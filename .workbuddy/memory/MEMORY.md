@@ -51,7 +51,11 @@
   - 环境变量：`DEEPSEEK_API_KEY`
   - 备选：Kimi K2.5（¥2/百万tokens）
   - **⚠️ screener_system_prompt.txt 不得被 AutoResearch 整体覆盖**（Day 3、Day 6两次被覆盖）
-    - **已修复**（2026-04-12）：直接修改 `layer3_analyst.py` 的 `write_rules()` 函数，对该文件强制追加模式（`"a"`），其他文件保持覆盖模式（`"w"`）
+    - **代码防护已修复**（2026-04-12）：`layer3_analyst.py` 的 `write_rules()` 对该文件强制追加模式
+    - **文件内容已完整重建**（2026-04-12 08:26，261行英文系统提示词）：
+      - 基础版：7条AVOID规则 + BUY/HOLD标准 + 0-10评分表 + 决策示例
+      - 追加：真实压力位(True Resistance) + 反转信号(Reversal Signal) + ST排除 + 止损上下文(-2%硬止损/4天时间止损) + 周线趋势重构逻辑
+    - GitHub备份：`screener_system_prompt_backup_20260412.txt`
     - 用户反馈（NO_BUY不重要、恒源煤电应选入、泸州老窖不应选入）已写入 `user_feedback.md`
 
 ### 全市场覆盖修复（2026-04-12）
