@@ -71,11 +71,12 @@ Verified calls on 2026-10-15: `GET /v1/team`, `GET /v1/account?type=1`,
      "type": "video",
      "status": 1,
      "content": "caption and #hashtags (max 2,200 UTF-16 code units)",
-     "extra": { "draft": false, "is_ai_generated": false },
+     "extra": { "draft": false, "is_ai_generated": true },
      "attachments": [{ "url": "<public_url from step 1>" }],
      "comment": []
    }
    ```
+   - `is_ai_generated` must be `true` (the production guide requires TikTok's AI-generated label on every post).
    - Use `public_url`, never `upload_url`, in `attachments[].url`.
    - `scheduled_at` is optional (publishes immediately when omitted; timestamps
      without a timezone are parsed in the team timezone, UTC-01:00).
