@@ -36,9 +36,10 @@ The owner's standing orders (2026-10-15):
 
 | Thing | How | Needs |
 |---|---|---|
-| GPU server shell | **No SSH** from cloud sessions (raw TCP blocked). Use `tools/jupyter_exec.py 'cmd' [timeout]`, which drives a JupyterLab terminal over HTTPS/WebSocket. Files: Jupyter contents API `GET/PUT $JUPYTER_URL/api/contents/<path>` (`?type=file&format=base64` for binaries). | env `JUPYTER_URL`, `JUPYTER_TOKEN`; `pip install websocket-client` |
-| GPU on/off | CompShare API `https://api.compshare.cn` (UCloud-style signed requests: PublicKey + Signature = SHA1 over sorted params + private key). Actions like `DescribeCompShareInstance`, `StartCompShareInstance`, `StopCompShareInstance` (check docs for exact params, zone `cn-sh2-01`, and how to start **with GPU**: it was once started in no-GPU mode). | env `COMPSHARE_PUBLIC_KEY`, `COMPSHARE_PRIVATE_KEY` |
-| SocialEcho | `https://api.socialecho.net`; the environment's proxy injects the `Authorization` header, so call it with plain curl and **no** header. Every call costs points. | already configured |
+| GPU server shell | **No SSH** from cloud sessions (raw TCP blocked). Use `tools/jupyter_exec.py 'cmd' [timeout]`, which drives a JupyterLab terminal over HTTPS/WebSocket. Files: Jupyter contents API `GET/PUT $JUPYTER_URL/api/contents/<path>` (`?type=file&format=base64` for binaries). | `JUPYTER_URL`/`JUPYTER_TOKEN` from `compshare.py jupyter`; `pip install websocket-client` |
+| GPU on/off, balance | `tools/compshare.py status / start / stop / wait Running|Stopped / balance / jupyter`. Signed CompShare API calls (verified 2026-10-15). `start` always passes `WithoutGpu=false`. `eval $(python3 tools/compshare.py jupyter)` sets `JUPYTER_URL`/`JUPYTER_TOKEN` from the API (only while Running). | env `COMPSHARE_PUBLIC_KEY`, `COMPSHARE_PRIVATE_KEY` |
+| SocialEcho | `tools/socialecho.py points / post VIDEO CAPTION WHEN / posts`. The environment's proxy injects the `Authorization` header (no key in code). Every call costs points. `post` is written from the docs but **not yet tested**: the first real use must check the result carefully. | already configured |
+| Email to Kenny | Gmail tool `mcp__Gmail__send_message` to **kennyzang@163.com**. Scheduled sessions may not have Gmail; then put the message at the top of the final reply (the task's push/email notification delivers it). | Gmail connector |
 
 Notes:
 - If any env var above is missing, tell the owner which one; never ask for secrets in chat.
@@ -61,9 +62,12 @@ Notes:
   - English (replaces Segoe UI Semibold/Black): **Selawik** (SIL OFL, Microsoft's Segoe-UI-metric-compatible font),
     so caption widths and line breaks stay the same. Update `build.py`/`cover.ass` font names accordingly.
 - **Editing runs on the GPU server** (ffmpeg is there), so no large file transfers.
-- **Publishing runs from a cloud scheduled task** (has the SocialEcho proxy; does not need the GPU on):
-  finished videos are uploaded to SocialEcho storage on production day, their `public_url` + caption go in a queue,
-  and each publish run posts the next item. First verify how long `public_url` stays valid (one test upload).
+- **Publishing uses SocialEcho's own scheduling** (`scheduled_at`), so no session has to wake up per post:
+  on production day each passing video is uploaded and scheduled at *previous scheduled post + random 7–9 h*
+  (never earlier than now + 30 min). 3 videos/day × ~8 h ≈ 24 h, matching the daily production.
+  Every post: `is_ai_generated: true`. Record each one in `publish_log.md`. Next day, verify they actually published.
+- **Thresholds (owner asked for warning emails):** CompShare `AmountAvailable` < ¥40 → warning email;
+  < ¥15 → skip production (don't start the GPU). SocialEcho points < 30 → warning email; < 10 → don't schedule posts.
 
 ## 5. Topics
 
@@ -75,6 +79,12 @@ Skip the book's ★☆☆ ideas (no story). Then self-chosen idioms with a clear
 Add each to `topic_pool.md` on the server when used. Retell in our own words (stories are public domain, books are not).
 
 ## 6. Daily production cycle (one session per day)
+
+Scheduled tasks (fresh session each time, environment's env vars + SocialEcho proxy, no Gmail connector):
+- **"Idiom Ink daily production"** `trig_01ExjP1vcZApwMpyjAFJyCaX`, daily 15:48 UTC (00:48 Beijing).
+- **"Idiom Ink GPU watchdog"** `trig_012AKRimu75ZjcbrwvBuQ9tM`, daily 01:52 UTC: stops the GPU if a production run
+  died and left it on; also warns on low balance.
+
 
 1. Start the GPU instance with GPU → wait for Jupyter → confirm `nvidia-smi` → ComfyUI up.
 2. For each of 3 episodes: script → refs (FLUX.2) → H3 jobs → review every clip → MOSS voices (free ComfyUI VRAM first)
@@ -88,14 +98,18 @@ Budget: about 3–5 GPU hours per day. After 2 failed re-rolls of a shot, trim/r
 
 ## 7. Still open (as of 2026-10-15)
 
-- [ ] Owner adds env vars `COMPSHARE_PUBLIC_KEY`, `COMPSHARE_PRIVATE_KEY` (new pair, old one leaked), `JUPYTER_URL`, `JUPYTER_TOKEN`.
-- [ ] Owner tops up SocialEcho points (97 left on 2026-10-15; ~10+/day needed).
-- [ ] Owner rotates the server root password (it was pasted in chat) and considers making this repo private.
-- [ ] Build: CompShare start/stop script, SocialEcho uploader + queue, scheduled tasks (daily production; 7–9 h publish chain).
-- [ ] First test publish (cost per post, draft vs publish behaviour, `public_url` lifetime).
-- [ ] Wire FLUX.2 klein into ComfyUI; install fonts.
+- [ ] Owner adds env vars `COMPSHARE_PUBLIC_KEY`, `COMPSHARE_PRIVATE_KEY` to the cloud environment (needed by every scheduled run).
+- [ ] Owner tops up CompShare (¥15.45 on 2026-10-15, ≈ one production day) and SocialEcho (97 points; ~10+/day).
+- [ ] Owner may add the Gmail connector to the two scheduled tasks in the claude.ai routines UI (else warnings come as task notifications).
+- [ ] Owner rotates the server root password (pasted in chat) and considers making this repo private.
+- [x] CompShare start/stop/balance script, SocialEcho scheduler script, scheduled tasks.
+- [ ] First real post: check points cost, scheduled_at behaviour, the record in `posts`. Log the results here.
+- [ ] Wire FLUX.2 klein into ComfyUI; install fonts (first GPU day, before episode 06).
+- [ ] Measure real GPU cost per episode (`balance` before/after) and adjust the ¥ thresholds.
 
 ## Status log (newest first)
 
+- 2026-10-15 (later): CompShare signed API works (`compshare.py`); GPU stopped via API. Balance ¥15.45 → warning
+  email sent to kennyzang@163.com. Created the daily production + watchdog scheduled tasks (first run 2026-10-16).
 - 2026-10-15: Access proven: Jupyter terminal works from cloud (`tools/jupyter_exec.py`); SSH and the old CompShare
   token do not. Server was in no-GPU mode; owner asked to stop it manually. No episodes 06+ started yet.
