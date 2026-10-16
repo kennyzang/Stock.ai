@@ -1,0 +1,205 @@
+{
+ "prompt": {
+  "1": {
+   "class_type": "UNETLoader",
+   "inputs": {
+    "unet_name": "idiom_flux2_klein_9b_kv_fp8.safetensors",
+    "weight_dtype": "default"
+   }
+  },
+  "2": {
+   "class_type": "FluxKVCache",
+   "inputs": {
+    "model": [
+     "1",
+     0
+    ]
+   }
+  },
+  "3": {
+   "class_type": "CLIPLoader",
+   "inputs": {
+    "clip_name": "idiom_qwen_3_8b_fp8mixed.safetensors",
+    "type": "flux2",
+    "device": "default"
+   }
+  },
+  "4": {
+   "class_type": "VAELoader",
+   "inputs": {
+    "vae_name": "idiom_flux2-vae.safetensors"
+   }
+  },
+  "5": {
+   "class_type": "CLIPTextEncode",
+   "inputs": {
+    "text": "Vertical 9:16 scene. Traditional Chinese ink-wash painting (shuimo) on warm aged rice paper, loose expressive black ink brushstrokes, soft grey washes, lots of open space, muted earthy colors with small vermilion red accents. Slightly stylized and a bit humorous, like a hand-painted storybook, in exactly the same painting style as the reference images. Plain clean surfaces. No text, no letters, no calligraphy, no signature, no seal stamps. The scholar cat host from the reference sheet (a small cute tabby cat in a grey scholar robe with a vermilion sash and a black scholar hat) stands in the lower half of the picture in a simple, plain study with a clean wooden floor, holding up one paw, palm out, in a polite 'no, thank you' gesture, head slightly shaken, stepping aside. The upper half of the picture is a bare, plain, pale rice-paper wall with nothing on it. Clean, clear, empty air.",
+    "clip": [
+     "3",
+     0
+    ]
+   }
+  },
+  "6": {
+   "class_type": "ConditioningZeroOut",
+   "inputs": {
+    "conditioning": [
+     "5",
+     0
+    ]
+   }
+  },
+  "7": {
+   "class_type": "EmptyFlux2LatentImage",
+   "inputs": {
+    "width": 768,
+    "height": 1344,
+    "batch_size": 1
+   }
+  },
+  "8": {
+   "class_type": "Flux2Scheduler",
+   "inputs": {
+    "steps": 4,
+    "width": 768,
+    "height": 1344
+   }
+  },
+  "9": {
+   "class_type": "KSamplerSelect",
+   "inputs": {
+    "sampler_name": "euler"
+   }
+  },
+  "10": {
+   "class_type": "RandomNoise",
+   "inputs": {
+    "noise_seed": 1102877264
+   }
+  },
+  "13": {
+   "class_type": "VAEDecode",
+   "inputs": {
+    "samples": [
+     "12",
+     0
+    ],
+    "vae": [
+     "4",
+     0
+    ]
+   }
+  },
+  "14": {
+   "class_type": "SaveImage",
+   "inputs": {
+    "images": [
+     "13",
+     0
+    ],
+    "filename_prefix": "idiom_ep06/refs/05_cat_u1_b"
+   }
+  },
+  "20": {
+   "class_type": "LoadImage",
+   "inputs": {
+    "image": "idioms/04_mascot_cat_sheet.png"
+   }
+  },
+  "21": {
+   "class_type": "ImageScaleToTotalPixels",
+   "inputs": {
+    "image": [
+     "20",
+     0
+    ],
+    "upscale_method": "lanczos",
+    "megapixels": 1.0,
+    "resolution_steps": 1
+   }
+  },
+  "22": {
+   "class_type": "VAEEncode",
+   "inputs": {
+    "pixels": [
+     "21",
+     0
+    ],
+    "vae": [
+     "4",
+     0
+    ]
+   }
+  },
+  "23": {
+   "class_type": "ReferenceLatent",
+   "inputs": {
+    "conditioning": [
+     "5",
+     0
+    ],
+    "latent": [
+     "22",
+     0
+    ]
+   }
+  },
+  "24": {
+   "class_type": "ReferenceLatent",
+   "inputs": {
+    "conditioning": [
+     "6",
+     0
+    ],
+    "latent": [
+     "22",
+     0
+    ]
+   }
+  },
+  "11": {
+   "class_type": "CFGGuider",
+   "inputs": {
+    "model": [
+     "2",
+     0
+    ],
+    "positive": [
+     "23",
+     0
+    ],
+    "negative": [
+     "24",
+     0
+    ],
+    "cfg": 1.0
+   }
+  },
+  "12": {
+   "class_type": "SamplerCustomAdvanced",
+   "inputs": {
+    "noise": [
+     "10",
+     0
+    ],
+    "guider": [
+     "11",
+     0
+    ],
+    "sampler": [
+     "9",
+     0
+    ],
+    "sigmas": [
+     "8",
+     0
+    ],
+    "latent_image": [
+     "7",
+     0
+    ]
+   }
+  }
+ },
+ "client_id": "idiom-ep06-ref-05_cat_u1"
+}

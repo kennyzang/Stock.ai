@@ -26,14 +26,20 @@ FAST = {"P2": dict(gap=0.10, m_pause=0.05)}
 
 CLIP = {
     "H1": "H1_hook.mp4", "S02": "S02_road.mp4", "S03": "S03_strap.mp4", "S04": "S04_tie.mp4",
-    "S05": "S05_farmer_sees.mp4", "S06": "S06_run.mp4", "S07": "S07_hands.mp4", "S08": "S08_wind.mp4",
-    "S09": "S09_cap.mp4", "S10": "S10_granny.mp4", "S11": "S11_sunset.mp4", "S11q": "S11_sunset.mp4",
-    "P1": "P1_still.mp4", "P2": "P1_still.mp4",  # H3's P1 grew a glowing sun + flares: slow zoom on the clean style frame "U1": "U1_cousin.mp4", "U2": "U2_phone.mp4", "L1": "H1_hook.mp4",
+    "S05": "S05_farmer_sees.mp4", "S06": "S06_run.mp4", "S07": "S07_hands.mp4", "S08": "S08_wind_v2.mp4",
+    "S09": "S09_cap.mp4", "S10": "S10_granny.mp4", "S11": "S11_sunset_v2.mp4", "S11q": "P1_still.mp4",
+    # H3's P1 grew a glowing sun + lens flares: a slow zoom on the clean style frame instead
+    "P1": "P1_still.mp4", "P2": "P1_still.mp4",
+    # FLUX stills + slow zoom: two H3 rounds of the cat gave ink blobs, fake calligraphy, a see-through desk
+    "U1": "U1_still.mp4", "U2": "U2_still.mp4",
+    "L1": "H1_hook.mp4",
 }
 # from the clip review (contact sheets): skip standing/empty openings and identity glitches, cut before artifacts
-CLIP_START = {"H1": 1.5, "L1": 1.5, "S02": 0.8, "S03": 2.2, "S04": 1.6, "S05": 1.5, "S07": 1.2, "S09": 2.9,
-              "S10": 2.5, "S11q": 2.0, "P2": 6.0}
-CLIP_MAX = {"S06": 3.8, "P1": 6.0}
+CLIP_START = {"H1": 1.5, "L1": 1.5, "S02": 0.8, "S03": 2.2, "S04": 1.6, "S05": 1.5, "S07": 1.2, "S08": 2.0,
+              "S09": 2.9, "S10": 2.5}
+CLIP_MAX = {"S06": 3.8}
+# quote → payoff → breakdown play as ONE continuous slow zoom: each starts where the previous one ended
+CHAIN = ["S11q", "P1", "P2"]
 PINGPONG = set()
 STORY = set()
 TITLE_CARD = None
@@ -207,7 +213,7 @@ def py_colored(pairs, size):
 
 def main():
     make_audio()
-    seg_files, events, t0 = [], [], 0.0
+    seg_files, events, t0, chain_t = [], [], 0.0, 0.0
     for si, (shot, ls, min_s) in enumerate(SEGMENTS):
         # 1) narration track for this segment
         gap = FAST.get(shot, {}).get("gap", GAP)
@@ -239,8 +245,11 @@ def main():
                  "-shortest", str(seg)])
         else:
             src = CLIPS / CLIP[shot]
-            s0 = CLIP_START.get(shot, 0.0)
+            s0 = chain_t if shot in CHAIN else CLIP_START.get(shot, 0.0)
             cut = min(duration(src) - s0, CLIP_MAX.get(shot, 99))
+            if shot in CHAIN:
+                cut = min(cut, seg_len)
+                chain_t = s0 + cut
             clen = cut * 2 if shot in PINGPONG else cut
             speed = min(max(seg_len / clen, 1.0), 1.15)  # at most a barely-visible 1.15x slow-down (more looks stuttery)
             hold = max(seg_len - clen * speed, 0)

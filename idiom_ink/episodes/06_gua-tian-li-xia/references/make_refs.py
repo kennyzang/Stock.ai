@@ -54,6 +54,20 @@ JOBS = [
      "kind face, dark green dress with a plum-red apron, carrying a round bamboo basket. Poses: walking with the basket; stopping "
      "with eyes wide in surprise; pointing up with one hand. Same face and clothes in every pose. She looks clearly different from "
      "the young scholar in the reference."),
+    # "Use it" shots as stills (+ slow zoom in the edit): two H3 rounds of the cat gave floating ink blobs,
+    # fake calligraphy and a see-through desk (guide P2: after 2 failed re-rolls, change the approach)
+    ("05_cat_u1", V, [CAT],
+     f"Vertical 9:16 scene. {STYLE} The scholar cat host from the reference sheet (a small cute tabby cat in a grey scholar "
+     "robe with a vermilion sash and a black scholar hat) stands in the lower half of the picture in a simple, plain study "
+     "with a clean wooden floor, holding up one paw, palm out, in a polite 'no, thank you' gesture, head slightly shaken, "
+     "stepping aside. The upper half of the picture is a bare, plain, pale rice-paper wall with nothing on it. "
+     "Clean, clear, empty air."),
+    ("06_cat_u2", V, [CAT],
+     f"Vertical 9:16 scene. {STYLE} The scholar cat host from the reference sheet (a small cute tabby cat in a grey scholar "
+     "robe with a vermilion sash and a black scholar hat) stands very straight in the lower half of the picture in a simple, "
+     "plain study with a clean wooden floor, holding up both empty paws in front of its chest to show there is nothing in "
+     "them, with a small proud smile. The upper half of the picture is a bare, plain, pale rice-paper wall with nothing "
+     "on it. Clean, clear, empty air."),
 ]
 
 
