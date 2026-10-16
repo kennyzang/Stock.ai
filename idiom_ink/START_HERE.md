@@ -107,7 +107,45 @@ Budget: about 3–5 GPU hours per day. After 2 failed re-rolls of a shot, trim/r
 - [ ] Wire FLUX.2 klein into ComfyUI; install fonts (first GPU day, before episode 06).
 - [ ] Measure real GPU cost per episode (`balance` before/after) and adjust the ¥ thresholds.
 
+## 8. Lessons from episode 06 (first fully cloud-run episode, 2026-10-16)
+
+Pipeline that worked (copy `episodes/06_gua-tian-li-xia/`): script.md → `references/make_refs.py` (FLUX.2 klein jobs)
+→ `h3/make_jobs.py` → `/root/run_episode.sh` → `tools/collect_clips.sh ep06 06_slug` (clips + contact sheets on the
+server; download the jpgs with `jupyter_files.py get` and LOOK at them) → `edit/build.py --audio-only` (MOSS via
+`moss_local.py`) → ASR check → `edit/build.py` → freezedetect + frame grid → cover → `socialecho.py post` → stop GPU.
+The episode folder on the server is `/root/autodl-tmp/idiom_handover/NN_slug/`; keep the repo copy in sync.
+
+- **GPU start:** "This GPU type is currently out of resources" (226604) is common. Keep retrying every 2 min; CompShare
+  then migrates the disk to a free host (226621 "System disk migration in progress", then 226622 "Pod is starting").
+- **Cost:** ¥3.84/h for the RTX 5090; episode 06 took ~1 h 55 min = ¥7.46 including one-time setup. Storage keeps
+  billing while stopped (~¥1.3/day).
+- **Reference images (FLUX.2 klein 9B, ~5 s each):** never attach another episode's character sheet or the cat sheet
+  to a human character sheet: figures leak in (a bearded old man, cat ears/tails). Use the new style frame plus at most
+  the main character sheet. Render 2 seeds; if stray figures appear, crop the clean ones and pad with the paper colour.
+  Red seal stamps can appear: reject.
+- **H3:** multi-character story shots were fine. Single-person shots sometimes grow a duplicate/ghost: say "Exactly one
+  person in the whole scene … stays one single solid figure". Shots with only the cat sheet produced floating ink blobs,
+  fake calligraphy/text and see-through desks in 6 of 6 tries → make "Use it" shots as **FLUX stills + slow zoom**
+  (bottom-anchored so the cat sits mid-frame under the text panel). "Golden hour" in a landscape gave a glowing sun +
+  lens flares → payoff background = **slow zoom on the clean style frame** (P1/P2 chained on one still, see CHAIN).
+- **Voices:** the old silence trim (-45 dB, no margin) cut the plosive off lines starting with 瓜 (ASR heard 花);
+  `moss_local.py` now keeps 80 ms. Lines of ~3 words can come out as junk (A2): write ≥6-word lines.
+- **ASR:** `asr_check.py`'s zh prompt "以下是普通话的句子" biases Whisper to write 以下 for 李下. Check Mandarin with no
+  initial prompt (`beam_size=5, condition_on_previous_text=False`), see the snippet in this session's history.
+- **Length:** first cut was 93.7 s; tightening the examples and merging a bridge line gave 89.3 s. Budget the script
+  for ~80 s: short example sentences (≤12 characters), loop line ≤10 words.
+- **Tools:** `jupyter_exec.py` runs commands with stdin=/dev/null (ffmpeg used to swallow the end marker and hang the
+  client); use `ffmpeg -nostdin` in server scripts anyway. Jupyter can't write hidden dirs (`~/.fonts`): upload
+  elsewhere and `cp`. `pkill -f` patterns can kill your own command (I4).
+- **SocialEcho:** upload URL 1 point + publish 1 point per post; `GET /v1/article` lists only already-published TikTok
+  videos (scheduled records appear after they publish).
+
 ## Status log (newest first)
+
+- 2026-10-16: **Episode 06 瓜田李下 produced** (89.4 s, all checks passed; audio ASR-verified, not listened to) and
+  scheduled on SocialEcho for 2026-10-16 18:34 UTC (record 543997). GPU stopped 16:11 UTC; balance ¥56.67;
+  SocialEcho 92 points. Env vars COMPSHARE_* still NOT set in the environment → scheduled runs will fail until added.
+  Next topic: 07 东窗事发 (dark story: keep it non-violent), then 08 班门弄斧.
 
 - 2026-10-15 (later): CompShare signed API works (`compshare.py`); GPU stopped via API. Balance ¥15.45 → warning
   email sent to kennyzang@163.com. Created the daily production + watchdog scheduled tasks (first run 2026-10-16).

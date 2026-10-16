@@ -27,7 +27,7 @@ FAST = {"P2": dict(gap=0.10, m_pause=0.05)}
 CLIP = {
     "H1": "H1_hook.mp4", "S02": "S02_road.mp4", "S03": "S03_strap.mp4", "S04": "S04_tie.mp4",
     "S05": "S05_farmer_sees.mp4", "S06": "S06_run.mp4", "S07": "S07_hands.mp4", "S08": "S08_wind_v2.mp4",
-    "S09": "S09_cap.mp4", "S10": "S10_granny.mp4", "S11": "S11_sunset_v2.mp4", "S11q": "P1_still.mp4",
+    "S09": "S09_cap.mp4", "S10": "S10_granny.mp4", "S11": "S11_sunset_v2.mp4", "S11q": "S11q_still.mp4",  # S09 frame (him fixing his cap under the plums) + slow zoom
     # H3's P1 grew a glowing sun + lens flares: a slow zoom on the clean style frame instead
     "P1": "P1_still.mp4", "P2": "P1_still.mp4",
     # FLUX stills + slow zoom: two H3 rounds of the cat gave ink blobs, fake calligraphy, a see-through desk
@@ -35,11 +35,11 @@ CLIP = {
     "L1": "H1_hook.mp4",
 }
 # from the clip review (contact sheets): skip standing/empty openings and identity glitches, cut before artifacts
-CLIP_START = {"H1": 1.5, "L1": 1.5, "S02": 0.8, "S03": 2.2, "S04": 1.6, "S05": 1.5, "S07": 1.2, "S08": 2.0,
+CLIP_START = {"H1": 1.5, "L1": 1.5, "S02": 0.8, "S03": 1.4, "S04": 1.6, "S05": 1.5, "S07": 1.2, "S08": 2.0,
               "S09": 2.9, "S10": 2.5}
 CLIP_MAX = {"S06": 3.8}
-# quote → payoff → breakdown play as ONE continuous slow zoom: each starts where the previous one ended
-CHAIN = ["S11q", "P1", "P2"]
+# payoff → breakdown play as ONE continuous slow zoom: P2 starts where P1 ended
+CHAIN = ["P1", "P2"]
 PINGPONG = set()
 STORY = set()
 TITLE_CARD = None
@@ -69,25 +69,23 @@ SEGMENTS = [
     ("S08", [("N", "Later, the wind knocked his hat crooked, right under a plum tree.", None)], 0),
     ("S09", [("N", "He reached up to fix it.", None)], 0),
     ("S10", [("N", "And an old woman cried: he's picking my plums!", "And an old woman cried: “He's picking my plums!”")], 0),
-    ("S11", [("N", "That night, he remembered an old poem.", None)], 0),
-    ("S11q", [("M", "瓜田不纳履，李下不正冠。", ""),
+    ("S11q", [("N", "There's an old poem about this. It says:", None),  # a 3-word line came out as junk (guide A2)
+              ("M", "瓜田不纳履，李下不正冠。", ""),
               ("N", "In a melon field, don't tie your shoe. Under a plum tree, don't fix your hat.",
                "“In a melon field, don't tie your shoe. Under a plum tree, don't fix your hat.”")], 0),
     ("P1", [("N", "That's the saying…", None), ("M", "瓜田李下。", "")], 0),
     ("P2", [("M", "瓜。", ""), ("NF", "Melon.", None), ("M", "田。", ""), ("NF", "Field.", None),
             ("M", "李。", ""), ("NF", "Plum.", None), ("M", "下。", ""), ("NF", "Under.", None),
             ("N", "Stay out of spots where innocent things look guilty.", None)], 0),
-    ("U1", [("M", "你表弟来应聘，你最好回避，瓜田李下。", ""),
-            ("N", "Your cousin applied for the job? Stay out of the hiring.",
-             "“Your cousin applied for the job? Stay out of the hiring.”")], 0),
-    ("U2", [("M", "考试时别碰手机，哪怕只看时间，瓜田李下嘛。", ""),
-            ("N", "Don't touch your phone in an exam. Not even to check the time.",
-             "“Don't touch your phone in an exam. Not even to check the time.”")], 0),
-    ("L1", [("N", "Being innocent isn't enough. Sometimes you have to look innocent, too.", None)], 0),
+    ("U1", [("M", "表弟来应聘，你回避吧，瓜田李下。", ""),
+            ("N", "Your cousin applied? Stay out of the hiring.", "“Your cousin applied? Stay out of the hiring.”")], 0),
+    ("U2", [("M", "考试别碰手机，瓜田李下嘛。", ""),
+            ("N", "Don't touch your phone during an exam.", "“Don't touch your phone during an exam.”")], 0),
+    ("L1", [("N", "Being innocent isn't enough. You have to look innocent, too.", None)], 0),
 ]
 EXAMPLES = {
-    "U1": ("你表弟来应聘，\\N你最好回避，\\N瓜田李下。", "Nǐ biǎodì lái yìngpìn,\\Nnǐ zuìhǎo huíbì,\\Nguā tián lǐ xià."),
-    "U2": ("考试时别碰手机，\\N哪怕只看时间，\\N瓜田李下嘛。", "Kǎoshì shí bié pèng shǒujī,\\Nnǎpà zhǐ kàn shíjiān,\\Nguā tián lǐ xià ma."),
+    "U1": ("表弟来应聘，\\N你回避吧，\\N瓜田李下。", "Biǎodì lái yìngpìn,\\Nnǐ huíbì ba,\\Nguā tián lǐ xià."),
+    "U2": ("考试别碰手机，\\N瓜田李下嘛。", "Kǎoshì bié pèng shǒujī,\\Nguā tián lǐ xià ma."),
 }
 
 GAP = 0.10    # silence between lines
