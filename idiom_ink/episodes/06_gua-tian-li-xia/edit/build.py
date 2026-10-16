@@ -181,8 +181,8 @@ def make_breakdown(synth):
     if len(gaps) != 3:
         raise SystemExit(f"breakdown take has {len(gaps)} pauses, expected 3: delete {whole.name} (and its server wav) to re-roll")
     cuts = [0.0] + gaps + [duration(whole)]
-    trim = ("silenceremove=start_periods=1:start_threshold=-45dB,areverse,"
-            "silenceremove=start_periods=1:start_threshold=-45dB,areverse")
+    trim = ("silenceremove=start_periods=1:start_threshold=-55dB:start_silence=0.08,areverse,"
+            "silenceremove=start_periods=1:start_threshold=-55dB:start_silence=0.08,areverse")
     for p, a, b in zip(outs, cuts, cuts[1:]):
         run(["ffmpeg", "-y", "-i", str(whole), "-ss", f"{a:.3f}", "-to", f"{b:.3f}", "-af", trim, "-ar", "24000", "-b:a", "96k", str(p)])
         p.with_suffix(".json").write_text("[]", encoding="utf-8")

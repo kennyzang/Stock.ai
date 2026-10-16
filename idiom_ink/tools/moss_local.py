@@ -33,8 +33,9 @@ def synth(items, job="idiom_tts"):
     for p, v, t, lang, tempo in todo:
         wav = remote / "out" / f"{Path(p).stem}.wav"
         af = f"atempo={tempo:.3f}," if abs(tempo - 1) > 1e-3 else ""
-        af += ("silenceremove=start_periods=1:start_threshold=-45dB,areverse,"
-               "silenceremove=start_periods=1:start_threshold=-45dB,areverse")
+        # keep 80 ms before the first sound: a tight -45 dB trim cut the "g" off 瓜 (ASR heard 花)
+        af += ("silenceremove=start_periods=1:start_threshold=-55dB:start_silence=0.08,areverse,"
+               "silenceremove=start_periods=1:start_threshold=-55dB:start_silence=0.08,areverse")
         Path(p).parent.mkdir(parents=True, exist_ok=True)
         subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(wav), "-af", af, "-ar", "24000", "-b:a", "96k", str(p)], check=True)
         Path(p).with_suffix(".json").write_text("[]", encoding="utf-8")
