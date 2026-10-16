@@ -28,11 +28,13 @@ CLIP = {
     "H1": "H1_hook.mp4", "S02": "S02_road.mp4", "S03": "S03_strap.mp4", "S04": "S04_tie.mp4",
     "S05": "S05_farmer_sees.mp4", "S06": "S06_run.mp4", "S07": "S07_hands.mp4", "S08": "S08_wind.mp4",
     "S09": "S09_cap.mp4", "S10": "S10_granny.mp4", "S11": "S11_sunset.mp4", "S11q": "S11_sunset.mp4",
-    "P1": "P1_payoff.mp4", "P2": "P1_payoff.mp4", "U1": "U1_cousin.mp4", "U2": "U2_phone.mp4", "L1": "H1_hook.mp4",
+    "P1": "P1_still.mp4", "P2": "P1_still.mp4",  # H3's P1 grew a glowing sun + flares: slow zoom on the clean style frame "U1": "U1_cousin.mp4", "U2": "U2_phone.mp4", "L1": "H1_hook.mp4",
 }
-CLIP_START = {"S11q": 2.0, "P2": 5.0}  # set per clip after review (skip empty openings)
-CLIP_MAX = {"P1": 5.0}
-PINGPONG = {"P2"}
+# from the clip review (contact sheets): skip standing/empty openings and identity glitches, cut before artifacts
+CLIP_START = {"H1": 1.5, "L1": 1.5, "S02": 0.8, "S03": 2.2, "S04": 1.6, "S05": 1.5, "S07": 1.2, "S09": 2.9,
+              "S10": 2.5, "S11q": 2.0, "P2": 6.0}
+CLIP_MAX = {"S06": 3.8, "P1": 6.0}
+PINGPONG = set()
 STORY = set()
 TITLE_CARD = None
 SFX_MUTE = {"U1", "U2"}

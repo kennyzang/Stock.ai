@@ -42,11 +42,16 @@ def run(cmd, timeout=300):
     mark = uuid.uuid4().hex[:12]
     begin, end = f"__BEGIN_{mark}", f"__END_{mark}_"
     # The quotes split the markers, so the terminal's echo of this line never matches them.
-    ws.send(json.dumps(["stdin", f"stty -echo; echo __BEGIN''_{mark}; {cmd}\n__rc=$?; echo; echo __END''_{mark}_$__rc\n"]))
+    # stdin is /dev/null: tools like ffmpeg otherwise read the terminal and swallow the end-marker line
+    ws.send(json.dumps(["stdin", f"stty -echo; echo __BEGIN''_{mark}; {{ {cmd}\n}} < /dev/null; __rc=$?; echo; echo __END''_{mark}_$__rc\n"]))
     out, code, deadline = "", None, time.time() + timeout
     try:
         while time.time() < deadline:
-            msg = json.loads(ws.recv())
+            ws.settimeout(max(1.0, deadline - time.time()))  # hard overall deadline (a recv once hung for 10+ min)
+            try:
+                msg = json.loads(ws.recv())
+            except websocket.WebSocketTimeoutException:
+                break
             if msg[0] != "stdout":
                 continue
             out += msg[1]

@@ -5,4 +5,4 @@ set -euo pipefail
 clip=$1 out=$2
 dur=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$clip")
 fps=$(python3 -c "print(8/max(float('$dur'),0.5))")
-ffmpeg -v error -y -i "$clip" -vf "fps=$fps,scale=360:-2,tile=4x2:padding=6:color=white" -frames:v 1 -q:v 3 "$out"
+ffmpeg -nostdin -v error -y -i "$clip" -vf "fps=$fps,scale=360:-2,tile=4x2:padding=6:color=white" -frames:v 1 -q:v 3 "$out"

@@ -78,8 +78,10 @@ SHOTS = [
      "stocky bald farmer glares at him with narrowed eyes, his hoe held across his body, not believing him.",
      "Wind, a hoe handle knocking softly on the ground."),
     ("S08_wind", ["scholar", "road"], 5,
-     "Under the plum tree heavy with purple plums by the low earth wall, a gust of wind blows; the young scholar's black cap "
-     "tilts to one side and his robe flutters.",
+     "Medium shot. Exactly one person in the whole scene: the young scholar stands still on the dusty road right under the "
+     "plum tree heavy with purple plums, by the low earth wall; the rest of the road is empty. A gust of wind blows from the left: "
+     "the leaves and plums sway, his sleeves flutter, and his black cap is pushed crooked, tilting to one side on his head. "
+     "He looks up, surprised.",
      "Wind gusting through branches, leaves rustling."),
     ("S09_cap", ["scholar", "road"], 5,
      "Under the low branches of the plum tree, the young scholar raises both hands to his head and straightens his black cap; "
@@ -90,20 +92,23 @@ SHOTS = [
      "her mouth opens in shock, and she points up toward the plum tree.",
      "Footsteps stopping, a basket creaking."),
     ("S11_sunset", ["scholar", "road"], 5,
-     "At sunset the young scholar walks on alone along the dusty road away from the camera, slowly, deep in thought; long "
-     "soft shadows, the melon field and the plum tree behind him.",
+     "Exactly one person in the whole scene: the young scholar, seen from behind, walks slowly away along the empty dusty "
+     "road in soft evening light, head bowed in thought, his small bundle on his back. He stays one single solid figure the "
+     "whole time; the road ahead of him is empty. The melon field is on his left.",
      "Slow footsteps, evening birds."),
     ("P1_payoff", ["road"], 13,
      "Very wide, calm view of the country road, the melon field and the single plum tree at golden hour: the upper half of the "
      "frame is open pale sky; leaves sway gently in the wind. Nobody in the scene. Static camera.",
      "Soft wind, distant birds."),
     ("U1_cousin", ["cat"], 8,
-     "The scholar cat sits at a plain wooden desk with one blank sheet of paper, raises one paw, shakes its head politely and "
-     "slides its chair back away from the desk, as if stepping aside.",
-     "A chair scraping softly, paper rustling."),
+     "The scholar cat stands in a simple, plain study with bare pale walls and a clean wooden floor, holds up one paw, "
+     "palm out, politely shakes its head, and takes one small step back, as if stepping aside. The upper part of the frame "
+     "is a plain, clean, empty pale wall; the air is clear and still.",
+     "Soft paw steps on a wooden floor, cloth rustling."),
     ("U2_phone", ["cat"], 8,
-     "The scholar cat sits very straight at a plain wooden desk with one blank sheet of paper, both paws resting flat on the desk "
-     "in plain view, eyes forward, with a small proud smile, tail swishing. The air is clear and still.",
+     "The scholar cat stands very straight in a simple, plain study with bare pale walls and a clean wooden floor, holds up "
+     "both empty paws in front of its chest to show there is nothing in them, with a small proud smile, tail swishing. The "
+     "upper part of the frame is a plain, clean, empty pale wall; the air is clear and still.",
      "A soft tail swish, a quiet room."),
 ]
 
