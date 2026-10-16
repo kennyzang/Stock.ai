@@ -1,0 +1,14 @@
+H1_hook
+S02_road
+S03_strap
+S04_tie
+S05_farmer_sees
+S06_run
+S07_hands
+S08_wind
+S09_cap
+S10_granny
+S11_sunset
+P1_payoff
+U1_cousin
+U2_phone

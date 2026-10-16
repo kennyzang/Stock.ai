@@ -1,0 +1,17 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Idiom,LXGW WenKai,190,&H00262626,&H00262626,&H00C6DEE9,&H00000000,1,0,0,0,100,100,6,0,1,9,0,5,0,0,0,134
+Style: Py,DejaVu Sans,70,&H00262626,&H00262626,&H00C6DEE9,&H00000000,0,0,0,0,100,100,6,0,1,6,0,5,0,0,0,1
+Style: Hook,Selawik,74,&H00FFFFFF,&H00FFFFFF,&H00262626,&H00000000,1,0,0,0,100,100,0,0,1,8,0,5,0,0,0,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:05.00,Idiom,,0,0,0,,{\pos(540,330)}瓜田李下
+Dialogue: 0,0:00:00.00,0:00:05.00,Py,,0,0,0,,{\pos(540,485)}{\c&H2B2BD6&}guā {\c&H1E8CF0&}tián {\c&H3C9A2E&}lǐ {\c&HC86A1E&}xià
+Dialogue: 0,0:00:00.00,0:00:05.00,Hook,,0,0,0,,{\pos(540,1560)}He only fixed his shoe…\Nand got called a thief.
