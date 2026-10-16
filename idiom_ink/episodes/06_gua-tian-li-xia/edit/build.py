@@ -154,10 +154,37 @@ MOSS_VOICE = {"N": ("narrator_en", "English", 1.0), "NF": ("narrator_en", "Engli
               "M": ("mandarin_zh", "Chinese", 1.0)}
 
 
+BREAKDOWN_LINE = "。[pause 0.8s]".join(c for c, _ in BREAKDOWN) + "。"
+
+
+def make_breakdown(synth):
+    """Speak the four characters in ONE Mandarin take and split it at the silences (single characters
+    generated alone come out as other words, guide mistake A3). Writes P2_00/02/04/06_M.mp3."""
+    outs = [WORK / f"P2_{i:02d}_M.mp3" for i in (0, 2, 4, 6)]
+    if all(p.exists() for p in outs):
+        return
+    whole = WORK / "P2_ALL_M.mp3"
+    synth([(whole, "mandarin_zh", BREAKDOWN_LINE, "Chinese", 1.0)], job=EP.name)
+    log = subprocess.run(["ffmpeg", "-i", str(whole), "-af", "silencedetect=noise=-35dB:d=0.35", "-f", "null", "-"],
+                         capture_output=True, text=True).stderr
+    starts = [float(l.split("silence_start: ")[1]) for l in log.splitlines() if "silence_start: " in l]
+    ends = [float(l.split("silence_end: ")[1].split()[0]) for l in log.splitlines() if "silence_end: " in l]
+    gaps = [(a + b) / 2 for a, b in zip(starts, ends)]
+    if len(gaps) != 3:
+        raise SystemExit(f"breakdown take has {len(gaps)} pauses, expected 3: delete {whole.name} (and its server wav) to re-roll")
+    cuts = [0.0] + gaps + [duration(whole)]
+    trim = ("silenceremove=start_periods=1:start_threshold=-45dB,areverse,"
+            "silenceremove=start_periods=1:start_threshold=-45dB,areverse")
+    for p, a, b in zip(outs, cuts, cuts[1:]):
+        run(["ffmpeg", "-y", "-i", str(whole), "-ss", f"{a:.3f}", "-to", f"{b:.3f}", "-af", trim, "-ar", "24000", "-b:a", "96k", str(p)])
+        p.with_suffix(".json").write_text("[]", encoding="utf-8")
+
+
 def make_audio():
     import sys
     sys.path.insert(0, "/root/autodl-tmp/idiom_handover/tools")
     from moss_local import synth
+    make_breakdown(synth)
     items = []
     for shot, ls, _ in SEGMENTS:
         for li, (vk, text, sub) in enumerate(ls):
@@ -347,4 +374,8 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    if "--audio-only" in sys.argv:  # make the voices, then ASR-check them before editing
+        make_audio()
+    else:
+        main()
