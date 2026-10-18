@@ -142,6 +142,18 @@ The episode folder on the server is `/root/autodl-tmp/idiom_handover/NN_slug/`; 
 
 ## Status log (newest first)
 
+- 2026-10-18: **GPU disk cleanup (owner-approved).** Freed ~38 GB: `/` went 153 GB used / 28 GB free → 115 GB / 65 GB.
+  Deleted: pip cache (12.7 GB), model `minimax_h3_fl2va_pruned_int8_convrot.safetensors` (19.5 GB; the idiom pipeline
+  only uses ref2va; last used by the owner's `human-intern-ep01` jobs on 2026-09-12) and `ace_step_1.5_turbo_aio`
+  (9.3 GB; unused by any job), a stale 467 MB /tmp file, the 417 MB failed-login log (`btmp`, shows the server is
+  being brute-forced), and my regenerable episode intermediates (`joined.mp4` of 06-09, ep06 replaced voice takes).
+  Verified the ref2va model, H3 text encoder/VAEs/4-step LoRA, FLUX.2 klein, MOSS, fonts and the venv are intact.
+  Checked the 22 GB `hf_cache/hub/blobs` store: NOT duplicated, no orphans, all used by MOSS-TTS v1.5 /
+  Audio-Tokenizer / VoiceGenerator. Optional: MOSS-VoiceGenerator (3.9 GB) is only needed to design new voices.
+  Facts for later: the Oct 17 15:48 UTC scheduled run produced episodes 07 東窗事發 (live 10-17 19:21 UTC),
+  08 班門弄斧 (live 10-18 03:21 UTC) and 09 守株待兔 (finished; not yet published as of 04:41 UTC), but did NOT
+  commit/log them: `publish_log.md` is missing rows for 07-09. (The GPU was left running at the owner's request.)
+
 - 2026-10-18: **Production schedule PAUSED by the owner.** Both scheduled tasks are disabled (not deleted):
   "Idiom Ink daily production" `trig_01ExjP1vcZApwMpyjAFJyCaX` (15:48 UTC) and "Idiom Ink GPU watchdog"
   `trig_012AKRimu75ZjcbrwvBuQ9tM` (01:52 UTC; paused too because it stops a running GPU, which would kill another
