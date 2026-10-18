@@ -142,6 +142,13 @@ The episode folder on the server is `/root/autodl-tmp/idiom_handover/NN_slug/`; 
 
 ## Status log (newest first)
 
+- 2026-10-18: **Production schedule PAUSED by the owner.** Both scheduled tasks are disabled (not deleted):
+  "Idiom Ink daily production" `trig_01ExjP1vcZApwMpyjAFJyCaX` (15:48 UTC) and "Idiom Ink GPU watchdog"
+  `trig_012AKRimu75ZjcbrwvBuQ9tM` (01:52 UTC; paused too because it stops a running GPU, which would kill another
+  agent's work). The owner is letting another agent use the GPU. **Do not start, stop or otherwise touch the GPU
+  instance, and do not re-enable the tasks, until the owner says so.** To resume: `update_trigger` with
+  `enabled: true` on both ids (plus the COMPSHARE_* env vars must be set, see section 7).
+
 - 2026-10-16: **Episode 06 瓜田李下 produced** (89.4 s, all checks passed; audio ASR-verified, not listened to) and
   scheduled on SocialEcho for 2026-10-16 18:34 UTC (record 543997). GPU stopped 16:11 UTC; balance ¥56.67;
   SocialEcho 92 points. Env vars COMPSHARE_* still NOT set in the environment → scheduled runs will fail until added.
