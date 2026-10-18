@@ -9,7 +9,8 @@ Most useful sections: 3 (auth), 4 (errors), 5.2 (accounts), 5.6 (upload URL), 5.
 - Auth header on every request: `Authorization: Bearer <Team API Key>` (key starts with `se_`).
   Ask the owner for the key. Keep it in an environment variable, never in git, logs or chat.
 - Optional: `X-Lang: en`. Rate limit: 120 requests/minute.
-- Team "Chinese Idioms" (id 22626). TikTok account "Idiom Ink" (`kingkingking8888`), **account_id 22788134**.
+- Find your TikTok account first: `GET /v1/account?type=1` and use that account's `id` as `account_id`.
+  Only publish to the account the owner told you to use (check `app.title` = TikTok and `status.value` = 1).
 
 ## Points
 Every API call costs team points (at least 1 each). Check `meta.ai_points.remaining` in each response.
@@ -21,7 +22,7 @@ Do not make unnecessary calls. If the balance is low or a call returns 422 with 
 3. `POST /v1/publish/article` with JSON:
    ```json
    {
-     "account_id": 22788134,
+     "account_id": <id from GET /v1/account>,
      "type": "video",
      "status": 1,
      "content": "caption #hashtags",
@@ -42,5 +43,3 @@ Video limits: 1 video, up to 1 GiB, at least 360x360, 23-60 fps, 3-600 s. Captio
 - Do not post the same video twice; keep a record of what has been published.
 - If anything is unclear or fails twice, stop and report to the owner instead of guessing.
 - Publishing cost per post is not documented. Note it from the first response message.
-
-More background, open questions and the planned 7-9 hour schedule: `HANDOVER_SOCIALECHO.md`.
