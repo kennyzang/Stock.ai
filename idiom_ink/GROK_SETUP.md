@@ -20,7 +20,11 @@ EACH RUN
      Replace the old file in the same Drive folder with the same file name (delete or overwrite the old one
      so only one file has each name).
 3. Image rules (always):
-   - Vertical 9:16, as large as you can render (1080×1920 or more is ideal).
+   - Vertical 9:16, as large as you can render (1080×1920 or more is ideal). Render PORTRAIT natively: set the
+     image tool's aspect ratio / orientation to 9:16 (or 2:3 if 9:16 isn't offered) before generating. Compose
+     the scene for a tall frame (characters filling the middle of the height), not a wide scene.
+   - Never letterbox or pad: no added bands, borders or blurred fills. If your tool truly cannot render portrait,
+     upload the raw landscape render unpadded at its native size and say so in the reply; we handle the layout.
    - The style block in the request, identical across all images of an episode and across episodes.
    - Characters exactly as written in CONTINUITY: same face, hair, clothes and colours in every image.
    - Only the people the scene lists. Correct hands, no extra limbs, no duplicate people.
