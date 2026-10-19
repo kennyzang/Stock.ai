@@ -4,7 +4,7 @@
 |---|---|---|---|---|---|---|---|---|---|---|
 | 12 | 刻舟求剑 | 2026-10-19 13:54 | 1a154728680561ae | EP12_2026-10-19 (1-Duuc97MvlPtai2cBL436gRGizsy5scf) | waiting for Grok | 0 | – | – | – | – |
 | 11 | 掩耳盗铃 | 2026-10-19 13:54 | 1a15472834836262 | EP11_2026-10-19 (18Yx7hxtpKfC4rXGOsyX4sA4Y4jKXIOds) | waiting for Grok | 0 | – | – | – | – |
-| 10 | 画蛇添足 (pilot) | 2026-10-19 13:16 | 1a1544e512a376a9 | EP10_2026-10-19 (18CjDMHd4jKOcPxdFDPoxvNTP2CiqKyOO) | accepted 15:50 (ChatGPT, 9/9 1024×1536) | 1 | Jennifer, all pass ASR | ✅ v2 30.6 s, −15.1 LUFS, 8.5 MB | Publication 2026-10-19 16:40 (releases/EP10) | waiting for reply |
+| 10 | 画蛇添足 (pilot) | 2026-10-19 13:16 | 1a1544e512a376a9 | EP10_2026-10-19 (18CjDMHd4jKOcPxdFDPoxvNTP2CiqKyOO) | accepted 15:50 (ChatGPT, 9/9 1024×1536) | 1 | Jennifer, all pass ASR | ✅ v2 30.6 s, −15.1 LUFS, 8.5 MB | Publication 2026-10-19 16:40 (releases/EP10) | SocialEcho 555073, scheduled 2026-10-19 16:57 UTC (music 东方既白) |
 
 ## Notes
 - 2026-10-19: producer handed over from session_01UE4ArSjhTKBPtAHUBZxvXF. DashScope key verified reachable on
@@ -43,3 +43,5 @@
   session is "Publication", session_014Ei81gE1W46shqwc9gMyUz (PRODUCER.md §5 fixed).
 - 2026-10-19 16:40: owner picked Jennifer. EP10 v2 committed to releases/EP10 (with posting.md) and handed to
   Publication (session_014Ei81gE1W46shqwc9gMyUz).
+- 2026-10-19 16:41: Publication confirmed EP10: sha256 OK, SocialEcho record 555073, scheduled 16:57:49 UTC, music
+  东方既白 at 18, pinned-comment text appended to the description; 270 points left. It will report the live link.
