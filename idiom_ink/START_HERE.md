@@ -142,6 +142,14 @@ The episode folder on the server is `/root/autodl-tmp/idiom_handover/NN_slug/`; 
 
 ## Status log (newest first)
 
+- 2026-10-19: **NEW FORMAT from episode 10: read `FORMAT_SHORTS.md` first.** Owner decisions: no GPU instance,
+  videos < 30 s with a faster pace (play-through rate for a new account), images from **Grok** via email
+  (`[IDIOM-SCRIPT] EPNN · date` to kennytseng4@gmail.com → PNGs in Drive `Idiom-Ink-images/EPNN_date/` → reply
+  `[IDIOM-IMAGES]`), voices from the owner's **Alibaba Cloud** API. Editing runs in the cloud session with
+  `tools/shorts_build.py` (fonts: `tools/setup_fonts.sh`). EP10 画蛇添足 is the pilot: image request sent 13:2x UTC;
+  the GPU sections above (H3, FLUX, MOSS, Jupyter, CompShare start/stop) are legacy. The Alibaba key is not
+  connected yet.
+
 - 2026-10-18: **GPU disk cleanup (owner-approved).** Freed ~38 GB: `/` went 153 GB used / 28 GB free → 115 GB / 65 GB.
   Deleted: pip cache (12.7 GB), model `minimax_h3_fl2va_pruned_int8_convrot.safetensors` (19.5 GB; the idiom pipeline
   only uses ref2va; last used by the owner's `human-intern-ep01` jobs on 2026-09-12) and `ace_step_1.5_turbo_aio`
