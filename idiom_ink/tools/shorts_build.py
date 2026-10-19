@@ -136,7 +136,11 @@ def fill_frame(img, focus, tmp):
     b = next((y for y in range(h, 0, -2) if busy((0, y - 2, w, y))), h)
     l = next((x for x in range(0, w, 2) if busy((x, t, x + 2, b))), 0)
     r = next((x for x in range(w, 0, -2) if busy((x - 2, t, x, b))), w)
-    if (b - t) > h * 0.3 and (r - l) > w * 0.3:
+    # only a real letterbox/pillarbox counts: flat bands on BOTH sides and landscape art left between them
+    # (a calm plain sky at the top of a portrait image is not padding)
+    letterbox = t > h * 0.05 and h - b > h * 0.05 and (r - l) / max(b - t, 1) > 1.2
+    pillarbox = l > w * 0.05 and w - r > w * 0.05 and (b - t) / max(r - l, 1) > 2.0
+    if (letterbox or pillarbox) and (b - t) > h * 0.2 and (r - l) > w * 0.2:
         im = im.crop((l + 4, t + 4, r - 4, b - 4))   # a few px more: the band edge is often a soft fade
     w, h = im.size
     if w / h <= 0.8:   # portrait: cover-crop around the focus point
