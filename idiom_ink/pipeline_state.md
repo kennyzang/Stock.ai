@@ -24,3 +24,9 @@
   EP11/EP12 requests with the FORMAT block in their threads. shorts_build.py now strips padding bands and never
   shows empty paper (landscape fallback = enlarged art over blurred copy); output capped ~2.8 Mbit/s (≤ 10 MB).
   If the EP10 redo isn't back by 2026-10-20 02:30 UTC, ship EP10 with the fallback layout.
+- 2026-10-19: images switched from Grok to ChatGPT (Grok only renders 1280×720). Setup prompt now
+  `IMAGE_SETUP.md` (3 runs/day, portrait 9:16 or 2:3 1024×1536, no padding); owner pastes it into ChatGPT.
+  ChatGPT picks up the open EP10 redo and the EP11/EP12 requests from Gmail. Future request template FORMAT
+  block accepts 2:3. (Note: the EP11/EP12 requests already sent ask for 9:16 ≥ 1080×1920; IMAGE_SETUP allows
+  2:3 instead, so no re-send needed.)
+

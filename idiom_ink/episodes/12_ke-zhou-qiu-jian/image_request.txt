@@ -1,5 +1,6 @@
 Subject: [IDIOM-SCRIPT] EP12 · 2026-10-19
 From/To: kennytseng4@gmail.com   (re-sent 2026-10-19 with the full-frame FORMAT block)
+Note: the FORMAT paragraph below was edited after sending (2026-10-19, switch to ChatGPT: 2:3 portrait accepted); the email as sent asked for 9:16 only.
 
 IDIOM INK SHORTS — IMAGE REQUEST
 EPISODE: EP12
@@ -9,7 +10,7 @@ SERIES: Idiom Ink | Chinese Idioms (TikTok @kingkingking8888). A 25-second verti
 IMAGES NEEDED: 9 (EP12_I1 ... EP12_I9)
 
 FORMAT (most important; applies to every image)
-Vertical 9:16 aspect ratio, full-frame composition, edge-to-edge illustration that completely fills the canvas: no top or bottom margins, no borders, no letterbox or padding bands, no empty brown or paper-coloured space. Cinematic framing: wide shots unless a scene asks for a close-up. Render natively in portrait (--ar 9:16), at least 1080x1920. Never render landscape and then pad or scale it into a vertical frame; if your tool gives you a landscape image, change its aspect ratio setting to 9:16 and render again.
+Vertical 9:16 aspect ratio, full-frame composition, edge-to-edge illustration that completely fills the canvas: no top or bottom margins, no borders, no letterbox or padding bands, no empty brown or paper-coloured space. Cinematic framing: wide shots unless a scene asks for a close-up. Render natively in portrait: 9:16 (--ar 9:16, at least 1080x1920) if your tool offers it, otherwise 2:3 portrait (1024x1536); keep faces and key action inside the central 85% of the width. Never render landscape or square, and never pad, upscale or stretch an image into a vertical frame.
 
 HOW TO DELIVER
 1. Generate each image in the style below. Vertical 9:16, at least 1080x1920 (if the native render is smaller, say so in your reply). No text of any kind in the images: no letters, no Chinese characters, no calligraphy, no seal stamps, no signature, no watermark, no speech bubbles, no UI text.

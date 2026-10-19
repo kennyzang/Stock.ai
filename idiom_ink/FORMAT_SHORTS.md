@@ -1,7 +1,7 @@
 # Idiom Ink — Shorts format (v3, from episode 10)
 
 Owner decisions (2026-10-19): **no GPU instance**; **videos under 30 s** with a faster pace, to raise the
-play-through (完播) rate of a new account; images from **Grok** via email → Google Drive; voices from the owner's
+play-through (完播) rate of a new account; images from **ChatGPT** (was Grok) via email → Google Drive; voices from the owner's
 **Alibaba Cloud** API. Look: **ink-wash manhua** (our ink-wash skin + manhua storytelling: full-bleed panels,
 expressive faces). This file replaces the 70–85 s structure of `PRODUCTION_GUIDE.md` §4; that guide's content rules
 still apply unless changed here.
@@ -40,11 +40,11 @@ their glosses on the idiom card (read in 1 glance, not read aloud one by one).
 - **Style: ink-wash manhua.** Bold confident black ink linework, flat muted washes (ochre, rust red, slate blue,
   moss green) on warm aged rice paper; expressive, slightly exaggerated faces (sweat drops, wide eyes, smug grins);
   dynamic angles; one full-bleed panel per image; no panel borders, no speech bubbles.
-- **9:16, ≥ 1080×1920, full-frame, edge-to-edge**, never letterboxed (owner's rule, 2026-10-19). Every image
+- **Portrait 9:16 (≥ 1080×1920) or 2:3 (1024×1536, ChatGPT's tallest size), full-frame, edge-to-edge**, never letterboxed (owner's rule, 2026-10-19). Every image
   request carries the FORMAT block and the full-bleed COMPOSITION RULES of `episodes/12_ke-zhou-qiu-jian/
   image_request.txt` (the current template). The builder cuts off any padding bands; landscape art (fallback
   only) is shown enlarged over a blurred copy of itself so the canvas is always illustration. Letterboxed or
-  landscape delivery is a blocking problem: ask for a 9:16 re-render (counts as a redo round).
+  landscape delivery is a blocking problem: ask for a portrait re-render (counts as a redo round).
 - **TikTok safe zones:** main subject inside the middle 60 % of the height; top 15 % (tabs) and bottom 25 %
   (caption/handle/music) low-detail; right 15 % (buttons) free of key action.
 - **≤ 3 recurring characters**, each with a fixed costume/face spec repeated word for word in every request
@@ -86,7 +86,7 @@ Runs inside a Claude cloud session (ffmpeg + libass + Python are in the containe
 1. **Script** → `episodes/NN_slug/script.md`: story beats, VO lines with target seconds, image list.
 2. **Image request email** (Gmail, from/to kennytseng4@gmail.com), subject `[IDIOM-SCRIPT] EPNN · YYYY-MM-DD`,
    body = delivery rules + story context + character continuity + one block per image. Drive target:
-   `Idiom-Ink-images/EPNN_YYYY-MM-DD/EPNN_I1.png …` (we create the folder first). Grok replies in the thread with
+   `Idiom-Ink-images/EPNN_YYYY-MM-DD/EPNN_I1.png …` (we create the folder first). ChatGPT replies in the thread with
    `[IDIOM-IMAGES] EPNN · YYYY-MM-DD`. Redo requests: reply `[IDIOM-REDO] EPNN` listing image ids + reason.
 3. **Image QC** (every image, full size): style, character continuity, hands/anatomy, extra or missing people,
    any text/marks, safe-zone composition. Redo at most twice, then re-plan the shot.
@@ -97,7 +97,7 @@ Runs inside a Claude cloud session (ffmpeg + libass + Python are in the containe
 7. **Publish** via SocialEcho (`is_ai_generated: true`), caption + pinned comment from `posting.md`.
 
 Daily automation (later): one routine per day does (a) assemble + QC + schedule the episodes whose images arrived,
-(b) send image requests for the next day's episodes — a one-day lag so Grok has time. Routines need the **Gmail +
+(b) send image requests for the next day's episodes — a one-day lag so the image service has time. Routines need the **Gmail +
 Google Drive connectors**, so they must be created in the claude.ai routines UI with those connectors on (routines
 created from a session here get no connectors).
 

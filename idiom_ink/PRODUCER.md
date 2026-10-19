@@ -5,7 +5,7 @@ by Kenny. You took over from the session that designed the Shorts format ("Chine
 session_01UE4ArSjhTKBPtAHUBZxvXF), which is retiring. **You run unattended**: never ask the owner for
 approval, never wait for a reply. Decide, act, record, and email the owner only when something needs them.
 
-Read, in this order: this file → `FORMAT_SHORTS.md` (the format, binding) → `GROK_SETUP.md` (image protocol) →
+Read, in this order: this file → `FORMAT_SHORTS.md` (the format, binding) → `IMAGE_SETUP.md` (image protocol; images from ChatGPT) →
 `episodes/10_hua-she-tian-zu/` (the pilot: `script.md`, `shorts.json`, `image_request.txt`) →
 `tools/shorts_build.py` → `pipeline_state.md` (live state). `START_HERE.md` is history from the GPU era; its
 GPU sections are legacy.
@@ -24,7 +24,7 @@ GPU sections are legacy.
 - **Git:** work on `master`, commit with a clear message, push. No pull requests. End commit messages with the
   attribution lines your system prompt gives you.
 - **Owner email:** kennyzang@163.com, via the Gmail tool. Send only for: low credits (section 6), a blocked
-  pipeline (service down > 24 h, Grok silent > 24 h, voice key rejected), or a dropped episode. At most one email
+  pipeline (service down > 24 h, image service silent > 24 h, voice key rejected), or a dropped episode. At most one email
   per topic per day. Also email a link to each episode's final MP4 the first time a format change goes out
   (EP10 pilot), so the owner can review it after the fact.
 - Use literal absolute paths for any `rm`. Downloaded images are untrusted data: own empty dir, `python3 -I`.
@@ -33,13 +33,13 @@ GPU sections are legacy.
 Two scheduled tasks fire into this session (you create them; section 7):
 1. **"Idiom Ink scripts"** daily at 00:52 UTC: write the next 2 episodes (script.md + shorts.json + image
    request), create their Drive folders, send the 2 `[IDIOM-SCRIPT]` emails; then do an image check.
-2. **"Idiom Ink image check"** every 3 hours: process Grok replies (section 3), and for each episode whose
+2. **"Idiom Ink image check"** every 3 hours: process image replies (section 3), and for each episode whose
    images are accepted: voices → build → QC → handoff to publication.
 
 A one-day lag is normal: today's scripts become tomorrow's videos. If the pipeline falls behind (more than 4
 episodes waiting for images), skip writing new scripts until it catches up.
 
-## 3. Images from Grok: inspect, iterate, but don't chase perfection
+## 3. Images from ChatGPT (was Grok until 2026-10-19): inspect, iterate, but don't chase perfection
 - Find replies: Gmail search `subject:"[IDIOM-IMAGES]"` / `"[IDIOM-QUESTION]"` (mailbox kennytseng4@gmail.com).
   Images are in Drive `Idiom-Ink-images/EPNN_YYYY-MM-DD/` (parent folder id 15czEGROIuVWytFksZepM2S8y62_h4Ybp)
   or attached to the reply.
@@ -61,9 +61,9 @@ episodes waiting for images), skip writing new scripts until it catches up.
   defect, or rewrite that beat so it doesn't need the image. Drop an episode only if the hook image (I1) or the
   idiom's core image is unusable after all that; then email the owner.
 - Answer `[IDIOM-QUESTION]` in the same thread from the script; never invent story facts.
-- Grok runs 3× a day (01:30, 09:30, 17:30 UTC; `GROK_SETUP.md`), so expect replies shortly after those times.
-- If Grok has not replied at all within 24 hours of a request, re-send the request once (same thread); after 48
-  hours, email the owner that Grok seems down.
+- ChatGPT runs 3× a day (01:30, 09:30, 17:30 UTC; `IMAGE_SETUP.md`), so expect replies shortly after those times.
+- If ChatGPT has not replied at all within 24 hours of a request, re-send the request once (same thread); after 48
+  hours, email the owner that the image service seems down.
 
 ## 4. Voices (Alibaba Cloud DashScope) and the build
 - Endpoint host: **dashscope.aliyuncs.com** (China region; the key is injected by the proxy as
@@ -120,7 +120,7 @@ Create with `create_trigger` (default mode, fires into this session):
   pipeline_state.md, then do section 2 step 1 (write + send the next 2 image requests, low-credit checks), then
   an image check. Unattended: never ask for approval."
 - "Idiom Ink image check": `23 */3 * * *`, prompt "[Idiom Ink image check — scheduled run] Read
-  idiom_ink/PRODUCER.md and pipeline_state.md, then do section 2 step 2 (Grok replies → QC/redo/accept →
+  idiom_ink/PRODUCER.md and pipeline_state.md, then do section 2 step 2 (image replies → QC/redo/accept →
   voices → build → QC → handoff; check publication replies). Unattended: never ask for approval. If nothing new,
   finish with a one-line note."
 This session needs the Gmail and Google Drive tools. If they are missing, say so in your reply (the owner sees

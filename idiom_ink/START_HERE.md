@@ -144,7 +144,7 @@ The episode folder on the server is `/root/autodl-tmp/idiom_handover/NN_slug/`; 
 
 - **2026-10-19 HANDOVER:** production moves to a dedicated unattended producer session; its standing orders
   are `PRODUCER.md` (2 episodes/day, Grok images, Alibaba voices, publishing via the "publication" session).
-  Grok setup prompt: `GROK_SETUP.md`. Live state: `pipeline_state.md`.
+  Image service (ChatGPT, was Grok) setup prompt: `IMAGE_SETUP.md`. Live state: `pipeline_state.md`.
 
 - 2026-10-19: **NEW FORMAT from episode 10: read `FORMAT_SHORTS.md` first.** Owner decisions: no GPU instance,
   videos < 30 s with a faster pace (play-through rate for a new account), images from **Grok** via email
