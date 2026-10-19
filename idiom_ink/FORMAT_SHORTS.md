@@ -69,6 +69,11 @@ their glosses on the idiom card (read in 1 glance, not read aloud one by one).
   slam, a short "pop" when the meaning line lands. No music in the pilot (TikTok trending sounds can be added in the
   app later; any music must stay ≥ 12 dB under the voice).
 - Every line is checked by transcription before editing (English and Mandarin), as before.
+- **Fixed voices (verified 2026-10-19, keep for every episode):** TTS `qwen3-tts-flash` (DashScope native
+  `/api/v1/services/aigc/multimodal-generation/generation`), English narrator voice **Ethan**
+  (`language_type: English`), Mandarin voice **Cherry** (`language_type: Chinese`); speed-up 1.15× and
+  silence trim (80 ms kept) done locally with ffmpeg. ASR `qwen3-asr-flash` (`/compatible-mode/v1/chat/completions`,
+  no context prompt). Tool: `tools/alitts.py EPISODE/shorts.json --outdir DIR` (TTS → ASR check → retries).
 
 ## 6. Pipeline (no server)
 

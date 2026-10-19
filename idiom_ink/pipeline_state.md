@@ -7,3 +7,5 @@
 ## Notes
 - 2026-10-19: producer handed over from session_01UE4ArSjhTKBPtAHUBZxvXF. DashScope key verified reachable on
   dashscope.aliyuncs.com (HTTP 200 on /compatible-mode/v1/models); dashscope-intl returns 401.
+- 2026-10-19: voices fixed: qwen3-tts-flash (Ethan EN / Cherry ZH) + qwen3-asr-flash; `tools/alitts.py` tested on
+  EP10 lines B01_N, B05_N, B07_N, B08_M: all matched by ASR first try.

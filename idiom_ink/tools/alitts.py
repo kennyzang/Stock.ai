@@ -1,0 +1,127 @@
+#!/usr/bin/env python3
+"""Alibaba Cloud DashScope voices for Idiom Ink Shorts (TTS + ASR check).
+
+Auth: in cloud sessions the environment's proxy injects `Authorization` for dashscope.aliyuncs.com,
+so no key is handled here. (Elsewhere set DASHSCOPE_API_KEY and it is sent as a Bearer header.)
+
+Fixed brand voices (FORMAT_SHORTS.md §5): TTS model qwen3-tts-flash, English narrator "Ethan",
+Mandarin "Cherry"; ASR model qwen3-asr-flash (no biasing context).
+
+Usage:
+  alitts.py EPISODE_DIR/shorts.json --outdir DIR [--only ID,ID] [--retries 3]
+      every line -> DIR/<line id>.wav (1.15x, silence trimmed, >= 80 ms kept), then ASR-checked.
+      English must match word for word (punctuation/case ignored); Mandarin must equal the idiom.
+      Writes DIR/asr_report.json; exit 1 if any line still fails after the retries.
+  alitts.py say "text" OUT.wav [--voice N|M]      one line, no check
+  alitts.py asr FILE.wav                          print the transcript
+"""
+import argparse, base64, json, os, re, ssl, subprocess, sys, tempfile, time, urllib.request
+from pathlib import Path
+
+HOST = "https://dashscope.aliyuncs.com"
+TTS_MODEL, ASR_MODEL = "qwen3-tts-flash", "qwen3-asr-flash"
+VOICES = {"N": ("Ethan", "English"), "M": ("Cherry", "Chinese")}
+SPEED, PAD = 1.15, 0.08
+CA = "/root/.ccr/ca-bundle.crt"
+CTX = ssl.create_default_context(cafile=CA) if os.path.exists(CA) else None
+
+
+def post(path, body, tries=4):
+    h = {"Content-Type": "application/json"}
+    if os.environ.get("DASHSCOPE_API_KEY"):
+        h["Authorization"] = "Bearer " + os.environ["DASHSCOPE_API_KEY"]
+    for i in range(tries):
+        r = urllib.request.Request(HOST + path, data=json.dumps(body).encode(), headers=h, method="POST")
+        try:
+            with urllib.request.urlopen(r, context=CTX, timeout=180) as resp:
+                return json.load(resp)
+        except urllib.error.HTTPError as e:
+            msg = e.read().decode(errors="replace")
+            if e.code in (401, 403) or "Arrearage" in msg or "quota" in msg.lower():
+                raise SystemExit(f"DashScope refused ({e.code}): {msg[:300]}")  # owner email (PRODUCER §6)
+            err = f"{e.code} {msg[:200]}"
+        except Exception as e:  # transient "upstream request failed" etc.
+            err = str(e)
+        time.sleep(2 ** (i + 1))
+    raise RuntimeError(f"DashScope {path} failed: {err}")
+
+
+def fetch(url, dest):
+    with urllib.request.urlopen(url, context=CTX, timeout=180) as resp:
+        Path(dest).write_bytes(resp.read())
+
+
+def tts(text, out, voice="N"):
+    name, lang = VOICES[voice]
+    d = post("/api/v1/services/aigc/multimodal-generation/generation",
+             {"model": TTS_MODEL, "input": {"text": text, "voice": name, "language_type": lang}})
+    with tempfile.TemporaryDirectory() as t:
+        raw = Path(t) / "raw.wav"
+        fetch(d["output"]["audio"]["url"], raw)
+        # speed up, trim silence at both ends, then put back PAD s so no consonant is clipped
+        trim = "silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.02"
+        flt = f"atempo={SPEED},{trim},areverse,{trim},areverse,adelay={int(PAD*1000)},apad=pad_dur={PAD}"
+        subprocess.run(["ffmpeg", "-nostdin", "-y", "-loglevel", "error", "-i", str(raw), "-af", flt,
+                        "-ar", "48000", "-ac", "1", str(out)], check=True)
+    return out
+
+
+def asr(path):
+    b = base64.b64encode(Path(path).read_bytes()).decode()
+    d = post("/compatible-mode/v1/chat/completions", {
+        "model": ASR_MODEL, "stream": False, "asr_options": {"enable_itn": False},
+        "messages": [{"role": "user", "content": [
+            {"type": "input_audio", "input_audio": {"data": "data:audio/wav;base64," + b}}]}]})
+    return d["choices"][0]["message"]["content"].strip()
+
+
+def norm_en(s):
+    s = s.lower().replace("’", "'")
+    return re.sub(r"[^a-z0-9' ]+", " ", s).split()
+
+
+def norm_zh(s):
+    return re.sub(r"[^一-鿿]", "", s)
+
+
+def matches(line, heard, idiom):
+    if line["voice"] == "M":
+        return norm_zh(heard) == norm_zh(idiom or line["text"])
+    return norm_en(heard) == norm_en(line["text"])
+
+
+def episode(spec_path, outdir, only=None, retries=3):
+    spec = json.loads(Path(spec_path).read_text())
+    out = Path(outdir); out.mkdir(parents=True, exist_ok=True)
+    report, bad = {}, []
+    for b in spec["beats"]:
+        for li in b.get("lines", []):
+            if only and li["id"] not in only:
+                continue
+            for k in range(1, retries + 1):
+                wav = tts(li["text"], out / f"{li['id']}.wav", li["voice"])
+                heard = asr(wav)
+                ok = matches(li, heard, spec.get("idiom"))
+                print(f"{li['id']} try {k}: {'OK ' if ok else 'BAD'} | {li['text']} | heard: {heard}")
+                if ok:
+                    break
+            report[li["id"]] = {"text": li["text"], "heard": heard, "ok": ok, "tries": k}
+            if not ok:
+                bad.append(li["id"])
+    (out / "asr_report.json").write_text(json.dumps(report, ensure_ascii=False, indent=1))
+    if bad:
+        print("FAILED (re-word these):", ",".join(bad)); sys.exit(1)
+    print("all lines pass ASR")
+
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1 and sys.argv[1] == "say":
+        ap = argparse.ArgumentParser(); ap.add_argument("cmd"); ap.add_argument("text"); ap.add_argument("out")
+        ap.add_argument("--voice", default="N"); a = ap.parse_args()
+        tts(a.text, a.out, a.voice)
+    elif len(sys.argv) > 1 and sys.argv[1] == "asr":
+        print(asr(sys.argv[2]))
+    else:
+        ap = argparse.ArgumentParser(); ap.add_argument("spec"); ap.add_argument("--outdir", required=True)
+        ap.add_argument("--only"); ap.add_argument("--retries", type=int, default=3); a = ap.parse_args()
+        episode(a.spec, a.outdir, set(a.only.split(",")) if a.only else None, a.retries)
