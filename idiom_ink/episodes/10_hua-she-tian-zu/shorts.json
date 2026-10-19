@@ -1,33 +1,260 @@
 {
-  "out": "ep10_hua-she-tian-zu.mp4",
-  "idiom": "画蛇添足",
-  "pinyin": [["huà", 4], ["shé", 2], ["tiān", 1], ["zú", 2]],
-  "gloss": [["画", "draw"], ["蛇", "snake"], ["添", "add"], ["足", "feet"]],
-  "cover_text": "He WON…\\Nthen lost it\\Nadding 4 tiny feet.",
-  "beats": [
-    {"id": "B01", "img": "EP10_I1.png", "move": "push_in", "focus": [0.5, 0.48],
-     "hook": "He finished FIRST…\\Nand still LOST.",
-     "lines": [{"id": "B01_N", "voice": "N", "text": "He finished first… and still lost."}]},
-    {"id": "B02", "img": "EP10_I2.png", "move": "pull_out", "focus": [0.5, 0.55],
-     "lines": [{"id": "B02_N", "voice": "N", "text": "One jug of wine. Enough for just one man.", "hl": ["one", "jug"]}]},
-    {"id": "B03", "img": "EP10_I3.png", "move": "pan_right", "focus": [0.5, 0.5],
-     "lines": [{"id": "B03_N", "voice": "N", "text": "So: first to draw a snake… wins it.", "hl": ["snake", "wins"]}]},
-    {"id": "B04", "img": "EP10_I4.png", "move": "push_in", "focus": [0.5, 0.42],
-     "lines": [{"id": "B04_N", "voice": "N", "text": "He finished first, and grabbed the jug…", "hl": ["first"]}]},
-    {"id": "B05", "img": "EP10_I5.png", "move": "push_in_more", "focus": [0.5, 0.5],
-     "lines": [{"id": "B05_N", "voice": "N", "text": "…then showed off: I'll even add feet!", "cap": "…then showed off: “I'll even add FEET!”", "hl": ["FEET!”"]}]},
-    {"id": "B06", "img": "EP10_I6.png", "move": "pan_left", "focus": [0.5, 0.5],
-     "lines": [{"id": "B06_N", "voice": "N", "text": "His rival finished… and snatched the jug.", "hl": ["snatched"]}]},
-    {"id": "B07", "img": "EP10_I7.png", "move": "punch", "focus": [0.5, 0.55],
-     "lines": [{"id": "B07_N", "voice": "N", "text": "Snakes don't have feet!", "cap": "“Snakes don't have FEET!”", "hl": ["FEET!”"]}]},
-    {"id": "B08", "img": "EP10_I8.png", "move": "push_in", "focus": [0.5, 0.7], "card": true, "nosplit": true,
-     "lines": [{"id": "B08_M", "voice": "M", "text": "画蛇添足。", "cap": ""},
-               {"id": "B08_N", "voice": "N", "text": "Draw a snake… add feet.", "cap": ""}]},
-    {"id": "B09", "img": "EP10_I8.png", "move": "push_in_more", "focus": [0.5, 0.7], "meaning": "= ruining it by overdoing it",
-     "lines": [{"id": "B09_N", "voice": "N", "text": "It means ruining it by doing too much."}]},
-    {"id": "B10", "img": "EP10_I9.png", "move": "push_in", "focus": [0.5, 0.5],
-     "lines": [{"id": "B10_N", "voice": "N", "text": "Like one more filter… on a perfect photo.", "hl": ["one", "more", "filter…"]}]},
-    {"id": "B11", "img": "EP10_I1.png", "move": "pull_out", "focus": [0.5, 0.48], "close": "Ever done that?",
-     "lines": [{"id": "B11_N", "voice": "N", "text": "Ever done that?"}]}
+ "out": "ep10_hua-she-tian-zu.mp4",
+ "idiom": "画蛇添足",
+ "pinyin": [
+  [
+   "huà",
+   4
+  ],
+  [
+   "shé",
+   2
+  ],
+  [
+   "tiān",
+   1
+  ],
+  [
+   "zú",
+   2
   ]
+ ],
+ "gloss": [
+  [
+   "画",
+   "draw"
+  ],
+  [
+   "蛇",
+   "snake"
+  ],
+  [
+   "添",
+   "add"
+  ],
+  [
+   "足",
+   "feet"
+  ]
+ ],
+ "cover_text": "He WON…\\Nthen lost it\\Nadding 4 tiny feet.",
+ "beats": [
+  {
+   "id": "B01",
+   "img": "EP10_I1.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "hook": "He finished FIRST…\\Nand still LOST.",
+   "lines": [
+    {
+     "id": "B01_N",
+     "voice": "N",
+     "text": "He finished first… and still lost."
+    }
+   ],
+   "hook_y": 1220
+  },
+  {
+   "id": "B02",
+   "img": "EP10_I2.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.55
+   ],
+   "lines": [
+    {
+     "id": "B02_N",
+     "voice": "N",
+     "text": "One jug of wine. Enough for just one man.",
+     "hl": [
+      "one",
+      "jug"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B03",
+   "img": "EP10_I3.png",
+   "move": "pan_right",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B03_N",
+     "voice": "N",
+     "text": "So: first to draw a snake… wins it.",
+     "hl": [
+      "snake",
+      "wins"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B04",
+   "img": "EP10_I4.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.42
+   ],
+   "lines": [
+    {
+     "id": "B04_N",
+     "voice": "N",
+     "text": "He finished first, and grabbed the jug…",
+     "hl": [
+      "first"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B05",
+   "img": "EP10_I5.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B05_N",
+     "voice": "N",
+     "text": "…then showed off: I'll even add feet!",
+     "cap": "…then showed off: “I'll even add FEET!”",
+     "hl": [
+      "FEET!”"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B06",
+   "img": "EP10_I6.png",
+   "move": "pan_left",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B06_N",
+     "voice": "N",
+     "text": "His rival finished… and snatched the jug.",
+     "hl": [
+      "snatched"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B07",
+   "img": "EP10_I7.png",
+   "move": "push_in",
+   "focus": [
+    0.4,
+    0.3
+   ],
+   "lines": [
+    {
+     "id": "B07_N",
+     "voice": "N",
+     "text": "Snakes don't have feet!",
+     "cap": "“Snakes don't have FEET!”",
+     "hl": [
+      "FEET!”"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B08",
+   "img": "EP10_I8.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "card": true,
+   "nosplit": true,
+   "lines": [
+    {
+     "id": "B08_M",
+     "voice": "M",
+     "text": "画蛇添足。",
+     "cap": ""
+    },
+    {
+     "id": "B08_N",
+     "voice": "N",
+     "text": "Draw a snake… add feet.",
+     "cap": ""
+    }
+   ]
+  },
+  {
+   "id": "B09",
+   "img": "EP10_I8.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "meaning": "= ruining it by overdoing it",
+   "lines": [
+    {
+     "id": "B09_N",
+     "voice": "N",
+     "text": "It means ruining it by doing too much."
+    }
+   ]
+  },
+  {
+   "id": "B10",
+   "img": "EP10_I9.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B10_N",
+     "voice": "N",
+     "text": "Like one more filter… on a perfect photo.",
+     "hl": [
+      "one",
+      "more",
+      "filter…"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B11",
+   "img": "EP10_I1.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "close": "Ever done that?",
+   "lines": [
+    {
+     "id": "B11_N",
+     "voice": "N",
+     "text": "Ever done that?"
+    }
+   ],
+   "close_y": 1220
+  }
+ ]
 }

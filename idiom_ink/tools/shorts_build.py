@@ -7,7 +7,7 @@ Media (images, audio, renders) stay out of git: the repo is public and they are 
 
 Spec (JSON):
   out, idiom, pinyin [[syll, tone]], gloss [[char, english]], tag (optional)
-  beats: [{id, img, move, focus:[fx,fy], hook, card, meaning, close, nocap, nosplit, min,
+  beats: [{id, img, move, focus:[fx,fy], hook, hook_y (default 340) / close_y (default 860): move text off faces, card, meaning, close, nocap, nosplit, min,
            lines:[{id, voice:"N"|"M", text, cap (None = text, "" = none), hl:[words to highlight]}]}]
   move: push_in | pull_out | pan_left | pan_right | push_in_more | punch      (focus = point to keep centred)
 Audio files: <audio_dir>/<line id>.wav|.mp3. Word timings (optional): <line id>.words.json [[start, end, word], ...]
@@ -216,7 +216,7 @@ def ass(spec, beats, total):
     for b in beats:
         s, e = b["start"], b["end"]
         if b.get("hook"):
-            ev.append((s, e, "Hook", f"{{\\an5\\pos({W//2},340)\\fscx92\\fscy92\\t(0,90,\\fscx100\\fscy100)}}{b['hook']}"))
+            ev.append((s, e, "Hook", f"{{\\an5\\pos({W//2},{b.get('hook_y', 340)})\\fscx92\\fscy92\\t(0,90,\\fscx100\\fscy100)}}{b['hook']}"))
         if b.get("card"):
             card_on = s
         if card_on is not None and (b.get("card") or b.get("meaning")):
@@ -229,7 +229,7 @@ def ass(spec, beats, total):
         if b.get("meaning"):
             ev.append((s, e, "Meaning", f"{{\\an5\\pos({W//2},900)\\fad(80,0)\\fscx85\\fscy85\\t(0,90,\\fscx100\\fscy100)}}{b['meaning']}"))
         if b.get("close"):
-            ev.append((s, e + 0.05, "End", f"{{\\an5\\pos({W//2},860)\\fscx85\\fscy85\\t(0,90,\\fscx100\\fscy100)}}{b['close']}"))
+            ev.append((s, e + 0.05, "End", f"{{\\an5\\pos({W//2},{b.get('close_y', 860)})\\fscx85\\fscy85\\t(0,90,\\fscx100\\fscy100)}}{b['close']}"))
         if not (b.get("hook") or b.get("card") or b.get("meaning") or b.get("close")):  # corner tag on story beats only
             ev.append((s, e, "Tag", f"{{\\an7\\pos(44,210)}}{spec.get('tag', idiom)}"))
         if not (b.get("hook") or b.get("nocap") or b.get("meaning") or b.get("close")):
