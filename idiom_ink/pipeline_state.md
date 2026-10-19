@@ -4,7 +4,7 @@
 |---|---|---|---|---|---|---|---|---|---|---|
 | 12 | 刻舟求剑 | 2026-10-19 13:54 | 1a154728680561ae | EP12_2026-10-19 (1-Duuc97MvlPtai2cBL436gRGizsy5scf) | waiting for Grok | 0 | – | – | – | – |
 | 11 | 掩耳盗铃 | 2026-10-19 13:54 | 1a15472834836262 | EP11_2026-10-19 (18Yx7hxtpKfC4rXGOsyX4sA4Y4jKXIOds) | waiting for Grok | 0 | – | – | – | – |
-| 10 | 画蛇添足 (pilot) | 2026-10-19 13:16 | 1a1544e512a376a9 | EP10_2026-10-19 (18CjDMHd4jKOcPxdFDPoxvNTP2CiqKyOO) | accepted 15:50 (ChatGPT redo, 9/9 1024×1536) | 1 | done, all pass ASR | ✅ 24.2 s, −14.2 LUFS, 9.1 MB | 2026-10-19 16:00 (releases/EP10) | waiting for reply |
+| 10 | 画蛇添足 (pilot) | 2026-10-19 13:16 | 1a1544e512a376a9 | EP10_2026-10-19 (18CjDMHd4jKOcPxdFDPoxvNTP2CiqKyOO) | accepted 15:50 (ChatGPT redo, 9/9 1024×1536) | 1 | done, all pass ASR | ✅ 24.2 s, −14.2 LUFS, 9.1 MB | NOT handed off (v1 went to the wrong session by mistake, nothing posted; v2 waits for owner's voice pick) | – |
 
 ## Notes
 - 2026-10-19: producer handed over from session_01UE4ArSjhTKBPtAHUBZxvXF. DashScope key verified reachable on
@@ -34,4 +34,11 @@
   reference). Builder: added per-beat `hook_y`/`close_y` (EP10 hook and end line at y=1220 to clear faces), B07
   changed to push_in (focus 0.4,0.3) so Zhang's head isn't cropped. Final QC passed. Handed to publication
   (send_message 16:00) and review email sent to owner. EP11/EP12 still waiting for ChatGPT.
+- 2026-10-19 16:30: owner: Ethan sounds Chinese-accented and v1 is too fast; duration < 40 s is fine. Changes:
+  narrator Jennifer (American English) at 1.0× speed, inner pauses capped at 0.3 s, GAP 0.30 / TAIL 0.35 /
+  M_PAUSE 0.35, framings up to ~4 s, cap 39.5 s, bitrate 2.1 Mbit/s. EP10 v2 = 30.6 s, 8.5 MB, −15.1 LUFS,
+  all lines pass ASR. MiniMax speech voices are on the key's model list but "not activated".
+- 2026-10-19: the EP10 v1 handoff went to "TikTok video publishing integration" (session_0137AuLDHVLLchAGLeDSoz1e)
+  by mistake; it did nothing (no download, no SocialEcho call) and the owner told it to ignore us. The right
+  session is "Publication", session_014Ei81gE1W46shqwc9gMyUz (PRODUCER.md §5 fixed).
 

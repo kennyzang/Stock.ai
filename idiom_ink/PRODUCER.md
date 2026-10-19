@@ -11,7 +11,7 @@ Read, in this order: this file → `FORMAT_SHORTS.md` (the format, binding) → 
 GPU sections are legacy.
 
 ## 1. Standing orders (all of these, every run)
-- **Output: 2 episodes per day**, each < 30 s, in the format of `FORMAT_SHORTS.md`.
+- **Output: 2 episodes per day**, each < 40 s (target 28–36 s, relaxed pace; owner 2026-10-19), in the format of `FORMAT_SHORTS.md`.
 - **No GPU.** Do not start, stop or touch the CompShare GPU instance or its files. Do not re-enable the
   disabled triggers "Idiom Ink daily production" / "Idiom Ink GPU watchdog". `compshare.py balance` (API read
   only) is allowed for the low-credit warning.
@@ -68,8 +68,8 @@ episodes waiting for images), skip writing new scripts until it catches up.
 ## 4. Voices (Alibaba Cloud DashScope) and the build
 - Endpoint host: **dashscope.aliyuncs.com** (China region; the key is injected by the proxy as
   `Authorization: Bearer …`; dashscope-intl is NOT authorised). First job: verify the key, pick a natural warm
-  English narrator voice and a clear standard-Mandarin voice (CosyVoice / Qwen-TTS family), and write
-  `tools/alitts.py` (text → wav per line id, speed ≈ 1.15×, trims leading/trailing silence but keeps ≥ 80 ms so
+  native-English narrator voice (no Chinese accent: owner rejected Ethan) and a clear standard-Mandarin voice (CosyVoice / Qwen-TTS family), and write
+  `tools/alitts.py` (text → wav per line id, natural speed (1.0×; owner found 1.15× too fast), trims leading/trailing silence but keeps ≥ 80 ms so
   no consonant is clipped). Record the model and voice names in `FORMAT_SHORTS.md` §5 and keep them fixed for
   every episode (one consistent narrator is part of the brand).
 - **ASR check every line** (DashScope speech recognition is fine; transcribe without a biasing prompt). The
@@ -79,20 +79,21 @@ episodes waiting for images), skip writing new scripts until it catches up.
 - Build: `tools/setup_fonts.sh` once per container, then
   `python3 tools/shorts_build.py episodes/NN_slug/shorts.json --images DIR --audio DIR --outdir DIR`.
   Media stays out of git except the final MP4 and cover (section 5).
-- **Video QC:** total < 30 s (target 22–27); no framing longer than ~3 s; look at the `_grid.jpg` and also
+- **Video QC:** total < 40 s (target 28–36); no framing longer than ~4.5 s; look at the `_grid.jpg` and also
   extract and look at frames at 0.1 s, the card, the meaning line and the last second; captions don't cover a
   face; text is spelt right; the audio has no clipped words, long gaps or clicks; loudness ≈ −14 LUFS; content
   logic: everyday meaning right, the twist clear, ending agrees with the lesson.
 
 ## 5. Handoff to the "publication" session
-- The publication session is **"TikTok video publishing integration"**, session_0137AuLDHVLLchAGLeDSoz1e (a
-  different environment, no repo). It also publishes another account (@auntiemeimahjong); **our videos are a
-  separate account with their own queue and settings**. Say so in every message.
+- The publication session is **"Publication"**, session_014Ei81gE1W46shqwc9gMyUz (same environment as this
+  session). NOT "TikTok video publishing integration" (session_0137AuLDHVLLchAGLeDSoz1e): that one publishes only
+  @auntiemeimahjong and must never get our messages (a 2026-10-19 message went there by mistake; nothing was
+  posted). Say in every message that this is @kingkingking8888 with its own queue and settings.
 - Transfer: commit the final `epNN_slug.mp4` (keep ≤ 10 MB) and `epNN_slug_cover.png` to
   `idiom_ink/releases/EPNN/` on master and push; the files are public anyway once posted. Give raw URLs:
   `https://raw.githubusercontent.com/kennyzang/Stock.ai/master/idiom_ink/releases/EPNN/<file>` plus each file's
   sha256 and size.
-- Message (send_message to session_0137AuLDHVLLchAGLeDSoz1e), one per episode:
+- Message (send_message to session_014Ei81gE1W46shqwc9gMyUz, "Publication"), one per episode:
   - Account: **Idiom Ink | Chinese Idioms, TikTok @kingkingking8888, SocialEcho account_id 22788134**.
   - Video + cover URLs, sha256, duration.
   - Title, description (with hashtags) and the pinned-comment text from `script.md` "posting" (if a pinned

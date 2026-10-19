@@ -21,15 +21,15 @@ account; **one idea per video**; **no shot static > 3 s**; cut every pause; spee
 high-contrast captions that pop phrase by phrase (most viewers watch muted); voice first, music under it; end with
 one crisp line + a short comment question, never "like and follow"; 9:16 full-bleed, no black bars, subject centred.
 
-## 2. Structure (target 22–27 s, hard cap 29.5 s)
+## 2. Structure (target 28–36 s, hard cap 39.5 s; relaxed pace since 2026-10-19)
 
 | Time | Part | What happens |
 |---|---|---|
-| 0.0–2.0 | **Hook = result first** | The climax image + 2-line hook text on frame 1 + VO from frame 1 (no silence). A contradiction or twist ("He finished first… and still lost."). |
-| 2.0–15 | **Story** | 5–6 stills, **1.6–2.6 s each**, every still moving (push/pull/pan), hard cuts with a whoosh. Narration only the plot beats that build to the twist. |
-| 15–18 | **Idiom slam** | Big 成语 card (tone-coloured pinyin + literal gloss) appears with an impact sound; Mandarin VO says the idiom once, narrator gives the literal gloss. |
-| 18–23 | **Meaning + modern use** | One-line meaning, then one modern, relatable example (still of a modern scene). |
-| 23–25 | **Close + loop** | One-line punch / comment question on screen ("Ever 画蛇添足? 👇" lives in the caption, not burned in with emoji), last frame cuts back to the hook image. |
+| 0.0–2.6 | **Hook = result first** | The climax image + 2-line hook text on frame 1 + VO from frame 1 (no silence). A contradiction or twist ("He finished first… and still lost."). |
+| 2.6–20 | **Story** | 5–6 stills, **2.3–4 s each**, every still moving (push/pull/pan), hard cuts with a whoosh. Narration only the plot beats that build to the twist. |
+| 20–25 | **Idiom slam** | Big 成语 card (tone-coloured pinyin + literal gloss) appears with an impact sound; Mandarin VO says the idiom once, narrator gives the literal gloss. |
+| 25–31 | **Meaning + modern use** | One-line meaning, then one modern, relatable example (still of a modern scene). |
+| 31–33 | **Close + loop** | One-line punch / comment question on screen ("Ever 画蛇添足? 👇" lives in the caption, not burned in with emoji), last frame cuts back to the hook image. |
 
 Moved out of the video (to keep < 30 s) and into the **pinned comment + description**: the character-by-character
 breakdown and the 2nd example sentence (Chinese + pinyin + English). On screen we still show all 4 characters with
@@ -66,17 +66,18 @@ their glosses on the idiom card (read in 1 glance, not read aloud one by one).
 
 ## 5. Audio
 
-- **Narrator (English)**: one natural, warm, slightly playful voice from Alibaba Cloud (DashScope TTS), speed
-  ≈ 1.15×, lines back-to-back (gap 0.06–0.12 s), loudness normalised to −14 LUFS.
+- **Narrator (English)**: one natural, warm, slightly playful voice from Alibaba Cloud (DashScope TTS), natural
+  speed (1.0×), ~0.3 s between lines and ~0.35 s after each beat, pauses inside a line capped at ~0.3 s, loudness normalised to −14 LUFS.
 - **Mandarin**: only the idiom (and only once); same provider, a clear standard-Mandarin voice.
 - **SFX** (synthesised by our script, no licensing): whoosh on every cut (quiet), one impact "boom" on the idiom
   slam, a short "pop" when the meaning line lands. No music in the pilot (TikTok trending sounds can be added in the
   app later; any music must stay ≥ 12 dB under the voice).
 - Every line is checked by transcription before editing (English and Mandarin), as before.
 - **Fixed voices (verified 2026-10-19, keep for every episode):** TTS `qwen3-tts-flash` (DashScope native
-  `/api/v1/services/aigc/multimodal-generation/generation`), English narrator voice **Ethan**
-  (`language_type: English`), Mandarin voice **Cherry** (`language_type: Chinese`); speed-up 1.15× and
-  silence trim (80 ms kept) done locally with ffmpeg. ASR `qwen3-asr-flash` (`/compatible-mode/v1/chat/completions`,
+  `/api/v1/services/aigc/multimodal-generation/generation`), English narrator voice **Jennifer**
+  (`language_type: English`, American English; replaced Ethan 2026-10-19, owner heard a Chinese accent), Mandarin voice **Cherry** (`language_type: Chinese`); no speed-up; silence trim
+  (80 ms kept) and inner-pause cap done locally with ffmpeg. Jennifer sometimes ad-libs "um"/"hmm": the ASR check
+  catches it and regenerates. ASR `qwen3-asr-flash` (`/compatible-mode/v1/chat/completions`,
   no context prompt). Tool: `tools/alitts.py EPISODE/shorts.json --outdir DIR` (TTS → ASR check → retries).
 
 ## 6. Pipeline (no server)

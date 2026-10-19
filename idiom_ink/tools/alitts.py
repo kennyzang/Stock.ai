@@ -4,12 +4,12 @@
 Auth: in cloud sessions the environment's proxy injects `Authorization` for dashscope.aliyuncs.com,
 so no key is handled here. (Elsewhere set DASHSCOPE_API_KEY and it is sent as a Bearer header.)
 
-Fixed brand voices (FORMAT_SHORTS.md §5): TTS model qwen3-tts-flash, English narrator "Ethan",
+Fixed brand voices (FORMAT_SHORTS.md §5): TTS model qwen3-tts-flash, English narrator "Jennifer" (American English; Ethan had a Chinese accent),
 Mandarin "Cherry"; ASR model qwen3-asr-flash (no biasing context).
 
 Usage:
   alitts.py EPISODE_DIR/shorts.json --outdir DIR [--only ID,ID] [--retries 3]
-      every line -> DIR/<line id>.wav (1.15x, silence trimmed, >= 80 ms kept), then ASR-checked.
+      every line -> DIR/<line id>.wav (natural speed, inner pauses capped at ~0.3 s, silence trimmed, >= 80 ms kept), then ASR-checked.
       English must match word for word (punctuation/case ignored); Mandarin must equal the idiom.
       Writes DIR/asr_report.json; exit 1 if any line still fails after the retries.
   alitts.py say "text" OUT.wav [--voice N|M]      one line, no check
@@ -20,8 +20,8 @@ from pathlib import Path
 
 HOST = "https://dashscope.aliyuncs.com"
 TTS_MODEL, ASR_MODEL = "qwen3-tts-flash", "qwen3-asr-flash"
-VOICES = {"N": ("Ethan", "English"), "M": ("Cherry", "Chinese")}
-SPEED, PAD = 1.15, 0.08
+VOICES = {"N": ("Jennifer", "English"), "M": ("Cherry", "Chinese")}
+SPEED, PAD = 1.0, 0.08
 CA = "/root/.ccr/ca-bundle.crt"
 CTX = ssl.create_default_context(cafile=CA) if os.path.exists(CA) else None
 
@@ -60,7 +60,9 @@ def tts(text, out, voice="N"):
         fetch(d["output"]["audio"]["url"], raw)
         # speed up, trim silence at both ends, then put back PAD s so no consonant is clipped
         trim = "silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.02"
-        flt = f"atempo={SPEED},{trim},areverse,{trim},areverse,adelay={int(PAD*1000)},apad=pad_dur={PAD}"
+        tempo = f"atempo={SPEED}," if SPEED != 1.0 else ""
+        squeeze = "silenceremove=stop_periods=-1:stop_duration=0.4:stop_threshold=-45dB:stop_silence=0.3"  # pauses inside a line <= ~0.3 s
+        flt = f"{tempo}{trim},areverse,{trim},areverse,{squeeze},adelay={int(PAD*1000)},apad=pad_dur={PAD}"
         subprocess.run(["ffmpeg", "-nostdin", "-y", "-loglevel", "error", "-i", str(raw), "-af", flt,
                         "-ar", "48000", "-ac", "1", str(out)], check=True)
     return out

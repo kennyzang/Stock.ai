@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build an Idiom Ink short (< 30 s) from still images + voice lines. No GPU. See FORMAT_SHORTS.md.
+"""Build an Idiom Ink short (< 40 s) from still images + voice lines. No GPU. See FORMAT_SHORTS.md.
 
 Usage:  shorts_build.py EPISODE_DIR/shorts.json --images DIR --audio DIR --outdir DIR [--placeholder]
   --placeholder   missing voice files become silence of the estimated length (layout / timing tests)
@@ -11,7 +11,7 @@ Spec (JSON):
            lines:[{id, voice:"N"|"M", text, cap (None = text, "" = none), hl:[words to highlight]}]}]
   move: push_in | pull_out | pan_left | pan_right | push_in_more | punch      (focus = point to keep centred)
 Audio files: <audio_dir>/<line id>.wav|.mp3. Word timings (optional): <line id>.words.json [[start, end, word], ...]
-Output: <out> (1080x1920, 30 fps, H.264 + AAC, -14 LUFS, +faststart, <= ~10 MB), <out stem>_cover.png, <out stem>_grid.jpg
+Output: <out> (1080x1920, 30 fps, H.264 + AAC, -14 LUFS, +faststart, <= ~10 MB at 38 s), <out stem>_cover.png, <out stem>_grid.jpg
 Images are always shown full-frame: flat padding bands (letterbox/pillarbox) are cut off first; portrait art is
 cover-cropped to 9:16; landscape art (fallback only, ask Grok for 9:16) is enlarged over a blurred copy of itself
 so the whole canvas is illustration, never empty paper.
@@ -20,9 +20,9 @@ import json, math, re, subprocess, sys, tempfile
 from pathlib import Path
 
 W, H, FPS = 1080, 1920, 30
-GAP, LEAD, TAIL, M_PAUSE = 0.08, 0.04, 0.10, 0.12   # tight: the playbook says cut every pause
-SPLIT_AT, MIN_BEAT = 2.8, 1.2                       # no single framing longer than ~3 s
-WPS = 3.1                                           # placeholder speech rate (words/second), ~1.15x
+GAP, LEAD, TAIL, M_PAUSE = 0.30, 0.04, 0.35, 0.35   # relaxed pace (owner, 2026-10-19: v1 felt too fast)
+SPLIT_AT, MIN_BEAT = 4.0, 1.8                       # no single framing longer than ~4 s
+WPS = 2.6                                           # placeholder speech rate (words/second), natural speed
 TONE = {1: "&H2B2BD6&", 2: "&H1E8CF0&", 3: "&H3C9A2E&", 4: "&HC86A1E&", 0: "&H404040&"}  # ASS &HBBGGRR&
 HL = "&H33DDFF&"                                    # warm yellow keyword highlight
 INK, PAPER = "&H00262626", "&H00C6DEE9"
@@ -279,8 +279,8 @@ def main():
     out = (Path(a.outdir) / spec["out"]).resolve()
     tmp = Path(tempfile.mkdtemp(prefix="shorts_"))
     beats, total = plan(spec, tmp, placeholder)
-    if total > 29.5:
-        print(f"WARNING: {total:.1f} s is over the 29.5 s cap: shorten lines")
+    if total > 39.5:
+        print(f"WARNING: {total:.1f} s is over the 39.5 s cap: shorten lines")
 
     # video: one clip per sub-shot, then concat
     clips, cuts = [], []
@@ -318,7 +318,7 @@ def main():
     # burn text + mux
     (tmp / "text.ass").write_text(ass(spec, beats, total), encoding="utf-8-sig")
     sh(["ffmpeg", "-nostdin", "-y", "-i", "video.mp4", "-i", "audio.wav", "-vf", "subtitles=text.ass",
-        "-map", "0:v", "-map", "1:a", "-c:v", "libx264", "-crf", "20", "-maxrate", "2800k", "-bufsize", "5600k", "-preset", "slow", "-pix_fmt", "yuv420p",
+        "-map", "0:v", "-map", "1:a", "-c:v", "libx264", "-crf", "20", "-maxrate", "2100k", "-bufsize", "4200k", "-preset", "slow", "-pix_fmt", "yuv420p",
         "-r", str(FPS), "-c:a", "aac", "-b:a", "192k", "-t", f"{total:.3f}", "-movflags", "+faststart", str(out)], cwd=tmp)
 
     # cover (hook image + idiom + hook text) and a QC frame grid
