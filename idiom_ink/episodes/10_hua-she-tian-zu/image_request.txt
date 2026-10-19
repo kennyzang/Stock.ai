@@ -1,0 +1,69 @@
+Subject: [IDIOM-SCRIPT] EP10 · 2026-10-19
+From/To: kennytseng4@gmail.com   (sent 2026-10-19 13:16 UTC, Gmail thread 1a1544e512a376a9)
+This is the TEMPLATE for every image request: copy HOW TO DELIVER, STYLE and COMPOSITION RULES word for word,
+change the episode fields, STORY CONTEXT, CONTINUITY and SCENES.
+
+IDIOM INK SHORTS — IMAGE REQUEST
+EPISODE: EP10
+DATE: 2026-10-19
+IDIOM: 画蛇添足 (huà shé tiān zú) — "draw a snake and add feet" = ruining something by overdoing it
+SERIES: Idiom Ink | Chinese Idioms (TikTok @kingkingking8888). A 25-second vertical short: still images, cut fast, with narration.
+IMAGES NEEDED: 9 (EP10_I1 ... EP10_I9)
+
+HOW TO DELIVER
+1. Generate each image in the style below. Vertical 9:16, at least 1080x1920 (if the native render is smaller, say so in your reply). No text of any kind in the images: no letters, no Chinese characters, no calligraphy, no seal stamps, no signature, no watermark, no speech bubbles, no UI text.
+2. Upload to Google Drive folder "Idiom-Ink-images" (https://drive.google.com/drive/folders/15czEGROIuVWytFksZepM2S8y62_h4Ybp), into the subfolder that already exists, named exactly: EP10_2026-10-19 (https://drive.google.com/drive/folders/18CjDMHd4jKOcPxdFDPoxvNTP2CiqKyOO)
+3. File names exactly: EP10_I1.png, EP10_I2.png, EP10_I3.png, EP10_I4.png, EP10_I5.png, EP10_I6.png, EP10_I7.png, EP10_I8.png, EP10_I9.png
+4. Reply in this email thread with subject: [IDIOM-IMAGES] EP10 · 2026-10-19
+   Body: the Drive subfolder link, the list of file names, the native render size, and any image you could not make or had to change (with the reason).
+
+STYLE (the series look; keep it identical in all 9 images)
+"Ink-wash manhua": a Chinese manhua comic panel painted like a traditional ink-wash (shuimo) storybook. Bold, confident black ink outlines; flat muted washes of ochre, rust red, slate blue and moss green; warm aged rice-paper texture showing through; soft grey ink washes for the background; lots of calm empty space. Faces are expressive and a little exaggerated, like a comic (smug grins, wide shocked eyes, sweat drops) but never grotesque. Slightly humorous, family-friendly. One full-bleed panel per image: no panel borders, no frames, no split panels.
+This episode's images become the style reference for all later episodes, so please lock the look carefully.
+
+COMPOSITION RULES (the video is viewed on phones with TikTok buttons on top)
+- Main subject in the middle 60% of the height. Keep the top 15% and the bottom 25% calm and low-detail (we put captions there). Keep key action out of the right-hand 15% (TikTok buttons).
+- Characters large and readable at thumbnail size; faces clearly visible unless said otherwise.
+- Only the people listed for each image. Correct hands (5 fingers), no extra limbs, no duplicate people.
+
+STORY CONTEXT (so the images make sense)
+Ancient China, state of Chu, about 2,300 years ago. After a family ceremony, a lord gives his servants one jug of wine. It is not enough for all of them, but plenty for one. They agree: everyone draws a snake on the ground with a stick, and whoever finishes first drinks the wine. Zhang finishes first and grabs the jug. Feeling clever, he holds the jug in his left hand and starts adding little feet to his snake with his right hand. Meanwhile Li finishes his snake, snatches the jug and says: "Snakes don't have feet!" — and drinks it all. Zhang loses the wine because he added something that was never needed.
+
+CONTINUITY (keep these exactly the same in every image they appear in)
+- ZHANG, the show-off: young man about 25, tall and lanky, long face, thin black mustache, black hair in a topknot tied with a small red cloth, rust-red knee-length robe with rolled-up sleeves, black trousers, straw sandals.
+- LI, the rival: stocky short man about 35, round face, bushy eyebrows, short black beard, slate-blue robe, white cloth headband.
+- OLD WEI (only in I2 and I3): thin older servant, bald, grey stubble, plain beige robe.
+- THE JUG: one round bronze wine jug with two small loop handles and a green-brown patina. There is only one jug in the whole story.
+- SETTING: courtyard of a noble household: packed-earth ground, one grey stone step, a plain pale plastered wall (no writing or pictures on it), a dark wooden doorway.
+- THE DRAWINGS: snakes are drawn with a stick as simple grooves in the dirt. Zhang's snake gets four tiny stick-figure feet.
+
+SCENES
+
+EP10_I1 — The twist (used as the hook, first frame of the video)
+Medium shot, both faces clear. Li stands tipping the bronze jug up and drinking from it, eyes closed in triumph. Zhang crouches beside his snake drawing on the ground, frozen with the stick in his hand, jaw dropped in disbelief. The snake drawn in the dirt clearly has four tiny feet. This is the most important image; the editor will push in on it.
+
+EP10_I2 — The prize
+The bronze jug sits on the grey stone step in the foreground, slightly below centre. Behind it, Zhang, Li and Old Wei lean in and stare at it hungrily, one licking his lips. One jug, three thirsty men.
+
+EP10_I3 — The contest begins
+Slightly high angle. Zhang, Li and Old Wei crouch in a loose row on the packed-earth courtyard, each holding a stick and starting to draw a snake in the dirt, competitive expressions, dust flicking up. The jug stands on the step behind them.
+
+EP10_I4 — First!
+Zhang has jumped to his feet, grinning, holding the bronze jug high in his LEFT hand. At his feet, a finished simple snake drawn in the dirt (no feet yet). In the background, Li and Old Wei are still bent over their drawings.
+
+EP10_I5 — Showing off
+Zhang crouches again, jug held in his LEFT hand, and with the stick in his RIGHT hand he adds a tiny foot to his snake drawing, eyes half-closed, smug grin, very pleased with himself. Two tiny feet already drawn. (Only Zhang in this image.)
+
+EP10_I6 — The snatch
+Li lunges in and snatches the jug out of Zhang's left hand. Zhang is still crouched with his stick on the ground, head whipping round in surprise. Dynamic, comic motion; both faces visible.
+
+EP10_I7 — "Snakes don't have feet!"
+Li holds the jug and points down at Zhang's snake drawing, laughing. Zhang looks down at his drawing, embarrassed, scratching his head. The drawn snake with its four tiny feet is clearly visible between them.
+
+EP10_I8 — The drawing (background for the big title)
+Top-down close-up of the dirt: a simple snake drawn as a groove in the ground, with four tiny stick-figure feet, and the stick lying beside it. The snake sits in the lower half of the frame; the upper half is plain, calm packed earth with almost nothing in it (we place the big title there).
+
+EP10_I9 — Today's version (same style, modern setting)
+The same ZHANG (same long face, thin mustache, topknot with red cloth) in modern casual clothes (rust-red hoodie) sits at a small café table, frowning with intense concentration as he adds yet another filter to a photo on his phone. Beside him the same LI (round face, bushy eyebrows, short beard, slate-blue jacket) facepalms. The phone screen shows only a blurry colourful photo: no text, no icons, no app UI.
+
+THANK YOU. Any question: reply in this thread with subject starting [IDIOM-QUESTION] EP10.
