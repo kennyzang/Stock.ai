@@ -4,7 +4,7 @@
 |---|---|---|---|---|---|---|---|---|---|---|
 | 12 | 刻舟求剑 | 2026-10-19 13:54 | 1a154728680561ae | EP12_2026-10-19 (1-Duuc97MvlPtai2cBL436gRGizsy5scf) | waiting for Grok | 0 | – | – | – | – |
 | 11 | 掩耳盗铃 | 2026-10-19 13:54 | 1a15472834836262 | EP11_2026-10-19 (18Yx7hxtpKfC4rXGOsyX4sA4Y4jKXIOds) | waiting for Grok | 0 | – | – | – | – |
-| 10 | 画蛇添足 (pilot) | 2026-10-19 13:16 | 1a1544e512a376a9 | EP10_2026-10-19 (18CjDMHd4jKOcPxdFDPoxvNTP2CiqKyOO) | accepted 15:50 (ChatGPT redo, 9/9 1024×1536) | 1 | done, all pass ASR | ✅ 24.2 s, −14.2 LUFS, 9.1 MB | NOT handed off (v1 went to the wrong session by mistake, nothing posted; v2 waits for owner's voice pick) | – |
+| 10 | 画蛇添足 (pilot) | 2026-10-19 13:16 | 1a1544e512a376a9 | EP10_2026-10-19 (18CjDMHd4jKOcPxdFDPoxvNTP2CiqKyOO) | accepted 15:50 (ChatGPT, 9/9 1024×1536) | 1 | Jennifer, all pass ASR | ✅ v2 30.6 s, −15.1 LUFS, 8.5 MB | Publication 2026-10-19 16:40 (releases/EP10) | waiting for reply |
 
 ## Notes
 - 2026-10-19: producer handed over from session_01UE4ArSjhTKBPtAHUBZxvXF. DashScope key verified reachable on
@@ -41,4 +41,5 @@
 - 2026-10-19: the EP10 v1 handoff went to "TikTok video publishing integration" (session_0137AuLDHVLLchAGLeDSoz1e)
   by mistake; it did nothing (no download, no SocialEcho call) and the owner told it to ignore us. The right
   session is "Publication", session_014Ei81gE1W46shqwc9gMyUz (PRODUCER.md §5 fixed).
-
+- 2026-10-19 16:40: owner picked Jennifer. EP10 v2 committed to releases/EP10 (with posting.md) and handed to
+  Publication (session_014Ei81gE1W46shqwc9gMyUz).
