@@ -61,6 +61,7 @@ episodes waiting for images), skip writing new scripts until it catches up.
   defect, or rewrite that beat so it doesn't need the image. Drop an episode only if the hook image (I1) or the
   idiom's core image is unusable after all that; then email the owner.
 - Answer `[IDIOM-QUESTION]` in the same thread from the script; never invent story facts.
+- Grok runs 3× a day (01:30, 09:30, 17:30 UTC; `GROK_SETUP.md`), so expect replies shortly after those times.
 - If Grok has not replied at all within 24 hours of a request, re-send the request once (same thread); after 48
   hours, email the owner that Grok seems down.
 

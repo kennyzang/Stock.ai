@@ -1,8 +1,10 @@
 # Grok image service: setup prompt (owner pastes this into Grok once)
 
 Setup in Grok: connect **Gmail** and **Google Drive** for kennytseng4@gmail.com, then create a **scheduled task**
-that runs **every hour** with the prompt below. If your Grok plan has no hourly schedule, use the shortest
-interval it allows; production checks for images every 3 hours.
+that runs **3 times a day, at 01:30, 09:30 and 17:30 UTC** (09:30, 17:30 and 01:30 Beijing time), with the
+prompt below. Why these times: production sends the day's new requests at about 00:52 UTC, so the 01:30 run
+picks them up; the 09:30 and 17:30 runs handle redo requests the same day (production checks for images every
+3 hours and waits up to 12 hours for a redo). If your Grok plan allows fewer runs, keep 01:30 UTC.
 
 ---
 
