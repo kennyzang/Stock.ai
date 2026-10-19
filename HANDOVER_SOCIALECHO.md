@@ -173,3 +173,18 @@ its scheduled-task tools, but a scheduled cloud run has no access to the GPU box
    (episodes 3-5 are finished) and record the points cost and the final status from
    `GET /v1/article`.
 5. Then build the random 7-9 h loop in section 6, with logging and the guards in section 5.
+
+## 10. Owner decisions for Idiom Ink posting (2026-10-19/20)
+
+- Cadence unchanged: 2 posts a day, each 11-13 h after the previous post (random minute). Not 7-9 h.
+- Only this SocialEcho session posts for @kingkingking8888 (account_id 22788134). The MP4s (and captions
+  from each episode's `posting.md`) are sent in by another session. Other sessions must not post for this account.
+- Add music to every post: Chinese-flavour tracks, original sound 100%, music about 15-20%,
+  `selection: "trending_clip"`. Candidates from `GET /v1/tiktokshop/music/trending?account_id=22788134&genre=CHINESE_STYLE`:
+  - 东方既白 (万泽), uuid 7369680943181875201, 60 s
+  - 星漢倦歌 (Xiaoloulou), uuid 7517268381398157313, 60 s
+  Copy `url`, `uuid`, `cover`, `title`, `artist`, `duration` unchanged from a fresh list call just before each post
+  (preview URLs may expire). Rotate between the tracks. Re-check the genre list occasionally (1 point per call).
+- Untested: whether `extra.music` is accepted for a normal TikTok `video` post (docs only show it for TikTok Shop).
+  Verify on the first post and note the result here.
+- Points: 275 remaining on 2026-10-20 after the music lookups.
