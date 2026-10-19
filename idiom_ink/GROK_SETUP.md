@@ -20,18 +20,18 @@ EACH RUN
      Replace the old file in the same Drive folder with the same file name (delete or overwrite the old one
      so only one file has each name).
 3. Image rules (always):
-   - Vertical 9:16, as large as you can render (1080×1920 or more is ideal). Render PORTRAIT natively: set the
-     image tool's aspect ratio / orientation to 9:16 (or 2:3 if 9:16 isn't offered) before generating. Compose
-     the scene for a tall frame (characters filling the middle of the height), not a wide scene.
-   - Never letterbox or pad: no added bands, borders or blurred fills. If your tool truly cannot render portrait,
-     upload the raw landscape render unpadded at its native size and say so in the reply; we handle the layout.
+   - Vertical 9:16 aspect ratio (--ar 9:16), full-frame composition, edge-to-edge illustration that completely
+     fills the canvas: no top or bottom margins, no borders, no letterbox or padding bands, no empty brown or
+     paper-coloured space. Cinematic framing (wide shots unless the scene asks for a close-up). Render natively
+     in portrait at 1080×1920 or more: set the image tool's aspect ratio to 9:16 BEFORE generating. Never render
+     landscape and pad or scale it into a vertical frame; if a render comes out landscape, render it again at 9:16.
    - The style block in the request, identical across all images of an episode and across episodes.
    - Characters exactly as written in CONTINUITY: same face, hair, clothes and colours in every image.
    - Only the people the scene lists. Correct hands, no extra limbs, no duplicate people.
    - NO TEXT of any kind: no letters, Chinese characters, calligraphy, seals, signatures, watermarks, speech
      bubbles or UI text.
-   - Main subject in the middle 60 % of the height; calm, low-detail top 15 % and bottom 25 %; no key action in
-     the right-hand 15 %.
+   - The illustration runs to all four edges. Main subject in the middle 60 % of the height; the top 15 % and
+     bottom 25 % still show the scene (wall, sky, ground) with less detail; no key action in the right-hand 15 %.
 4. Upload each image as PNG (JPG is acceptable) to the Drive subfolder the request names (it already exists
    inside "Idiom-Ink-images"), with the exact file names it gives. If you cannot upload to Drive, attach the
    images to your reply email instead, with the same file names.

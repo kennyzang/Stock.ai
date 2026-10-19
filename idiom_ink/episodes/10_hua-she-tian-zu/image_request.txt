@@ -1,6 +1,7 @@
 Subject: [IDIOM-SCRIPT] EP10 · 2026-10-19
 From/To: kennytseng4@gmail.com   (sent 2026-10-19 13:16 UTC, Gmail thread 1a1544e512a376a9)
-This is the TEMPLATE for every image request: copy HOW TO DELIVER, STYLE and COMPOSITION RULES word for word,
+(Superseded as template: use episodes/12_ke-zhou-qiu-jian/image_request.txt, which adds the full-frame FORMAT block.)
+This was the TEMPLATE for every image request: copy HOW TO DELIVER, STYLE and COMPOSITION RULES word for word,
 change the episode fields, STORY CONTEXT, CONTINUITY and SCENES.
 
 IDIOM INK SHORTS — IMAGE REQUEST

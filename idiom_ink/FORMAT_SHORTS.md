@@ -40,7 +40,11 @@ their glosses on the idiom card (read in 1 glance, not read aloud one by one).
 - **Style: ink-wash manhua.** Bold confident black ink linework, flat muted washes (ochre, rust red, slate blue,
   moss green) on warm aged rice paper; expressive, slightly exaggerated faces (sweat drops, wide eyes, smug grins);
   dynamic angles; one full-bleed panel per image; no panel borders, no speech bubbles.
-- **9:16, ≥ 1080×1920**, never letterboxed. We centre-crop/scale anything else.
+- **9:16, ≥ 1080×1920, full-frame, edge-to-edge**, never letterboxed (owner's rule, 2026-10-19). Every image
+  request carries the FORMAT block and the full-bleed COMPOSITION RULES of `episodes/12_ke-zhou-qiu-jian/
+  image_request.txt` (the current template). The builder cuts off any padding bands; landscape art (fallback
+  only) is shown enlarged over a blurred copy of itself so the canvas is always illustration. Letterboxed or
+  landscape delivery is a blocking problem: ask for a 9:16 re-render (counts as a redo round).
 - **TikTok safe zones:** main subject inside the middle 60 % of the height; top 15 % (tabs) and bottom 25 %
   (caption/handle/music) low-detail; right 15 % (buttons) free of key action.
 - **≤ 3 recurring characters**, each with a fixed costume/face spec repeated word for word in every request

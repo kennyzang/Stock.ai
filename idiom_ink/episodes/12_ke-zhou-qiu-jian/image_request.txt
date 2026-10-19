@@ -1,5 +1,5 @@
 Subject: [IDIOM-SCRIPT] EP12 · 2026-10-19
-From/To: kennytseng4@gmail.com   (sent 2026-10-19 13:54 UTC, Gmail thread 1a154728680561ae)
+From/To: kennytseng4@gmail.com   (re-sent 2026-10-19 with the full-frame FORMAT block)
 
 IDIOM INK SHORTS — IMAGE REQUEST
 EPISODE: EP12
@@ -7,6 +7,9 @@ DATE: 2026-10-19
 IDIOM: 刻舟求剑 (kè zhōu qiú jiàn) — "carve the boat to find the sword" = sticking to old methods after things have changed
 SERIES: Idiom Ink | Chinese Idioms (TikTok @kingkingking8888). A 25-second vertical short: still images, cut fast, with narration.
 IMAGES NEEDED: 9 (EP12_I1 ... EP12_I9)
+
+FORMAT (most important; applies to every image)
+Vertical 9:16 aspect ratio, full-frame composition, edge-to-edge illustration that completely fills the canvas: no top or bottom margins, no borders, no letterbox or padding bands, no empty brown or paper-coloured space. Cinematic framing: wide shots unless a scene asks for a close-up. Render natively in portrait (--ar 9:16), at least 1080x1920. Never render landscape and then pad or scale it into a vertical frame; if your tool gives you a landscape image, change its aspect ratio setting to 9:16 and render again.
 
 HOW TO DELIVER
 1. Generate each image in the style below. Vertical 9:16, at least 1080x1920 (if the native render is smaller, say so in your reply). No text of any kind in the images: no letters, no Chinese characters, no calligraphy, no seal stamps, no signature, no watermark, no speech bubbles, no UI text.
@@ -16,11 +19,11 @@ HOW TO DELIVER
    Body: the Drive subfolder link, the list of file names, the native render size, and any image you could not make or had to change (with the reason).
 
 STYLE (the series look; keep it identical in all 9 images)
-"Ink-wash manhua": a Chinese manhua comic panel painted like a traditional ink-wash (shuimo) storybook. Bold, confident black ink outlines; flat muted washes of ochre, rust red, slate blue and moss green; warm aged rice-paper texture showing through; soft grey ink washes for the background; lots of calm empty space. Faces are expressive and a little exaggerated, like a comic (smug grins, wide shocked eyes, sweat drops) but never grotesque. Slightly humorous, family-friendly. One full-bleed panel per image: no panel borders, no frames, no split panels.
+"Ink-wash manhua": a Chinese manhua comic panel painted like a traditional ink-wash (shuimo) storybook. Bold, confident black ink outlines; flat muted washes of ochre, rust red, slate blue and moss green; warm aged rice-paper texture showing through; soft grey ink washes for the background; calm, uncluttered backgrounds that still fill the whole frame. Faces are expressive and a little exaggerated, like a comic (smug grins, wide shocked eyes, sweat drops) but never grotesque. Slightly humorous, family-friendly. One full-bleed panel per image: no panel borders, no frames, no split panels.
 Match the look of the earlier Idiom Ink episodes (EP10 画蛇添足) exactly.
 
 COMPOSITION RULES (the video is viewed on phones with TikTok buttons on top)
-- Main subject in the middle 60% of the height. Keep the top 15% and the bottom 25% calm and low-detail (we put captions there). Keep key action out of the right-hand 15% (TikTok buttons).
+- The illustration runs to all four edges. Put the main subject in the middle 60% of the height; the top 15% and bottom 25% still contain the scene (wall, sky, ground), just with less detail, because captions go there. Keep key action out of the right-hand 15% (TikTok buttons).
 - Characters large and readable at thumbnail size; faces clearly visible unless said otherwise.
 - Only the people listed for each image. Correct hands (5 fingers), no extra limbs, no duplicate people.
 

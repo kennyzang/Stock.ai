@@ -11,7 +11,10 @@ Spec (JSON):
            lines:[{id, voice:"N"|"M", text, cap (None = text, "" = none), hl:[words to highlight]}]}]
   move: push_in | pull_out | pan_left | pan_right | push_in_more | punch      (focus = point to keep centred)
 Audio files: <audio_dir>/<line id>.wav|.mp3. Word timings (optional): <line id>.words.json [[start, end, word], ...]
-Output: <out> (1080x1920, 30 fps, H.264 + AAC, -14 LUFS, +faststart), <out stem>_cover.png, <out stem>_grid.jpg
+Output: <out> (1080x1920, 30 fps, H.264 + AAC, -14 LUFS, +faststart, <= ~10 MB), <out stem>_cover.png, <out stem>_grid.jpg
+Images are always shown full-frame: flat padding bands (letterbox/pillarbox) are cut off first; portrait art is
+cover-cropped to 9:16; landscape art (fallback only, ask Grok for 9:16) is enlarged over a blurred copy of itself
+so the whole canvas is illustration, never empty paper.
 """
 import json, math, re, subprocess, sys, tempfile
 from pathlib import Path
@@ -116,6 +119,46 @@ def render_shot(img, move, focus, d, out):
           f"zoompan=z='{z}':x='{x}':y='{y}':d={n}:s={W}x{H}:fps={FPS},format=yuv420p")
     sh(["ffmpeg", "-nostdin", "-y", "-loop", "1", "-i", str(img), "-vf", vf, "-frames:v", str(n),
         "-c:v", "libx264", "-crf", "17", "-preset", "medium", "-r", str(FPS), str(out)])
+
+
+# ---------- images ----------
+def fill_frame(img, focus, tmp):
+    """Return a 1080x1920 full-frame version of img (see module doc)."""
+    from PIL import Image, ImageFilter, ImageStat, ImageEnhance
+    out = tmp / f"full_{Path(img).stem}_{focus[0]:.2f}.png"
+    if out.exists():
+        return out
+    im = Image.open(img).convert("RGB")
+    g = im.convert("L")
+    busy = lambda box: ImageStat.Stat(g.crop(box)).stddev[0] > 12   # flat paper bands have almost no detail
+    w, h = im.size
+    t = next((y for y in range(0, h, 2) if busy((0, y, w, y + 2))), 0)
+    b = next((y for y in range(h, 0, -2) if busy((0, y - 2, w, y))), h)
+    l = next((x for x in range(0, w, 2) if busy((x, t, x + 2, b))), 0)
+    r = next((x for x in range(w, 0, -2) if busy((x - 2, t, x, b))), w)
+    if (b - t) > h * 0.3 and (r - l) > w * 0.3:
+        im = im.crop((l + 4, t + 4, r - 4, b - 4))   # a few px more: the band edge is often a soft fade
+    w, h = im.size
+    if w / h <= 0.8:   # portrait: cover-crop around the focus point
+        k = max(W / w, H / h)
+        im = im.resize((round(w * k), round(h * k)), Image.LANCZOS)
+        x = min(max(round(focus[0] * im.width - W / 2), 0), im.width - W)
+        y = min(max(round(focus[1] * im.height - H / 2), 0), im.height - H)
+        im = im.crop((x, y, x + W, y + H))
+    else:              # landscape: enlarged art over a blurred, darker copy of itself
+        k = max(W / w, H / h)
+        bg = im.resize((round(w * k), round(h * k)), Image.LANCZOS)
+        x0 = (bg.width - W) // 2
+        bg = bg.crop((x0, 0, x0 + W, H)).filter(ImageFilter.GaussianBlur(45))
+        bg = ImageEnhance.Brightness(bg).enhance(0.72)
+        fw = round(W * 1.25)
+        fg = im.resize((fw, round(h * fw / w)), Image.LANCZOS)
+        x = min(max(round(focus[0] * fw - W / 2), 0), fw - W)
+        fg = fg.crop((x, 0, x + W, fg.height))
+        bg.paste(fg, (0, round(H * 0.46 - fg.height / 2)))
+        im = bg
+    im.save(out)
+    return out
 
 
 # ---------- text ----------
@@ -242,7 +285,7 @@ def main():
     # video: one clip per sub-shot, then concat
     clips, cuts = [], []
     for b in beats:
-        img = Path(spec["images_dir"]) / b["img"]
+        img = fill_frame(Path(spec["images_dir"]) / b["img"], b.get("focus", [0.5, 0.45]), tmp)
         for k, (a, z, move) in enumerate(shots_for(b)):
             p = tmp / f"{b['id']}_{k}.mp4"
             render_shot(img, move, b.get("focus", [0.5, 0.45]), z - a, p)
@@ -275,12 +318,12 @@ def main():
     # burn text + mux
     (tmp / "text.ass").write_text(ass(spec, beats, total), encoding="utf-8-sig")
     sh(["ffmpeg", "-nostdin", "-y", "-i", "video.mp4", "-i", "audio.wav", "-vf", "subtitles=text.ass",
-        "-map", "0:v", "-map", "1:a", "-c:v", "libx264", "-crf", "18", "-preset", "slow", "-pix_fmt", "yuv420p",
+        "-map", "0:v", "-map", "1:a", "-c:v", "libx264", "-crf", "20", "-maxrate", "2800k", "-bufsize", "5600k", "-preset", "slow", "-pix_fmt", "yuv420p",
         "-r", str(FPS), "-c:a", "aac", "-b:a", "192k", "-t", f"{total:.3f}", "-movflags", "+faststart", str(out)], cwd=tmp)
 
     # cover (hook image + idiom + hook text) and a QC frame grid
     cover = out.with_name(out.stem + "_cover.png")
-    first = Path(spec["images_dir"]) / beats[0]["img"]
+    first = fill_frame(Path(spec["images_dir"]) / beats[0]["img"], beats[0].get("focus", [0.5, 0.45]), tmp)
     cass = tmp / "cover.ass"
     pyline = " ".join(f"{{\\c{TONE[t]}}}{s}" for s, t in spec["pinyin"])
     cass.write_text(ass(spec, [], 0).split("[Events]")[0] + "[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n"
