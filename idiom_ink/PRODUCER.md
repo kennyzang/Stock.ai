@@ -106,6 +106,9 @@ episodes waiting for images), skip writing new scripts until it catches up.
   - Ask it to reply with the SocialEcho record id and the scheduled time, and later whether it went live.
   - The first message also explains this new arrangement and asks it to confirm it could download the files
     (sha256 match). If it can't reach raw.githubusercontent.com, ask what host it can reach.
+- Hand off at most about a day ahead (Publication's request, 2026-10-19): it posts with its own timer, 2 a day,
+  so keep finished episodes in `releases/` and send each one only when fewer than ~2 are waiting in its queue
+  (see `publish_log.md`).
 - Record every handoff and reply in `publish_log.md` and `pipeline_state.md`. If the publication session
   doesn't answer within 24 h, send one reminder; after 48 h email the owner.
 
