@@ -4,7 +4,7 @@
 |---|---|---|---|---|---|---|---|---|---|---|
 | 12 | 刻舟求剑 | 2026-10-19 13:54 | 1a154728680561ae | EP12_2026-10-19 (1-Duuc97MvlPtai2cBL436gRGizsy5scf) | waiting for Grok | 0 | – | – | – | – |
 | 11 | 掩耳盗铃 | 2026-10-19 13:54 | 1a15472834836262 | EP11_2026-10-19 (18Yx7hxtpKfC4rXGOsyX4sA4Y4jKXIOds) | waiting for Grok | 0 | – | – | – | – |
-| 10 | 画蛇添足 (pilot) | 2026-10-19 13:16 | 1a1544e512a376a9 | EP10_2026-10-19 (18CjDMHd4jKOcPxdFDPoxvNTP2CiqKyOO) | delivered 14:00 letterboxed; REDO round 1 sent 14:21 (all 9, native 9:16) | 1 | done, all pass ASR | test build 24.2 s; letterbox issue, see notes | – | – |
+| 10 | 画蛇添足 (pilot) | 2026-10-19 13:16 | 1a1544e512a376a9 | EP10_2026-10-19 (18CjDMHd4jKOcPxdFDPoxvNTP2CiqKyOO) | accepted 15:50 (ChatGPT redo, 9/9 1024×1536) | 1 | done, all pass ASR | ✅ 24.2 s, −14.2 LUFS, 9.1 MB | 2026-10-19 16:00 (releases/EP10) | waiting for reply |
 
 ## Notes
 - 2026-10-19: producer handed over from session_01UE4ArSjhTKBPtAHUBZxvXF. DashScope key verified reachable on
@@ -29,4 +29,9 @@
   ChatGPT picks up the open EP10 redo and the EP11/EP12 requests from Gmail. Future request template FORMAT
   block accepts 2:3. (Note: the EP11/EP12 requests already sent ask for 9:16 ≥ 1080×1920; IMAGE_SETUP allows
   2:3 instead, so no re-send needed.)
+- 2026-10-19 15:50: EP10 redo from ChatGPT accepted: full-frame 1024×1536, four feet, Wei bald, Li modern jacket,
+  no text. Style is more detailed/painterly than the Grok set (consistent within the episode; it's now the series
+  reference). Builder: added per-beat `hook_y`/`close_y` (EP10 hook and end line at y=1220 to clear faces), B07
+  changed to push_in (focus 0.4,0.3) so Zhang's head isn't cropped. Final QC passed. Handed to publication
+  (send_message 16:00) and review email sent to owner. EP11/EP12 still waiting for ChatGPT.
 
