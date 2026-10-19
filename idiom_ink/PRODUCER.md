@@ -98,8 +98,9 @@ episodes waiting for images), skip writing new scripts until it catches up.
   - Video + cover URLs, sha256, duration.
   - Title, description (with hashtags) and the pinned-comment text from `script.md` "posting" (if a pinned
     comment can't be posted via the API, append it to the description).
-  - `is_ai_generated: true`. **Original sound 100 %. No added music** for this account (not "Final Game
-    Showdown"; that's the other channel's) unless the owner later sets one.
+  - `is_ai_generated: true`. Music: the Publication session adds a Chinese-flavour track (original sound 100 %,
+    music ~15–20 %) per the owner's decision in `../HANDOVER_SOCIALECHO.md` §10; we don't choose it. Our video
+    has no music of its own.
   - **Schedule:** 2 posts a day for this account, each 11–13 h after this account's previous post (random
     minute), in its own queue independent of the other account; never immediately.
   - Ask it to reply with the SocialEcho record id and the scheduled time, and later whether it went live.
