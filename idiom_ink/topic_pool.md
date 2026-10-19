@@ -19,3 +19,12 @@ Only idioms from `Reference-book/` are used. Strongest stories first.
 | 13 | 哀兵必胜 āi bīng bì shèng | 6 | ★☆☆ Laozi quote, no story | |
 
 Ones marked ★☆☆ have no story in the book, so they would need a different format (or the original source's story).
+
+## Shorts era (FORMAT_SHORTS.md §7 list; public-domain classical sources, retold)
+| EP | Idiom | Source | Status |
+|---|---|---|---|
+| 10 | 画蛇添足 huà shé tiān zú | 战国策·齐策二 | pilot, images requested 2026-10-19 |
+| 11 | 掩耳盗铃 yǎn ěr dào líng | 吕氏春秋·自知 | images requested 2026-10-19 |
+| 12 | 刻舟求剑 kè zhōu qiú jiàn | 吕氏春秋·察今 | images requested 2026-10-19 |
+Next up from §7: 自相矛盾, 狐假虎威, 拔苗助长, 买椟还珠, 南辕北辙, 叶公好龙, 杞人忧天, 滥竽充数, 邯郸学步, 削足适履, 指鹿为马.
+

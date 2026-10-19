@@ -1,0 +1,255 @@
+{
+ "out": "ep11_yan-er-dao-ling.mp4",
+ "idiom": "掩耳盗铃",
+ "pinyin": [
+  [
+   "yǎn",
+   3
+  ],
+  [
+   "ěr",
+   3
+  ],
+  [
+   "dào",
+   4
+  ],
+  [
+   "líng",
+   2
+  ]
+ ],
+ "gloss": [
+  [
+   "掩",
+   "cover"
+  ],
+  [
+   "耳",
+   "ears"
+  ],
+  [
+   "盗",
+   "steal"
+  ],
+  [
+   "铃",
+   "bell"
+  ]
+ ],
+ "cover_text": "He plugged HIS ears…\\Nso nobody heard?",
+ "beats": [
+  {
+   "id": "B01",
+   "img": "EP11_I1.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "hook": "He couldn't HEAR it…\\Nso nobody could?",
+   "lines": [
+    {
+     "id": "B01_N",
+     "voice": "N",
+     "text": "He couldn't hear the bell… so nobody could?"
+    }
+   ]
+  },
+  {
+   "id": "B02",
+   "img": "EP11_I2.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B02_N",
+     "voice": "N",
+     "text": "A thief found a giant bronze bell.",
+     "hl": [
+      "bronze",
+      "bell."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B03",
+   "img": "EP11_I3.png",
+   "move": "pan_right",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B03_N",
+     "voice": "N",
+     "text": "Way too heavy to carry. So… smash it!",
+     "hl": [
+      "smash"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B04",
+   "img": "EP11_I4.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B04_N",
+     "voice": "N",
+     "text": "First hit: the whole town could hear it.",
+     "hl": [
+      "whole",
+      "town"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B05",
+   "img": "EP11_I5.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B05_N",
+     "voice": "N",
+     "text": "His fix? Plug his own ears.",
+     "hl": [
+      "own",
+      "ears."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B06",
+   "img": "EP11_I6.png",
+   "move": "pan_left",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B06_N",
+     "voice": "N",
+     "text": "Can't hear it? Then nobody can!",
+     "hl": [
+      "nobody"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B07",
+   "img": "EP11_I7.png",
+   "move": "punch",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B07_N",
+     "voice": "N",
+     "text": "Everyone heard it. Except him.",
+     "hl": [
+      "Except",
+      "him."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B08",
+   "img": "EP11_I8.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "card": true,
+   "nosplit": true,
+   "lines": [
+    {
+     "id": "B08_M",
+     "voice": "M",
+     "text": "掩耳盗铃。"
+    },
+    {
+     "id": "B08_N",
+     "voice": "N",
+     "text": "Cover your ears… steal the bell."
+    }
+   ]
+  },
+  {
+   "id": "B09",
+   "img": "EP11_I8.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "meaning": "= fooling only yourself",
+   "lines": [
+    {
+     "id": "B09_N",
+     "voice": "N",
+     "text": "It means fooling only yourself."
+    }
+   ]
+  },
+  {
+   "id": "B10",
+   "img": "EP11_I9.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B10_N",
+     "voice": "N",
+     "text": "Like not checking your bank app… so you're not broke.",
+     "hl": [
+      "bank",
+      "app…"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B11",
+   "img": "EP11_I1.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "close": "Ever done that?",
+   "lines": [
+    {
+     "id": "B11_N",
+     "voice": "N",
+     "text": "Ever done that?"
+    }
+   ]
+  }
+ ]
+}

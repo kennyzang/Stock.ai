@@ -1,0 +1,254 @@
+{
+ "out": "ep12_ke-zhou-qiu-jian.mp4",
+ "idiom": "刻舟求剑",
+ "pinyin": [
+  [
+   "kè",
+   4
+  ],
+  [
+   "zhōu",
+   1
+  ],
+  [
+   "qiú",
+   2
+  ],
+  [
+   "jiàn",
+   4
+  ]
+ ],
+ "gloss": [
+  [
+   "刻",
+   "carve"
+  ],
+  [
+   "舟",
+   "boat"
+  ],
+  [
+   "求",
+   "seek"
+  ],
+  [
+   "剑",
+   "sword"
+  ]
+ ],
+ "cover_text": "He marked the spot…\\Non a MOVING boat.",
+ "beats": [
+  {
+   "id": "B01",
+   "img": "EP12_I1.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "hook": "He marked the spot…\\Non a MOVING boat.",
+   "lines": [
+    {
+     "id": "B01_N",
+     "voice": "N",
+     "text": "He marked the spot… on a moving boat."
+    }
+   ]
+  },
+  {
+   "id": "B02",
+   "img": "EP12_I2.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B02_N",
+     "voice": "N",
+     "text": "A proud swordsman, crossing a river by boat.",
+     "hl": [
+      "proud"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B03",
+   "img": "EP12_I3.png",
+   "move": "pan_right",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B03_N",
+     "voice": "N",
+     "text": "Then splash! His sword fell in.",
+     "hl": [
+      "splash!"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B04",
+   "img": "EP12_I4.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B04_N",
+     "voice": "N",
+     "text": "No panic. He carved a mark on the boat.",
+     "hl": [
+      "mark"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B05",
+   "img": "EP12_I5.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B05_N",
+     "voice": "N",
+     "text": "My sword fell right here. Easy!",
+     "hl": [
+      "right",
+      "here."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B06",
+   "img": "EP12_I6.png",
+   "move": "pan_left",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B06_N",
+     "voice": "N",
+     "text": "The boat sailed on… all the way to shore.",
+     "hl": [
+      "sailed",
+      "on…"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B07",
+   "img": "EP12_I7.png",
+   "move": "punch",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B07_N",
+     "voice": "N",
+     "text": "Then he jumped in, right under the mark.",
+     "hl": [
+      "jumped",
+      "in,"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B08",
+   "img": "EP12_I8.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "card": true,
+   "nosplit": true,
+   "lines": [
+    {
+     "id": "B08_M",
+     "voice": "M",
+     "text": "刻舟求剑。"
+    },
+    {
+     "id": "B08_N",
+     "voice": "N",
+     "text": "Carve the boat… find the sword."
+    }
+   ]
+  },
+  {
+   "id": "B09",
+   "img": "EP12_I8.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "meaning": "= sticking to a plan that no longer fits",
+   "lines": [
+    {
+     "id": "B09_N",
+     "voice": "N",
+     "text": "It means sticking to a plan after things change."
+    }
+   ]
+  },
+  {
+   "id": "B10",
+   "img": "EP12_I9.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B10_N",
+     "voice": "N",
+     "text": "Like last year's notes… for this year's exam.",
+     "hl": [
+      "last",
+      "year's"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B11",
+   "img": "EP12_I1.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "close": "Ever done that?",
+   "lines": [
+    {
+     "id": "B11_N",
+     "voice": "N",
+     "text": "Ever done that?"
+    }
+   ]
+  }
+ ]
+}
