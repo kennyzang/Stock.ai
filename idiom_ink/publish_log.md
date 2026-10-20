@@ -12,6 +12,6 @@ One row per SocialEcho post. Episodes 01–05 were posted manually before automa
 Rule: 2 posts/day, each 11-13 h after the previous REAL post time (post-list time). `scheduled_at` is unreliable (EP10 went live 13 min early), so the publisher posts at the planned time with its own timer.
 | Episode | Files verified (sha256) | Planned post (UTC) | Music | Status |
 |---|---|---|---|---|
-| 11 掩耳盗铃 | video + cover OK | submitted 2026-10-20 03:58 UTC | 星漢倦歌 (7517268381398157313) | SUBMITTED: record 555507, request_id 9c739c94-cb49-4373-b17c-406117ad40a3, 265 points left; verify live, then schedule EP12 |
+| 11 掩耳盗铃 | video + cover OK | submitted 2026-10-20 03:58 UTC | 星漢倦歌 (7517268381398157313) | LIVE 2026-10-20 03:56:40 UTC https://www.tiktok.com/@kingkingking8888/video/7698593934964051207 (record 555507, request_id 9c739c94-cb49-4373-b17c-406117ad40a3, 264 points left) ; EP12 timer set for 2026-10-20 15:26 UTC |
 | 12 刻舟求剑 | video + cover OK | 11-13 h after EP11's real post | 东方既白 (7369680943181875201) | waiting for EP11 |
 EP12 video sha256 cf0021d411801665ea6f40077365ab58342bdd4c63f8ea49082890c07d392929; cover sha256 50b6bd333bf36114bbbb9734cd651846df6a89bff27aeb9b76179136c820003f.
