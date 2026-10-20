@@ -59,3 +59,4 @@
   `episodes/NN_slug/episode.json`) and requested. Credits: CompShare 60.40 CNY, SocialEcho 269 points (Publication's
   last count; not re-queried to save a point), DashScope OK.
 
+- 2026-10-20 01:10: narration pre-check: EP13 all pass (~32 s est.); EP14 B03 reworded ("I'm the king!"), all pass (~35 s est.). alitts.py now treats contractions as equal (ASR writes "I am").

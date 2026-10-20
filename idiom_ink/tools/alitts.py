@@ -77,9 +77,14 @@ def asr(path):
     return d["choices"][0]["message"]["content"].strip()
 
 
+CONTRACTIONS = {"i'm": "i am", "you're": "you are", "it's": "it is", "don't": "do not", "can't": "cannot",
+                "won't": "will not", "he's": "he is", "she's": "she is", "that's": "that is", "isn't": "is not",
+                "doesn't": "does not", "didn't": "did not", "couldn't": "could not", "i'll": "i will", "let's": "let us"}
+
+
 def norm_en(s):
-    s = s.lower().replace("’", "'")
-    return re.sub(r"[^a-z0-9' ]+", " ", s).split()
+    s = re.sub(r"[^a-z0-9' ]+", " ", s.lower().replace("’", "'"))
+    return " ".join(CONTRACTIONS.get(w, w) for w in s.split()).split()  # ASR may expand or contract
 
 
 def norm_zh(s):

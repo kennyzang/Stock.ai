@@ -18,7 +18,7 @@
 |---|---|---|---|
 | 1 | I1 The twist (used as the hook, first frame of the video) | Hook text: **Everyone ran from him… / but not because of HIM.** | "Everyone ran from him, but not because of him." |
 | 2 | I2 Caught! | captions | "A hungry tiger caught a fox." |
-| 3 | I3 'I'm the king!' | captions | "But the fox said: Stop! I'm the king of animals!" |
+| 3 | I3 'I'm the king!' | captions | "But the fox said: Stop! I'm the king!" |
 | 4 | I4 'Walk behind me' | captions | "Don't believe me? Walk behind me and see." |
 | 5 | I5 The parade | captions | "So the fox walked in front, the tiger right behind." |
 | 6 | I6 Everyone runs | captions | "Every animal ran for its life!" |
