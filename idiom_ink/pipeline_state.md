@@ -2,9 +2,9 @@
 
 | EP | Idiom | Image request sent (UTC) | Gmail thread | Drive folder | Images | Redo rounds | Voices + ASR | Built + QC | Handed to publication | Scheduled / live |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 14 | 狐假虎威 | 2026-10-20 00:58 | 1a156cec048eb2ad | EP14_2026-10-20 (1Zcn8z20BFB0Me6dBLsWs719pzYupoimr) | accepted 03:30 (ChatGPT 9/9 after its own in-place replacement at 02:01) | 0 | Jennifer, all pass ASR | ✅ 32.2 s, −14.6 LUFS, 9.0 MB (releases/EP14) | HELD (after EP13) | – |
-| 13 | 自相矛盾 | 2026-10-20 00:58 | 1a156ce7a68c4777 | EP13_2026-10-20 (1Jb9CTfCPdWtLsO3KmPtPaZn6Hw0r8qKw) | accepted 03:30 (ChatGPT 9/9, 1024×1536) | 0 | Jennifer, all pass ASR | ✅ 28.6 s, −14.1 LUFS, 8.1 MB (releases/EP13) | Publication 2026-10-20 04:06 (sha256 OK) | queued: ~2026-10-21 02:30–04:30 UTC (music 星漢倦歌) |
-| 12 | 刻舟求剑 | 2026-10-19 13:54 (re-sent 14:19) | 1a154728680561ae | EP12_2026-10-19 (1-Duuc97MvlPtai2cBL436gRGizsy5scf) | accepted 18:25 (ChatGPT 9/9, 1024×1536) | 0 | Jennifer, all pass ASR | ✅ 30.9 s, −15.2 LUFS, 8.5 MB | Publication 2026-10-19 18:40 (sha256 OK) | queued: ~2026-10-20 15:26 UTC (music 东方既白) |
+| 14 | 狐假虎威 | 2026-10-20 00:58 | 1a156cec048eb2ad | EP14_2026-10-20 (1Zcn8z20BFB0Me6dBLsWs719pzYupoimr) | accepted 03:30 (ChatGPT 9/9 after its own in-place replacement at 02:01) | 0 | Jennifer, all pass ASR | ✅ 32.2 s, −14.6 LUFS, 9.0 MB (releases/EP14) | Publication 2026-10-20 15:37 | waiting for reply (slot after EP13, music 东方既白) |
+| 13 | 自相矛盾 | 2026-10-20 00:58 | 1a156ce7a68c4777 | EP13_2026-10-20 (1Jb9CTfCPdWtLsO3KmPtPaZn6Hw0r8qKw) | accepted 03:30 (ChatGPT 9/9, 1024×1536) | 0 | Jennifer, all pass ASR | ✅ 28.6 s, −14.1 LUFS, 8.1 MB (releases/EP13) | Publication 2026-10-20 04:06 (sha256 OK) | queued: ~2026-10-21 02:55 UTC (music 星漢倦歌) |
+| 12 | 刻舟求剑 | 2026-10-19 13:54 (re-sent 14:19) | 1a154728680561ae | EP12_2026-10-19 (1-Duuc97MvlPtai2cBL436gRGizsy5scf) | accepted 18:25 (ChatGPT 9/9, 1024×1536) | 0 | Jennifer, all pass ASR | ✅ 30.9 s, −15.2 LUFS, 8.5 MB | Publication 2026-10-19 18:40 (sha256 OK) | ✅ live 2026-10-20 15:27 UTC: https://www.tiktok.com/@kingkingking8888/video/7698771920782642453 |
 | 11 | 掩耳盗铃 | 2026-10-19 13:54 (re-sent 14:19) | 1a15472834836262 | EP11_2026-10-19 (18Yx7hxtpKfC4rXGOsyX4sA4Y4jKXIOds) | accepted 18:25 (ChatGPT 9/9, 1440×2560) | 0 | Jennifer, all pass ASR | ✅ 30.8 s, −14.9 LUFS, 8.7 MB | Publication 2026-10-19 18:40 (sha256 OK) | ✅ live 2026-10-20 03:56 UTC: https://www.tiktok.com/@kingkingking8888/video/7698593934964051207 |
 | 10 | 画蛇添足 (pilot) | 2026-10-19 13:16 | 1a1544e512a376a9 | EP10_2026-10-19 (18CjDMHd4jKOcPxdFDPoxvNTP2CiqKyOO) | accepted 15:50 (ChatGPT, 9/9 1024×1536) | 1 | Jennifer, all pass ASR | ✅ v2 30.6 s, −15.1 LUFS, 8.5 MB | Publication 2026-10-19 16:40 (releases/EP10) | ✅ live 2026-10-19 16:44 UTC: https://www.tiktok.com/@kingkingking8888/video/7698420789376224533 |
 
@@ -64,4 +64,5 @@
   releases/ per the one-day-ahead rule: Publication still has EP11 (~03:55) and EP12 waiting. Hand off EP13 after EP11
   is live, EP14 after EP12.
 - 2026-10-20 04:06: EP11 live (record 555507, 264 points). EP13 handed to Publication; EP14 held until EP12 is live.
+- 2026-10-20 15:37: EP12 live (record 558227, 259 points). EP14 handed to Publication.
 
