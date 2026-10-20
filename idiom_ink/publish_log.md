@@ -13,6 +13,6 @@ Rule: 2 posts/day, each 11-13 h after the previous REAL post time (post-list tim
 | Episode | Files verified (sha256) | Planned post (UTC) | Music | Status |
 |---|---|---|---|---|
 | 11 掩耳盗铃 | video + cover OK | submitted 2026-10-20 03:58 UTC | 星漢倦歌 (7517268381398157313) | LIVE 2026-10-20 03:56:40 UTC https://www.tiktok.com/@kingkingking8888/video/7698593934964051207 (record 555507, request_id 9c739c94-cb49-4373-b17c-406117ad40a3, 264 points left) ; EP12 timer set for 2026-10-20 15:26 UTC |
-| 12 刻舟求剑 | video + cover OK | 11-13 h after EP11's real post | 东方既白 (7369680943181875201) | waiting for EP11 |
+| 12 刻舟求剑 | video + cover OK | submitted 2026-10-20 15:28 UTC | 东方既白 (7369680943181875201) | SUBMITTED: record 558227, request_id e6229172-39b8-456d-a099-cbd28822b1a2, 260 points left; verify live |
 EP12 video sha256 cf0021d411801665ea6f40077365ab58342bdd4c63f8ea49082890c07d392929; cover sha256 50b6bd333bf36114bbbb9734cd651846df6a89bff27aeb9b76179136c820003f.
 | 13 自相矛盾 | video + cover OK (video sha256 7874b612f81fc51ba69d7476bbe18b2c19549a698ffd7ddae59c10742f3f0146; cover sha256 0ae9fcaf2ac3d2714ddfa4f76ac1c3258832552f198fee0ca007415279662bbc; 28.6 s) | 11-13 h after EP12's real post | 星漢倦歌 (7517268381398157313) | waiting for EP12; files at idiom_ink/releases/EP13/ (posting.md there; append its pinned comment to the description) |
