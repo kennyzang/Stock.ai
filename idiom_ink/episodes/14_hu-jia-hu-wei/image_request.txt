@@ -1,0 +1,68 @@
+Subject: [IDIOM-SCRIPT] EP14 · 2026-10-20
+From/To: kennytseng4@gmail.com   (sent 2026-10-20 00:58 UTC, Gmail thread 1a156cec048eb2ad)
+
+IDIOM INK SHORTS — IMAGE REQUEST
+EPISODE: EP14
+DATE: 2026-10-20
+IDIOM: 狐假虎威 (hú jiǎ hǔ wēi) — "the fox borrows the tiger's power" = showing off or bullying with someone else's power
+SERIES: Idiom Ink | Chinese Idioms (TikTok @kingkingking8888). A 30-second vertical short: still images, cut fast, with narration.
+IMAGES NEEDED: 9 (EP14_I1 ... EP14_I9)
+
+FORMAT (most important; applies to every image)
+Vertical 9:16 aspect ratio, full-frame composition, edge-to-edge illustration that completely fills the canvas: no top or bottom margins, no borders, no letterbox or padding bands, no empty brown or paper-coloured space. Cinematic framing: wide shots unless a scene asks for a close-up. Render natively in portrait: 9:16 (--ar 9:16, at least 1080x1920) if your tool offers it, otherwise 2:3 portrait (1024x1536); keep faces and key action inside the central 85% of the width. Never render landscape or square, and never pad, upscale or stretch an image into a vertical frame.
+
+HOW TO DELIVER
+1. Generate each image in the style below. Vertical 9:16, at least 1080x1920 (if the native render is smaller, say so in your reply). No text of any kind in the images: no letters, no Chinese characters, no calligraphy, no seal stamps, no signature, no watermark, no speech bubbles, no UI text.
+2. Upload to Google Drive folder "Idiom-Ink-images" (https://drive.google.com/drive/folders/15czEGROIuVWytFksZepM2S8y62_h4Ybp), into the subfolder that already exists, named exactly: EP14_2026-10-20 (https://drive.google.com/drive/folders/1Zcn8z20BFB0Me6dBLsWs719pzYupoimr)
+3. File names exactly: EP14_I1.png, EP14_I2.png, EP14_I3.png, EP14_I4.png, EP14_I5.png, EP14_I6.png, EP14_I7.png, EP14_I8.png, EP14_I9.png
+4. Reply in this email thread with subject: [IDIOM-IMAGES] EP14 · 2026-10-20
+   Body: the Drive subfolder link, the list of file names, the native render size, and any image you could not make or had to change (with the reason).
+
+STYLE (the series look; keep it identical in all 9 images)
+"Ink-wash manhua": a Chinese manhua comic panel painted like a traditional ink-wash (shuimo) storybook. Bold, confident black ink outlines; flat muted washes of ochre, rust red, slate blue and moss green; warm aged rice-paper texture showing through; soft grey ink washes for the background; calm, uncluttered backgrounds that still fill the whole frame. Faces are expressive and a little exaggerated, like a comic (smug grins, wide shocked eyes, sweat drops) but never grotesque. Slightly humorous, family-friendly. One full-bleed panel per image: no panel borders, no frames, no split panels.
+Match the look of the earlier Idiom Ink episodes (EP10 画蛇添足) exactly.
+
+COMPOSITION RULES (the video is viewed on phones with TikTok buttons on top)
+- The illustration runs to all four edges. Put the main subject in the middle 60% of the height; the top 15% and bottom 25% still contain the scene (wall, sky, ground), just with less detail, because captions go there. Keep key action out of the right-hand 15% (TikTok buttons).
+- Characters large and readable at thumbnail size; faces clearly visible unless said otherwise.
+- Only the people listed for each image. Correct hands (5 fingers), no extra limbs, no duplicate people.
+
+STORY CONTEXT (so the images make sense)
+Ancient China, a misty mountain forest. A hungry tiger catches a fox. The clever fox says: 'You can't eat me! Heaven made me king of all animals. Don't believe me? Walk behind me and watch them run.' So the fox walks proudly in front and the tiger follows right behind. Every animal that sees them runs for its life. The tiger is amazed and lets the fox go, never realising the animals were running from the tiger, not the fox.
+
+CONTINUITY (keep these exactly the same in every image they appear in)
+- THE FOX: slim red fox, orange-red fur, white chest, black-tipped ears and legs, big bushy tail with a white tip, narrow sly amber eyes, very expressive smug face. A real animal on four legs (no clothes) in the forest scenes.
+- THE TIGER: huge tiger, orange fur with bold black stripes, white face markings, big paws, round expressive eyes (comic, never scary or bloody). A real animal on four legs (no clothes) in the forest scenes.
+- OTHER ANIMALS (only in I1 and I6): a deer, a rabbit, a wild boar and a monkey, painted in the same style.
+- SETTING: a misty mountain forest in ink-wash style: tall pines, mossy rocks, ferns, a winding dirt forest path.
+
+SCENES
+
+EP14_I1 — The twist (used as the hook, first frame of the video)
+The fox walks proudly along the forest path toward the viewer, chin up, tail high, smug half-closed eyes. Right behind him, the huge tiger follows, looking around in wonder. In the background, a deer, a rabbit, a wild boar and a monkey flee in panic into the trees. Both the fox's and the tiger's faces clear. This is the most important image; the editor will push in on it.
+
+EP14_I2 — Caught!
+The tiger has pinned the fox to the ground under one huge paw, mouth open, licking his lips (no blood, comic). The fox's eyes are wide with shock, sweat drops flying.
+
+EP14_I3 — 'I'm the king!'
+Still under the tiger's paw, the fox suddenly puts on a proud, bossy face and points one front paw at the tiger's nose, as if scolding him. The tiger blinks, confused.
+
+EP14_I4 — 'Walk behind me'
+The tiger has lifted his paw and sits back, scratching his chin doubtfully. The fox stands, dusting himself off, and waves a paw grandly toward the forest path, inviting the tiger to follow.
+
+EP14_I5 — The parade
+Side view on the forest path: the fox struts in front with his tail held high like a flag; the huge tiger walks right behind him, curious. (Only the fox and the tiger.)
+
+EP14_I6 — Everyone runs
+Wide shot: in a forest clearing, a deer, a rabbit, a wild boar and a monkey see the fox and the tiger coming and run away in panic, dust flying, eyes wide. The fox and the tiger are small in the background on the path.
+
+EP14_I7 — The tiger is amazed
+Close-ish shot: the tiger stares after the fleeing animals with his jaw dropped, totally amazed. In front of him, the fox looks back over his shoulder at the viewer with a sly wink and a tiny smile.
+
+EP14_I8 — The path (background for the big title)
+The empty forest path from a low angle: in the lower half of the frame, two sets of footprints in the dirt, small fox prints next to huge tiger paw prints. The upper half is calm, misty pine forest with soft grey ink washes and almost nothing in it (we place the big title there). No animals.
+
+EP14_I9 — Today's version (same style, modern setting)
+An office: the same FOX, now standing on two legs in a slim orange suit, points bossily at two nervous office workers (plain modern clothes) at their desks. Right behind the fox, the same huge TIGER in a dark suit and tie stands looking down at his phone, not even paying attention. No text, no logos, no screens with writing.
+
+THANK YOU. Any question: reply in this thread with subject starting [IDIOM-QUESTION] EP14.

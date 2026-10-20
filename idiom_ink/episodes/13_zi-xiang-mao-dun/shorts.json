@@ -1,0 +1,253 @@
+{
+ "out": "ep13_zi-xiang-mao-dun.mp4",
+ "idiom": "自相矛盾",
+ "pinyin": [
+  [
+   "zì",
+   4
+  ],
+  [
+   "xiāng",
+   1
+  ],
+  [
+   "máo",
+   2
+  ],
+  [
+   "dùn",
+   4
+  ]
+ ],
+ "gloss": [
+  [
+   "自",
+   "self"
+  ],
+  [
+   "相",
+   "each other"
+  ],
+  [
+   "矛",
+   "spear"
+  ],
+  [
+   "盾",
+   "shield"
+  ]
+ ],
+ "cover_text": "Best spear. Best shield.\\NOne question…",
+ "beats": [
+  {
+   "id": "B01",
+   "img": "EP13_I1.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "hook": "One question…\\Nand NO answer.",
+   "lines": [
+    {
+     "id": "B01_N",
+     "voice": "N",
+     "text": "One simple question, and he had no answer."
+    }
+   ]
+  },
+  {
+   "id": "B02",
+   "img": "EP13_I2.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B02_N",
+     "voice": "N",
+     "text": "A man at the market sold shields and spears.",
+     "hl": [
+      "shields",
+      "spears."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B03",
+   "img": "EP13_I3.png",
+   "move": "pan_right",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B03_N",
+     "voice": "N",
+     "text": "This shield? Nothing can break it!",
+     "hl": [
+      "Nothing"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B04",
+   "img": "EP13_I4.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B04_N",
+     "voice": "N",
+     "text": "And this spear? It breaks through anything!",
+     "hl": [
+      "anything!"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B05",
+   "img": "EP13_I5.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B05_N",
+     "voice": "N",
+     "text": "The crowd was impressed.",
+     "hl": [
+      "impressed."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B06",
+   "img": "EP13_I6.png",
+   "move": "pan_left",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B06_N",
+     "voice": "N",
+     "text": "Then an old man asked one question.",
+     "hl": [
+      "one",
+      "question."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B07",
+   "img": "EP13_I7.png",
+   "move": "punch",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B07_N",
+     "voice": "N",
+     "text": "What if your spear hits your shield?",
+     "hl": [
+      "your",
+      "shield?"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B08",
+   "img": "EP13_I8.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "card": true,
+   "nosplit": true,
+   "lines": [
+    {
+     "id": "B08_M",
+     "voice": "M",
+     "text": "自相矛盾。"
+    },
+    {
+     "id": "B08_N",
+     "voice": "N",
+     "text": "Your own spear against your own shield."
+    }
+   ]
+  },
+  {
+   "id": "B09",
+   "img": "EP13_I8.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "meaning": "= contradicting yourself",
+   "lines": [
+    {
+     "id": "B09_N",
+     "voice": "N",
+     "text": "It means contradicting yourself."
+    }
+   ]
+  },
+  {
+   "id": "B10",
+   "img": "EP13_I9.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B10_N",
+     "voice": "N",
+     "text": "Like saying you're on a diet… over a second dessert.",
+     "hl": [
+      "diet…"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B11",
+   "img": "EP13_I1.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "close": "Ever done that?",
+   "lines": [
+    {
+     "id": "B11_N",
+     "voice": "N",
+     "text": "Ever done that?"
+    }
+   ]
+  }
+ ]
+}

@@ -138,7 +138,8 @@ it) and stop; do not invent another delivery path.
   that list, choose further well-known idioms with a clear story (public-domain classical sources, retold in our
   own words). Never repeat an idiom already done (check `topic_pool.md` and `episodes/`). Record each pick in
   `topic_pool.md`.
-- Each episode folder `episodes/NN_slug/`: `script.md` (as EP10), `shorts.json`, `image_request.txt` (the
-  email as sent). Keep 9 images, ≤ 3 recurring characters with a word-for-word continuity spec.
+- Each episode folder `episodes/NN_slug/`: write `episode.json` (copy `episodes/13_*/episode.json`), then
+  `python3 tools/make_episode.py episodes/NN_slug/episode.json` writes `script.md`, `shorts.json` and
+  `image_request.txt` (send its body after line 3; then put the Gmail thread id in its header). Keep 9 images, ≤ 3 recurring characters with a word-for-word continuity spec.
 - After a few posts, use TikTok analytics the owner shares (or SocialEcho stats if available) per
   `FORMAT_SHORTS.md` §8.

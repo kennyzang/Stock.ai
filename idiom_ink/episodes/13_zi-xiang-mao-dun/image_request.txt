@@ -1,0 +1,68 @@
+Subject: [IDIOM-SCRIPT] EP13 · 2026-10-20
+From/To: kennytseng4@gmail.com   (sent 2026-10-20 00:58 UTC, Gmail thread 1a156ce7a68c4777)
+
+IDIOM INK SHORTS — IMAGE REQUEST
+EPISODE: EP13
+DATE: 2026-10-20
+IDIOM: 自相矛盾 (zì xiāng máo dùn) — "your own spear against your own shield" = contradicting yourself
+SERIES: Idiom Ink | Chinese Idioms (TikTok @kingkingking8888). A 30-second vertical short: still images, cut fast, with narration.
+IMAGES NEEDED: 9 (EP13_I1 ... EP13_I9)
+
+FORMAT (most important; applies to every image)
+Vertical 9:16 aspect ratio, full-frame composition, edge-to-edge illustration that completely fills the canvas: no top or bottom margins, no borders, no letterbox or padding bands, no empty brown or paper-coloured space. Cinematic framing: wide shots unless a scene asks for a close-up. Render natively in portrait: 9:16 (--ar 9:16, at least 1080x1920) if your tool offers it, otherwise 2:3 portrait (1024x1536); keep faces and key action inside the central 85% of the width. Never render landscape or square, and never pad, upscale or stretch an image into a vertical frame.
+
+HOW TO DELIVER
+1. Generate each image in the style below. Vertical 9:16, at least 1080x1920 (if the native render is smaller, say so in your reply). No text of any kind in the images: no letters, no Chinese characters, no calligraphy, no seal stamps, no signature, no watermark, no speech bubbles, no UI text.
+2. Upload to Google Drive folder "Idiom-Ink-images" (https://drive.google.com/drive/folders/15czEGROIuVWytFksZepM2S8y62_h4Ybp), into the subfolder that already exists, named exactly: EP13_2026-10-20 (https://drive.google.com/drive/folders/1Jb9CTfCPdWtLsO3KmPtPaZn6Hw0r8qKw)
+3. File names exactly: EP13_I1.png, EP13_I2.png, EP13_I3.png, EP13_I4.png, EP13_I5.png, EP13_I6.png, EP13_I7.png, EP13_I8.png, EP13_I9.png
+4. Reply in this email thread with subject: [IDIOM-IMAGES] EP13 · 2026-10-20
+   Body: the Drive subfolder link, the list of file names, the native render size, and any image you could not make or had to change (with the reason).
+
+STYLE (the series look; keep it identical in all 9 images)
+"Ink-wash manhua": a Chinese manhua comic panel painted like a traditional ink-wash (shuimo) storybook. Bold, confident black ink outlines; flat muted washes of ochre, rust red, slate blue and moss green; warm aged rice-paper texture showing through; soft grey ink washes for the background; calm, uncluttered backgrounds that still fill the whole frame. Faces are expressive and a little exaggerated, like a comic (smug grins, wide shocked eyes, sweat drops) but never grotesque. Slightly humorous, family-friendly. One full-bleed panel per image: no panel borders, no frames, no split panels.
+Match the look of the earlier Idiom Ink episodes (EP10 画蛇添足) exactly.
+
+COMPOSITION RULES (the video is viewed on phones with TikTok buttons on top)
+- The illustration runs to all four edges. Put the main subject in the middle 60% of the height; the top 15% and bottom 25% still contain the scene (wall, sky, ground), just with less detail, because captions go there. Keep key action out of the right-hand 15% (TikTok buttons).
+- Characters large and readable at thumbnail size; faces clearly visible unless said otherwise.
+- Only the people listed for each image. Correct hands (5 fingers), no extra limbs, no duplicate people.
+
+STORY CONTEXT (so the images make sense)
+Ancient China, state of Chu, about 2,300 years ago. In a busy market, a loud seller shows off his goods. He holds up a huge shield: 'My shield is so strong that nothing can pierce it!' Then he holds up a spear: 'My spear is so sharp that it pierces anything!' The crowd is impressed, until an old man asks: 'So what happens if your spear hits your shield?' The seller freezes, holding the spear in one hand and the shield in the other, and has no answer.
+
+CONTINUITY (keep these exactly the same in every image they appear in)
+- WANG, the seller: loud, chubby man about 40, round red face, big grin, thin black mustache, black hair in a bun tied with a yellow cloth, ochre-yellow robe with rolled-up sleeves, brown apron.
+- THE OLD MAN: thin old man about 70, long white beard, bald on top with white hair at the sides, slate-blue robe, wooden walking stick.
+- THE SHIELD AND THE SPEAR: one huge round wooden shield painted dark red with a round bronze boss in the middle (no symbols, no writing); one long spear with a shiny bronze tip and a red tassel. His stall: a wooden table with more spears and shields leaning on it (no signs, no writing).
+- SETTING: a busy ancient town market: packed-earth street, wooden stalls with plain cloth awnings (no signs, no writing), soft daylight.
+
+SCENES
+
+EP13_I1 — The twist (used as the hook, first frame of the video)
+Medium shot, both faces clear. Wang stands frozen at his stall, the spear in one hand and the shield in the other, eyes wide, sweat drops flying, mouth open with no words. In front of him the Old Man leans on his stick and points calmly from the spear to the shield, one eyebrow raised. This is the most important image; the editor will push in on it.
+
+EP13_I2 — The seller
+Wide shot of the busy market. Wang stands behind his wooden stall full of spears and shields, one hand cupped at his mouth, shouting to the street with a huge grin. (Only Wang in the foreground; a few small, blurred shoppers far in the background are fine.)
+
+EP13_I3 — The unbreakable shield
+Wang holds the huge red shield up high in front of him and knocks on it proudly with his fist, chest puffed out, very pleased with himself. (Only Wang.)
+
+EP13_I4 — The unstoppable spear
+Wang thrusts the spear up dramatically, the bronze tip gleaming with a little sparkle, a confident, dramatic pose like a hero. (Only Wang.)
+
+EP13_I5 — The crowd is impressed
+A small crowd of three or four shoppers in plain robes gathers in front of the stall, nodding and gasping, impressed. Wang beams at them, holding the spear and shield. The Old Man stands at the back of the crowd, stroking his beard thoughtfully.
+
+EP13_I6 — One question
+The Old Man steps forward from the crowd and raises one finger, calm and polite, with a small sly smile. Wang leans toward him, still grinning, expecting a customer.
+
+EP13_I7 — Spear meets shield
+Close-up, comic: the Old Man gently taps the tip of Wang's spear against the middle of Wang's own shield with his walking stick, looking up at Wang with raised eyebrows. Wang's face goes pale and stiff, a single sweat drop rolling down.
+
+EP13_I8 — The spear and shield (background for the big title)
+The red shield lying flat on the packed-earth ground in the lower half of the frame, with the spear lying across it. The upper half is a calm, plain sky-and-awning background with soft grey ink washes and almost nothing in it (we place the big title there). No people.
+
+EP13_I9 — Today's version (same style, modern setting)
+The same WANG (round red face, thin mustache, hair bun with a yellow cloth) in a modern ochre hoodie sits at a café table proudly holding up a green salad bowl in one hand, while his other hand holds a fork stuck in a huge slice of chocolate cake. Beside him the same OLD MAN (long white beard, bald on top) in a slate-blue cardigan raises one eyebrow. No text, no logos, no menus with writing.
+
+THANK YOU. Any question: reply in this thread with subject starting [IDIOM-QUESTION] EP13.
