@@ -54,7 +54,8 @@
      "voice": "N",
      "text": "He paid for a treasure, and gave the treasure back."
     }
-   ]
+   ],
+   "hook_y": 1250
   },
   {
    "id": "B02",
@@ -204,7 +205,7 @@
     0.5,
     0.7
    ],
-   "meaning": "= choosing the wrapping over the treasure",
+   "meaning": "= loving the box, not the pearl",
    "lines": [
     {
      "id": "B09_N",

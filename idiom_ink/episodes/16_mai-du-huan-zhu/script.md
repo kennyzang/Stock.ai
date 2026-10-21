@@ -24,7 +24,7 @@
 | 6 | I6 He pays | captions | "He paid the full price." |
 | 7 | I7 'Just the box, thanks!' | captions | "Then he handed back the pearl. Just the box, thanks!" |
 | 8 | I8 | **idiom card** 买椟还珠 + mǎi dú huán zhū + 买 buy · 椟 box · 还 return · 珠 pearl | ZH: "买椟还珠。" then "Buy the box, give back the pearl." |
-| 9 | I8 (push-in) | meaning line **= choosing the wrapping over the treasure** | "It means caring about the wrapping, not what's inside." |
+| 9 | I8 (push-in) | meaning line **= loving the box, not the pearl** | "It means caring about the wrapping, not what's inside." |
 | 10 | I9 modern | captions | "Like keeping the fancy box… and throwing out the gift." |
 | 11 | I9 → cut to I1 | end line **Ever done that?** | "Ever done that?" |
 
