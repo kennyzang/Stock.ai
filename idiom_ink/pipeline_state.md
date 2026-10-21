@@ -2,7 +2,7 @@
 
 | EP | Idiom | Image request sent (UTC) | Gmail thread | Drive folder | Images | Redo rounds | Voices + ASR | Built + QC | Handed to publication | Scheduled / live |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 16 | 买椟还珠 | 2026-10-21 00:57 | 1a15bf41ca37f59d | EP16_2026-10-21 (1CNumd59Ru6pfl8uMBdHlD8b_weg_08HX) | accepted 03:10 (ChatGPT 9/9, 1024×1536) | 0 | Jennifer, all pass ASR | ✅ 31.3 s, −15.1 LUFS, 8.7 MB (releases/EP16) | Publication 2026-10-21 14:52 | waiting for reply (slot after EP15, music 东方既白) |
+| 16 | 买椟还珠 | 2026-10-21 00:57 | 1a15bf41ca37f59d | EP16_2026-10-21 (1CNumd59Ru6pfl8uMBdHlD8b_weg_08HX) | accepted 03:10 (ChatGPT 9/9, 1024×1536) | 0 | Jennifer, all pass ASR | ✅ 31.3 s, −15.1 LUFS, 8.7 MB (releases/EP16) | Publication 2026-10-21 14:52 (sha256 OK) | queued: ~2026-10-22 13:20–15:20 UTC (music 东方既白) |
 | 15 | 拔苗助长 | 2026-10-21 00:57 | 1a15bf3d4c4eb236 | EP15_2026-10-21 (1YYKaMUlDXn2hY5j4vm8IAntx2b8HmgT2) | accepted 03:10 (ChatGPT 9/9, 1024×1536) | 0 | Jennifer, all pass ASR | ✅ 31.7 s, −14.6 LUFS, 8.9 MB (releases/EP15) | Publication 2026-10-21 03:20 (sha256 OK) | queued: ~2026-10-22 02:21 UTC (music 星漢倦歌) |
 | 14 | 狐假虎威 | 2026-10-20 00:58 | 1a156cec048eb2ad | EP14_2026-10-20 (1Zcn8z20BFB0Me6dBLsWs719pzYupoimr) | accepted 03:30 (ChatGPT 9/9 after its own in-place replacement at 02:01) | 0 | Jennifer, all pass ASR | ✅ 32.2 s, −14.6 LUFS, 9.0 MB (releases/EP14) | Publication 2026-10-20 15:37 (sha256 OK) | ✅ live 2026-10-21 14:40 UTC: https://www.tiktok.com/@kingkingking8888/video/7699130963963514164 |
 | 13 | 自相矛盾 | 2026-10-20 00:58 | 1a156ce7a68c4777 | EP13_2026-10-20 (1Jb9CTfCPdWtLsO3KmPtPaZn6Hw0r8qKw) | accepted 03:30 (ChatGPT 9/9, 1024×1536) | 0 | Jennifer, all pass ASR | ✅ 28.6 s, −14.1 LUFS, 8.1 MB (releases/EP13) | Publication 2026-10-20 04:06 (sha256 OK) | ✅ live 2026-10-21 02:57 UTC: https://www.tiktok.com/@kingkingking8888/video/7698949848325786900 |
@@ -73,3 +73,4 @@
 - 2026-10-21 03:20: EP13 live (record 559014, 253 points). EP15/EP16 images accepted (no redo), built, QC'd (hooks at y=1250; EP16 meaning shortened). EP15 handed to Publication; EP16 held until EP14 is live.
 - 2026-10-21 14:52: EP14 live (record 561055, 248 points). EP16 handed to Publication.
 
+- Publication: send EP17 after EP15 is live.
