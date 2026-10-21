@@ -1,0 +1,254 @@
+{
+ "out": "ep16_mai-du-huan-zhu.mp4",
+ "idiom": "买椟还珠",
+ "pinyin": [
+  [
+   "mǎi",
+   3
+  ],
+  [
+   "dú",
+   2
+  ],
+  [
+   "huán",
+   2
+  ],
+  [
+   "zhū",
+   1
+  ]
+ ],
+ "gloss": [
+  [
+   "买",
+   "buy"
+  ],
+  [
+   "椟",
+   "box"
+  ],
+  [
+   "还",
+   "return"
+  ],
+  [
+   "珠",
+   "pearl"
+  ]
+ ],
+ "cover_text": "He bought the box…\\Nand gave back the PEARL.",
+ "beats": [
+  {
+   "id": "B01",
+   "img": "EP16_I1.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "hook": "He bought the box…\\Nand gave back the PEARL.",
+   "lines": [
+    {
+     "id": "B01_N",
+     "voice": "N",
+     "text": "He paid for a treasure, and gave the treasure back."
+    }
+   ]
+  },
+  {
+   "id": "B02",
+   "img": "EP16_I2.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B02_N",
+     "voice": "N",
+     "text": "A jeweller had one perfect pearl.",
+     "hl": [
+      "perfect",
+      "pearl."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B03",
+   "img": "EP16_I3.png",
+   "move": "pan_right",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B03_N",
+     "voice": "N",
+     "text": "To sell it, he made a beautiful box.",
+     "hl": [
+      "beautiful",
+      "box."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B04",
+   "img": "EP16_I4.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B04_N",
+     "voice": "N",
+     "text": "Carved wood, jade, even perfume.",
+     "hl": [
+      "perfume."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B05",
+   "img": "EP16_I5.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B05_N",
+     "voice": "N",
+     "text": "A buyer fell in love at first sight.",
+     "hl": [
+      "love"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B06",
+   "img": "EP16_I6.png",
+   "move": "pan_left",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B06_N",
+     "voice": "N",
+     "text": "He paid the full price.",
+     "hl": [
+      "full",
+      "price."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B07",
+   "img": "EP16_I7.png",
+   "move": "punch",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B07_N",
+     "voice": "N",
+     "text": "Then he handed back the pearl. Just the box, thanks!",
+     "hl": [
+      "pearl."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B08",
+   "img": "EP16_I8.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "card": true,
+   "nosplit": true,
+   "lines": [
+    {
+     "id": "B08_M",
+     "voice": "M",
+     "text": "买椟还珠。"
+    },
+    {
+     "id": "B08_N",
+     "voice": "N",
+     "text": "Buy the box, give back the pearl."
+    }
+   ]
+  },
+  {
+   "id": "B09",
+   "img": "EP16_I8.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "meaning": "= choosing the wrapping over the treasure",
+   "lines": [
+    {
+     "id": "B09_N",
+     "voice": "N",
+     "text": "It means caring about the wrapping, not what's inside."
+    }
+   ]
+  },
+  {
+   "id": "B10",
+   "img": "EP16_I9.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B10_N",
+     "voice": "N",
+     "text": "Like keeping the fancy box… and throwing out the gift.",
+     "hl": [
+      "fancy",
+      "box…"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B11",
+   "img": "EP16_I1.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "close": "Ever done that?",
+   "lines": [
+    {
+     "id": "B11_N",
+     "voice": "N",
+     "text": "Ever done that?"
+    }
+   ]
+  }
+ ]
+}

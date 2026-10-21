@@ -1,0 +1,256 @@
+{
+ "out": "ep15_ba-miao-zhu-zhang.mp4",
+ "idiom": "拔苗助长",
+ "pinyin": [
+  [
+   "bá",
+   2
+  ],
+  [
+   "miáo",
+   2
+  ],
+  [
+   "zhù",
+   4
+  ],
+  [
+   "zhǎng",
+   3
+  ]
+ ],
+ "gloss": [
+  [
+   "拔",
+   "pull"
+  ],
+  [
+   "苗",
+   "sprouts"
+  ],
+  [
+   "助",
+   "help"
+  ],
+  [
+   "长",
+   "grow"
+  ]
+ ],
+ "cover_text": "He helped them grow…\\Nand killed them all.",
+ "beats": [
+  {
+   "id": "B01",
+   "img": "EP15_I1.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "hook": "He helped them grow…\\Nand killed them ALL.",
+   "lines": [
+    {
+     "id": "B01_N",
+     "voice": "N",
+     "text": "He helped every plant grow, and killed them all."
+    }
+   ]
+  },
+  {
+   "id": "B02",
+   "img": "EP15_I2.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B02_N",
+     "voice": "N",
+     "text": "A farmer thought his rice grew way too slowly.",
+     "hl": [
+      "way",
+      "too",
+      "slowly."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B03",
+   "img": "EP15_I3.png",
+   "move": "pan_right",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B03_N",
+     "voice": "N",
+     "text": "Then he had an idea.",
+     "hl": [
+      "idea."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B04",
+   "img": "EP15_I4.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B04_N",
+     "voice": "N",
+     "text": "He pulled every seedling up, just a little.",
+     "hl": [
+      "just",
+      "a",
+      "little."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B05",
+   "img": "EP15_I5.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B05_N",
+     "voice": "N",
+     "text": "Exhausted but proud: I helped them grow!",
+     "hl": [
+      "helped"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B06",
+   "img": "EP15_I6.png",
+   "move": "pan_left",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B06_N",
+     "voice": "N",
+     "text": "His son ran out to see.",
+     "hl": [
+      "see."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B07",
+   "img": "EP15_I7.png",
+   "move": "punch",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B07_N",
+     "voice": "N",
+     "text": "Every single plant had dried up.",
+     "hl": [
+      "dried",
+      "up."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B08",
+   "img": "EP15_I8.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "card": true,
+   "nosplit": true,
+   "lines": [
+    {
+     "id": "B08_M",
+     "voice": "M",
+     "text": "拔苗助长。"
+    },
+    {
+     "id": "B08_N",
+     "voice": "N",
+     "text": "Pull up the sprouts to help them grow."
+    }
+   ]
+  },
+  {
+   "id": "B09",
+   "img": "EP15_I8.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "meaning": "= ruining it by rushing it",
+   "lines": [
+    {
+     "id": "B09_N",
+     "voice": "N",
+     "text": "It means ruining something by rushing it."
+    }
+   ]
+  },
+  {
+   "id": "B10",
+   "img": "EP15_I9.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B10_N",
+     "voice": "N",
+     "text": "Like pushing a kid into ten classes a day.",
+     "hl": [
+      "ten",
+      "classes"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B11",
+   "img": "EP15_I1.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "close": "Ever done that?",
+   "lines": [
+    {
+     "id": "B11_N",
+     "voice": "N",
+     "text": "Ever done that?"
+    }
+   ]
+  }
+ ]
+}

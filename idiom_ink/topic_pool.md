@@ -28,5 +28,7 @@ Ones marked ★☆☆ have no story in the book, so they would need a different 
 | 12 | 刻舟求剑 kè zhōu qiú jiàn | 吕氏春秋·察今 | images requested 2026-10-19 |
 | 13 | 自相矛盾 zì xiāng máo dùn | 韩非子·难一 | images requested 2026-10-20 |
 | 14 | 狐假虎威 hú jiǎ hǔ wēi | 战国策·楚策一 | images requested 2026-10-20 |
-Next up from §7: 拔苗助长, 买椟还珠, 南辕北辙, 叶公好龙, 杞人忧天, 滥竽充数, 邯郸学步, 削足适履, 指鹿为马.
+| 15 | 拔苗助长 bá miáo zhù zhǎng | 孟子·公孙丑上 | images requested 2026-10-21 |
+| 16 | 买椟还珠 mǎi dú huán zhū | 韩非子·外储说左上 | images requested 2026-10-21 |
+Next up from §7: 南辕北辙, 叶公好龙, 杞人忧天, 滥竽充数, 邯郸学步, 削足适履, 指鹿为马.
 

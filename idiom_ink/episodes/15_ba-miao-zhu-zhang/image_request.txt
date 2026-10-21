@@ -1,0 +1,68 @@
+Subject: [IDIOM-SCRIPT] EP15 · 2026-10-21
+From/To: kennytseng4@gmail.com   (sent 2026-10-21 00:57 UTC, Gmail thread 1a15bf3d4c4eb236)
+
+IDIOM INK SHORTS — IMAGE REQUEST
+EPISODE: EP15
+DATE: 2026-10-21
+IDIOM: 拔苗助长 (bá miáo zhù zhǎng) — "pull up the sprouts to help them grow" = ruining something by rushing it
+SERIES: Idiom Ink | Chinese Idioms (TikTok @kingkingking8888). A 30-second vertical short: still images, cut fast, with narration.
+IMAGES NEEDED: 9 (EP15_I1 ... EP15_I9)
+
+FORMAT (most important; applies to every image)
+Vertical 9:16 aspect ratio, full-frame composition, edge-to-edge illustration that completely fills the canvas: no top or bottom margins, no borders, no letterbox or padding bands, no empty brown or paper-coloured space. Cinematic framing: wide shots unless a scene asks for a close-up. Render natively in portrait: 9:16 (--ar 9:16, at least 1080x1920) if your tool offers it, otherwise 2:3 portrait (1024x1536); keep faces and key action inside the central 85% of the width. Never render landscape or square, and never pad, upscale or stretch an image into a vertical frame.
+
+HOW TO DELIVER
+1. Generate each image in the style below. Vertical 9:16, at least 1080x1920 (if the native render is smaller, say so in your reply). No text of any kind in the images: no letters, no Chinese characters, no calligraphy, no seal stamps, no signature, no watermark, no speech bubbles, no UI text.
+2. Upload to Google Drive folder "Idiom-Ink-images" (https://drive.google.com/drive/folders/15czEGROIuVWytFksZepM2S8y62_h4Ybp), into the subfolder that already exists, named exactly: EP15_2026-10-21 (https://drive.google.com/drive/folders/1YYKaMUlDXn2hY5j4vm8IAntx2b8HmgT2)
+3. File names exactly: EP15_I1.png, EP15_I2.png, EP15_I3.png, EP15_I4.png, EP15_I5.png, EP15_I6.png, EP15_I7.png, EP15_I8.png, EP15_I9.png
+4. Reply in this email thread with subject: [IDIOM-IMAGES] EP15 · 2026-10-21
+   Body: the Drive subfolder link, the list of file names, the native render size, and any image you could not make or had to change (with the reason).
+
+STYLE (the series look; keep it identical in all 9 images)
+"Ink-wash manhua": a Chinese manhua comic panel painted like a traditional ink-wash (shuimo) storybook. Bold, confident black ink outlines; flat muted washes of ochre, rust red, slate blue and moss green; warm aged rice-paper texture showing through; soft grey ink washes for the background; calm, uncluttered backgrounds that still fill the whole frame. Faces are expressive and a little exaggerated, like a comic (smug grins, wide shocked eyes, sweat drops) but never grotesque. Slightly humorous, family-friendly. One full-bleed panel per image: no panel borders, no frames, no split panels.
+Match the look of the earlier Idiom Ink episodes (EP10 画蛇添足) exactly.
+
+COMPOSITION RULES (the video is viewed on phones with TikTok buttons on top)
+- The illustration runs to all four edges. Put the main subject in the middle 60% of the height; the top 15% and bottom 25% still contain the scene (wall, sky, ground), just with less detail, because captions go there. Keep key action out of the right-hand 15% (TikTok buttons).
+- Characters large and readable at thumbnail size; faces clearly visible unless said otherwise.
+- Only the people listed for each image. Correct hands (5 fingers), no extra limbs, no duplicate people.
+
+STORY CONTEXT (so the images make sense)
+Ancient China, state of Song, about 2,300 years ago. An impatient farmer thinks his young rice plants are growing far too slowly. One day he has an idea: he wades into his field and pulls every single seedling up a little, so they look taller. He comes home exhausted but proud and tells his son: 'I helped the plants grow today!' His son runs out to the field and finds every plant wilted and dried up, because their roots were torn loose.
+
+CONTINUITY (keep these exactly the same in every image they appear in)
+- THE FARMER: lean man about 45, sunburnt face, thin goatee, impatient frown, wide conical straw hat, patched moss-green tunic, rolled-up brown trousers, muddy bare feet.
+- THE SON (only in I5, I6, I7 and, in modern clothes, I9): boy about 12, round face, black hair in two small buns, short ochre tunic, bare feet.
+- THE FIELD: one small rice paddy with neat rows of young bright-green rice seedlings standing in shallow water, mud ridges between the rows, a small thatched farmhouse at the edge.
+- SETTING: green countryside with soft grey ink-wash hills in the distance, early morning light.
+
+SCENES
+
+EP15_I1 — The twist (used as the hook, first frame of the video)
+Medium shot, both faces clear. The farmer stands in his field among rows of rice seedlings that are all wilted, yellow and drooping. He stares at them, jaw dropped, hat slipping off. Next to him his son holds up one limp seedling with a broken root, looking at his father in disbelief. This is the most important image; the editor will push in on it.
+
+EP15_I2 — Too slow!
+The farmer crouches at the edge of his paddy with his arms crossed, glaring at the short green seedlings, tapping one muddy foot impatiently, a frown and a little grumpy cloud of steam above his head. (Only the farmer.)
+
+EP15_I3 — An idea
+The farmer suddenly jumps up with a huge, excited grin, one finger raised, eyes shining: he has had a 'brilliant' idea. Behind him, the short seedlings in the paddy. (Only the farmer.)
+
+EP15_I4 — Pulling them up
+Wide shot: the farmer, knee-deep in the paddy, bends over and pulls a seedling up a little with both hands; behind him, a long row of seedlings now stands taller and wobbly, their pale roots showing above the water. Sweat drops fly. (Only the farmer.)
+
+EP15_I5 — Proud
+Evening at the thatched farmhouse door: the farmer slumps, exhausted, muddy to the knees, but grins proudly and points back toward the field. His son looks up at him curiously.
+
+EP15_I6 — The son runs
+The son runs barefoot along a mud ridge toward the field, worried, his hair buns bouncing. In the distance the field already looks pale and droopy.
+
+EP15_I7 — All dried up
+Close-ish shot: the son kneels at the edge of the paddy, shocked, looking at row after row of wilted, yellow, dead seedlings lying flat on the water. Big shocked eyes, hands on his cheeks.
+
+EP15_I8 — The dead seedlings (background for the big title)
+Low close-up of the paddy water: a few limp, yellowed seedlings with their pale roots pulled out of the mud lie in the lower half of the frame. The upper half is calm, plain misty sky with soft grey ink washes and almost nothing in it (we place the big title there). No people.
+
+EP15_I9 — Today's version (same style, modern setting)
+A small modern living room: the same FARMER (sunburnt face, thin goatee) as a modern dad in a moss-green sweater stacks a tall, wobbly pile of plain books (no titles, no writing) onto a desk in front of the same SON (round face, two hair buns) in a modern ochre T-shirt, who slumps over the desk, exhausted, with dark circles under his eyes. A clock-shaped wall decoration with no numbers. No text, no screens.
+
+THANK YOU. Any question: reply in this thread with subject starting [IDIOM-QUESTION] EP15.

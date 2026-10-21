@@ -1,0 +1,68 @@
+Subject: [IDIOM-SCRIPT] EP16 · 2026-10-21
+From/To: kennytseng4@gmail.com   (sent 2026-10-21 00:57 UTC, Gmail thread 1a15bf41ca37f59d)
+
+IDIOM INK SHORTS — IMAGE REQUEST
+EPISODE: EP16
+DATE: 2026-10-21
+IDIOM: 买椟还珠 (mǎi dú huán zhū) — "buy the box and give back the pearl" = caring about the wrapping and missing what really matters
+SERIES: Idiom Ink | Chinese Idioms (TikTok @kingkingking8888). A 30-second vertical short: still images, cut fast, with narration.
+IMAGES NEEDED: 9 (EP16_I1 ... EP16_I9)
+
+FORMAT (most important; applies to every image)
+Vertical 9:16 aspect ratio, full-frame composition, edge-to-edge illustration that completely fills the canvas: no top or bottom margins, no borders, no letterbox or padding bands, no empty brown or paper-coloured space. Cinematic framing: wide shots unless a scene asks for a close-up. Render natively in portrait: 9:16 (--ar 9:16, at least 1080x1920) if your tool offers it, otherwise 2:3 portrait (1024x1536); keep faces and key action inside the central 85% of the width. Never render landscape or square, and never pad, upscale or stretch an image into a vertical frame.
+
+HOW TO DELIVER
+1. Generate each image in the style below. Vertical 9:16, at least 1080x1920 (if the native render is smaller, say so in your reply). No text of any kind in the images: no letters, no Chinese characters, no calligraphy, no seal stamps, no signature, no watermark, no speech bubbles, no UI text.
+2. Upload to Google Drive folder "Idiom-Ink-images" (https://drive.google.com/drive/folders/15czEGROIuVWytFksZepM2S8y62_h4Ybp), into the subfolder that already exists, named exactly: EP16_2026-10-21 (https://drive.google.com/drive/folders/1CNumd59Ru6pfl8uMBdHlD8b_weg_08HX)
+3. File names exactly: EP16_I1.png, EP16_I2.png, EP16_I3.png, EP16_I4.png, EP16_I5.png, EP16_I6.png, EP16_I7.png, EP16_I8.png, EP16_I9.png
+4. Reply in this email thread with subject: [IDIOM-IMAGES] EP16 · 2026-10-21
+   Body: the Drive subfolder link, the list of file names, the native render size, and any image you could not make or had to change (with the reason).
+
+STYLE (the series look; keep it identical in all 9 images)
+"Ink-wash manhua": a Chinese manhua comic panel painted like a traditional ink-wash (shuimo) storybook. Bold, confident black ink outlines; flat muted washes of ochre, rust red, slate blue and moss green; warm aged rice-paper texture showing through; soft grey ink washes for the background; calm, uncluttered backgrounds that still fill the whole frame. Faces are expressive and a little exaggerated, like a comic (smug grins, wide shocked eyes, sweat drops) but never grotesque. Slightly humorous, family-friendly. One full-bleed panel per image: no panel borders, no frames, no split panels.
+Match the look of the earlier Idiom Ink episodes (EP10 画蛇添足) exactly.
+
+COMPOSITION RULES (the video is viewed on phones with TikTok buttons on top)
+- The illustration runs to all four edges. Put the main subject in the middle 60% of the height; the top 15% and bottom 25% still contain the scene (wall, sky, ground), just with less detail, because captions go there. Keep key action out of the right-hand 15% (TikTok buttons).
+- Characters large and readable at thumbnail size; faces clearly visible unless said otherwise.
+- Only the people listed for each image. Correct hands (5 fingers), no extra limbs, no duplicate people.
+
+STORY CONTEXT (so the images make sense)
+Ancient China, about 2,300 years ago. A jeweller from Chu has one perfect pearl. To sell it, he makes a gorgeous box for it: carved fragrant wood, green jade inlays, a golden clasp, even perfume. At the market a rich young buyer from Zheng falls in love with the box, pays the full price, opens it, takes the pearl out and hands the pearl back: he only wanted the box. The jeweller is left standing there, holding his pearl.
+
+CONTINUITY (keep these exactly the same in every image they appear in)
+- THE JEWELLER: slim man about 50, neat grey topknot, long thin grey mustache, kind tired eyes, deep slate-blue robe with a dark sash.
+- THE BUYER: young man about 25, round cheerful face, big sparkling eyes, wide smile, flamboyant rust-red silk robe with gold trim, a little jade hairpin in his topknot.
+- THE BOX AND THE PEARL: one small square box of dark red carved wood with flowers and birds carved on it, green jade inlays and a small golden clasp (no characters, no writing); one large, perfectly round, shining white pearl.
+- SETTING: the jeweller's simple wooden workshop, and a busy ancient market street with plain cloth awnings (no signs, no writing).
+
+SCENES
+
+EP16_I1 — The twist (used as the hook, first frame of the video)
+Medium shot, both faces clear. At the market stall, the buyer happily hugs the beautiful carved box to his chest with one arm, eyes closed in delight, while with his other hand he drops the shining pearl back into the jeweller's open palm. The jeweller stares at the pearl, jaw dropped, totally stunned. This is the most important image; the editor will push in on it.
+
+EP16_I2 — One perfect pearl
+Close-ish shot: in his workshop, the jeweller holds up the large shining white pearl between two fingers, admiring it, the pearl glowing softly. (Only the jeweller.)
+
+EP16_I3 — The beautiful box
+The jeweller bends over his workbench carving the small wooden box with a tiny chisel, setting green jade pieces into it, wood shavings around him, concentrating hard. (Only the jeweller.)
+
+EP16_I4 — Perfect packaging
+The finished box sits open on a silk cloth on the workbench, the pearl resting inside, golden clasp shining, a little curl of perfume smoke rising. The jeweller looks at it, very proud. (Only the jeweller.)
+
+EP16_I5 — Love at first sight
+At the market stall: the buyer leans in close to the box on the counter, eyes huge and sparkling, hands clasped together, completely in love with it. The jeweller stands behind the counter smiling.
+
+EP16_I6 — He pays
+The buyer pours a big handful of round bronze coins (plain, no characters) onto the counter, grinning. The jeweller's eyes go wide with happiness.
+
+EP16_I7 — 'Just the box, thanks!'
+The buyer has opened the box and holds the pearl out between two fingers back to the jeweller with a friendly, cheerful smile, the box tucked under his other arm. The jeweller looks confused.
+
+EP16_I8 — The pearl (background for the big title)
+The shining white pearl lying alone on the plain wooden stall counter in the lower half of the frame. The upper half is a calm, plain market background with soft grey ink washes and almost nothing in it (we place the big title there). No people.
+
+EP16_I9 — Today's version (same style, modern setting)
+A modern living room: the same BUYER (round cheerful face, jade hairpin in his topknot) in a modern rust-red hoodie proudly hugs a big shiny empty gift box with a fancy ribbon, while the small actual gift lies forgotten in the waste bin beside him. The same JEWELLER (grey topknot, thin grey mustache) in a slate-blue cardigan facepalms. No text, no logos, no brand names.
+
+THANK YOU. Any question: reply in this thread with subject starting [IDIOM-QUESTION] EP16.
