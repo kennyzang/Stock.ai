@@ -44,7 +44,7 @@
    "img": "EP18_I1.png",
    "move": "push_in",
    "focus": [
-    0.5,
+    0.6,
     0.48
    ],
    "hook": "He LOVED dragons…\\Nuntil he met one.",
@@ -158,9 +158,9 @@
   {
    "id": "B07",
    "img": "EP18_I7.png",
-   "move": "punch",
+   "move": "push_in",
    "focus": [
-    0.5,
+    0.58,
     0.5
    ],
    "lines": [
@@ -238,7 +238,7 @@
    "img": "EP18_I1.png",
    "move": "pull_out",
    "focus": [
-    0.5,
+    0.6,
     0.48
    ],
    "close": "Ever done that?",
@@ -248,7 +248,8 @@
      "voice": "N",
      "text": "Ever done that?"
     }
-   ]
+   ],
+   "close_y": 1300
   }
  ]
 }

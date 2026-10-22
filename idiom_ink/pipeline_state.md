@@ -2,7 +2,7 @@
 
 | EP | Idiom | Image request sent (UTC) | Gmail thread | Drive folder | Images | Redo rounds | Voices + ASR | Built + QC | Handed to publication | Scheduled / live |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 18 | 叶公好龙 | 2026-10-22 00:58 | 1a1611aaa6f55bf8 | EP18_2026-10-22 (1rSbi_qziH1w750DXX7bdy903L1-LMUAz) | delivered ~02:00 (ChatGPT 9/9), QC pending | 0 | – | – | – | – |
+| 18 | 叶公好龙 | 2026-10-22 00:58 | 1a1611aaa6f55bf8 | EP18_2026-10-22 (1rSbi_qziH1w750DXX7bdy903L1-LMUAz) | accepted 02:40 (ChatGPT 9/9, 1024×1536) | 0 | Jennifer, all pass ASR | ✅ 31.3 s, −14.3 LUFS, 8.8 MB (releases/EP18) | held until EP16 is live | – |
 | 17 | 南辕北辙 | 2026-10-22 00:58 | 1a1611a655a97b94 | EP17_2026-10-22 (1e9t8YakM7g6rMIhjfo7C6FTLGjLPnAF4) | accepted 02:32 (ChatGPT 9/9, 1024×1536) | 0 | Jennifer, all pass ASR | ✅ 32.8 s, −15.6 LUFS, 9.1 MB (releases/EP17) | Publication 2026-10-22 02:40 | queued: 11–13 h after EP16 (music 星漢倦歌) |
 | 16 | 买椟还珠 | 2026-10-21 00:57 | 1a15bf41ca37f59d | EP16_2026-10-21 (1CNumd59Ru6pfl8uMBdHlD8b_weg_08HX) | accepted 03:10 (ChatGPT 9/9, 1024×1536) | 0 | Jennifer, all pass ASR | ✅ 31.3 s, −15.1 LUFS, 8.7 MB (releases/EP16) | Publication 2026-10-21 14:52 (sha256 OK) | queued: ~2026-10-22 13:20–15:20 UTC (music 东方既白) |
 | 15 | 拔苗助长 | 2026-10-21 00:57 | 1a15bf3d4c4eb236 | EP15_2026-10-21 (1YYKaMUlDXn2hY5j4vm8IAntx2b8HmgT2) | accepted 03:10 (ChatGPT 9/9, 1024×1536) | 0 | Jennifer, all pass ASR | ✅ 31.7 s, −14.6 LUFS, 8.9 MB (releases/EP15) | Publication 2026-10-21 03:20 (sha256 OK) | ✅ LIVE 2026-10-22 02:25 UTC, record 561399, https://www.tiktok.com/@kingkingking8888/video/7699312522607856917 |
@@ -80,3 +80,4 @@
 
 - 2026-10-22 01:05: pre-check: EP17 B09 shortened (~37 s est.), EP18 B02 reworded ('This lord…'; ASR can't hear 'Ye' at line start). All lines pass.
 - 2026-10-22 02:40: EP15 live (record 561399, 243 points); EP16 timed ~13:34 UTC. EP17 images accepted (no redo), built, QC'd (hook_y 210, above the hat), handed to Publication. EP18 held until EP16 is live.
+- 2026-10-22 02:45: EP18 images accepted (no redo), built, QC'd (I1/I7 focus 0.6 so the dragon stays in frame, I7 punch→push_in, close_y 1300). Released; hand-off after EP16 is live (~13:34 UTC).
