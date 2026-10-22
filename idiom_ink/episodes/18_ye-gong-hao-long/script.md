@@ -17,7 +17,7 @@
 | # | Image | On screen | VO (EN unless marked) |
 |---|---|---|---|
 | 1 | I1 The twist (used as the hook, first frame of the video) | Hook text: **He LOVED dragons… / until he met one.** | "He loved dragons more than anything, until he met one." |
-| 2 | I2 Dragon fan | captions | "Lord Ye was crazy about dragons." |
+| 2 | I2 Dragon fan | captions | "This lord was crazy about dragons." |
 | 3 | I3 Dragons everywhere | captions | "Dragons on his walls, his cups, his clothes." |
 | 4 | I4 'I love dragons!' | captions | "He told everyone: I love dragons!" |
 | 5 | I5 The real dragon hears | captions | "A real dragon heard, and came to visit." |

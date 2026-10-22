@@ -24,7 +24,7 @@
 | 6 | I6 'Best driver!' | captions | "And my driver is the best!" |
 | 7 | I7 Farther and farther | captions | "So the faster he went, the farther he got." |
 | 8 | I8 | **idiom card** 南辕北辙 + nán yuán běi zhé + 南 south · 辕 shafts · 北 north · 辙 tracks | ZH: "南辕北辙。" then "The cart points south, the tracks go north." |
-| 9 | I8 (push-in) | meaning line **= going the wrong way, fast** | "It means your actions take you away from your goal." |
+| 9 | I8 (push-in) | meaning line **= going the wrong way, fast** | "It means working hard in the wrong direction." |
 | 10 | I9 modern | captions | "Like saving money by buying everything on sale." |
 | 11 | I9 → cut to I1 | end line **Ever done that?** | "Ever done that?" |
 

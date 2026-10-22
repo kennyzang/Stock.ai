@@ -78,3 +78,4 @@
 - Publication: send EP17 after EP15 is live.
 - 2026-10-22 00:58 (scripts run): EP17 南辕北辙 and EP18 叶公好龙 written and requested. Credits: CompShare 56.41 CNY, SocialEcho 248 points.
 
+- 2026-10-22 01:05: pre-check: EP17 B09 shortened (~37 s est.), EP18 B02 reworded ('This lord…'; ASR can't hear 'Ye' at line start). All lines pass.
