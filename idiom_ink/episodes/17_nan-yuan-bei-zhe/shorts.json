@@ -1,0 +1,252 @@
+{
+ "out": "ep17_nan-yuan-bei-zhe.mp4",
+ "idiom": "南辕北辙",
+ "pinyin": [
+  [
+   "nán",
+   2
+  ],
+  [
+   "yuán",
+   2
+  ],
+  [
+   "běi",
+   3
+  ],
+  [
+   "zhé",
+   2
+  ]
+ ],
+ "gloss": [
+  [
+   "南",
+   "south"
+  ],
+  [
+   "辕",
+   "shafts"
+  ],
+  [
+   "北",
+   "north"
+  ],
+  [
+   "辙",
+   "tracks"
+  ]
+ ],
+ "cover_text": "Best horse. Best driver.\\NWrong WAY.",
+ "beats": [
+  {
+   "id": "B01",
+   "img": "EP17_I1.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "hook": "Best horse. Best driver.\\NWrong WAY.",
+   "lines": [
+    {
+     "id": "B01_N",
+     "voice": "N",
+     "text": "Best horse, best driver, totally wrong direction."
+    }
+   ]
+  },
+  {
+   "id": "B02",
+   "img": "EP17_I2.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B02_N",
+     "voice": "N",
+     "text": "A rich man was racing to the kingdom of Chu.",
+     "hl": [
+      "Chu."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B03",
+   "img": "EP17_I3.png",
+   "move": "pan_right",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B03_N",
+     "voice": "N",
+     "text": "A friend stopped him: Chu is south! You're going north!",
+     "hl": [
+      "south!",
+      "north!"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B04",
+   "img": "EP17_I4.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B04_N",
+     "voice": "N",
+     "text": "No problem! My horse is fast!",
+     "hl": [
+      "fast!"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B05",
+   "img": "EP17_I5.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B05_N",
+     "voice": "N",
+     "text": "I have plenty of money!",
+     "hl": [
+      "money!"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B06",
+   "img": "EP17_I6.png",
+   "move": "pan_left",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B06_N",
+     "voice": "N",
+     "text": "And my driver is the best!",
+     "hl": [
+      "best!"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B07",
+   "img": "EP17_I7.png",
+   "move": "punch",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B07_N",
+     "voice": "N",
+     "text": "So the faster he went, the farther he got.",
+     "hl": [
+      "farther"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B08",
+   "img": "EP17_I8.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "card": true,
+   "nosplit": true,
+   "lines": [
+    {
+     "id": "B08_M",
+     "voice": "M",
+     "text": "南辕北辙。"
+    },
+    {
+     "id": "B08_N",
+     "voice": "N",
+     "text": "The cart points south, the tracks go north."
+    }
+   ]
+  },
+  {
+   "id": "B09",
+   "img": "EP17_I8.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "meaning": "= going the wrong way, fast",
+   "lines": [
+    {
+     "id": "B09_N",
+     "voice": "N",
+     "text": "It means your actions take you away from your goal."
+    }
+   ]
+  },
+  {
+   "id": "B10",
+   "img": "EP17_I9.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B10_N",
+     "voice": "N",
+     "text": "Like saving money by buying everything on sale.",
+     "hl": [
+      "on",
+      "sale."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B11",
+   "img": "EP17_I1.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "close": "Ever done that?",
+   "lines": [
+    {
+     "id": "B11_N",
+     "voice": "N",
+     "text": "Ever done that?"
+    }
+   ]
+  }
+ ]
+}

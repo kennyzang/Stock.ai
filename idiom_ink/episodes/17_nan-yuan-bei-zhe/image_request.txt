@@ -1,0 +1,68 @@
+Subject: [IDIOM-SCRIPT] EP17 · 2026-10-22
+From/To: kennytseng4@gmail.com   (sent 2026-10-22 00:58 UTC, Gmail thread 1a1611a655a97b94)
+
+IDIOM INK SHORTS — IMAGE REQUEST
+EPISODE: EP17
+DATE: 2026-10-22
+IDIOM: 南辕北辙 (nán yuán běi zhé) — "the cart points south, its tracks go north" = doing things that take you further from your goal
+SERIES: Idiom Ink | Chinese Idioms (TikTok @kingkingking8888). A 30-second vertical short: still images, cut fast, with narration.
+IMAGES NEEDED: 9 (EP17_I1 ... EP17_I9)
+
+FORMAT (most important; applies to every image)
+Vertical 9:16 aspect ratio, full-frame composition, edge-to-edge illustration that completely fills the canvas: no top or bottom margins, no borders, no letterbox or padding bands, no empty brown or paper-coloured space. Cinematic framing: wide shots unless a scene asks for a close-up. Render natively in portrait: 9:16 (--ar 9:16, at least 1080x1920) if your tool offers it, otherwise 2:3 portrait (1024x1536); keep faces and key action inside the central 85% of the width. Never render landscape or square, and never pad, upscale or stretch an image into a vertical frame.
+
+HOW TO DELIVER
+1. Generate each image in the style below. Vertical 9:16, at least 1080x1920 (if the native render is smaller, say so in your reply). No text of any kind in the images: no letters, no Chinese characters, no calligraphy, no seal stamps, no signature, no watermark, no speech bubbles, no UI text.
+2. Upload to Google Drive folder "Idiom-Ink-images" (https://drive.google.com/drive/folders/15czEGROIuVWytFksZepM2S8y62_h4Ybp), into the subfolder that already exists, named exactly: EP17_2026-10-22 (https://drive.google.com/drive/folders/1e9t8YakM7g6rMIhjfo7C6FTLGjLPnAF4)
+3. File names exactly: EP17_I1.png, EP17_I2.png, EP17_I3.png, EP17_I4.png, EP17_I5.png, EP17_I6.png, EP17_I7.png, EP17_I8.png, EP17_I9.png
+4. Reply in this email thread with subject: [IDIOM-IMAGES] EP17 · 2026-10-22
+   Body: the Drive subfolder link, the list of file names, the native render size, and any image you could not make or had to change (with the reason).
+
+STYLE (the series look; keep it identical in all 9 images)
+"Ink-wash manhua": a Chinese manhua comic panel painted like a traditional ink-wash (shuimo) storybook. Bold, confident black ink outlines; flat muted washes of ochre, rust red, slate blue and moss green; warm aged rice-paper texture showing through; soft grey ink washes for the background; calm, uncluttered backgrounds that still fill the whole frame. Faces are expressive and a little exaggerated, like a comic (smug grins, wide shocked eyes, sweat drops) but never grotesque. Slightly humorous, family-friendly. One full-bleed panel per image: no panel borders, no frames, no split panels.
+Match the look of the earlier Idiom Ink episodes (EP10 画蛇添足) exactly.
+
+COMPOSITION RULES (the video is viewed on phones with TikTok buttons on top)
+- The illustration runs to all four edges. Put the main subject in the middle 60% of the height; the top 15% and bottom 25% still contain the scene (wall, sky, ground), just with less detail, because captions go there. Keep key action out of the right-hand 15% (TikTok buttons).
+- Characters large and readable at thumbnail size; faces clearly visible unless said otherwise.
+- Only the people listed for each image. Correct hands (5 fingers), no extra limbs, no duplicate people.
+
+STORY CONTEXT (so the images make sense)
+Ancient China, about 2,300 years ago. A rich man is racing in his chariot to the kingdom of Chu, which lies to the south, but his chariot is heading north. His wise friend Ji Liang stops him: 'Chu is south! Why are you going north?' The rich man laughs: 'My horse is very fast! I have plenty of money! My driver is the best!' Ji Liang sighs: the better all those things are, the farther he will end up from Chu.
+
+CONTINUITY (keep these exactly the same in every image they appear in)
+- THE RICH MAN: plump, very confident man about 45, bushy black beard, tall black official hat, purple silk robe with gold trim, a big green jade ring, a huge grin.
+- JI LIANG, the friend: thin, wise man about 50, short grey beard, calm worried eyes, plain grey-green robe, bamboo walking stick.
+- THE CHARIOT: one two-wheeled wooden chariot pulled by one big, powerful white horse, driven by a young muscular driver (red headband, brown short jacket). The driver is always a small figure.
+- SETTING: a long straight dusty road across flat open country with soft grey ink-wash mountains on the horizon; a plain wooden road post shaped like an arrow (no writing).
+
+SCENES
+
+EP17_I1 — The twist (used as the hook, first frame of the video)
+On the dusty road: the white horse gallops away to the RIGHT pulling the chariot at full speed, dust flying, the rich man waving back happily with a huge grin. In the foreground a plain wooden arrow-shaped road post clearly points the OPPOSITE way, to the LEFT. Ji Liang stands beside the post with one hand on his head in disbelief. Both faces clear. This is the most important image; the editor will push in on it.
+
+EP17_I2 — Racing
+The rich man stands proudly in his chariot as the big white horse gallops, cape and beard blowing in the wind, pointing forward like a hero. The young driver holds the reins. Dust cloud behind.
+
+EP17_I3 — 'Chu is south!'
+Ji Liang has stepped onto the road with his walking stick raised, stopping the chariot. He points back over his shoulder in the other direction. The horse rears slightly; the rich man leans over the side of the chariot, curious.
+
+EP17_I4 — 'My horse is fast!'
+The rich man proudly pats the neck of his big powerful white horse, which tosses its mane, looking very fast and strong. Ji Liang looks on, unimpressed.
+
+EP17_I5 — 'I've got money!'
+The rich man shakes open a heavy cloth purse spilling round bronze coins (plain, no characters), grinning widely. Ji Liang raises an eyebrow.
+
+EP17_I6 — 'Best driver!'
+The rich man throws an arm around his young muscular driver, who flexes one arm proudly. Ji Liang facepalms in the background.
+
+EP17_I7 — Farther and farther
+Wide shot from above: the chariot speeds north along the endless straight road, getting smaller and smaller, a long dust trail behind. Tiny Ji Liang stands far behind, looking the other way, toward the south.
+
+EP17_I8 — The tracks (background for the big title)
+Low close-up of the dusty road: two long wheel tracks and hoof prints running away into the distance in the lower half of the frame. The upper half is calm, plain sky with soft grey ink washes and almost nothing in it (we place the big title there). No people.
+
+EP17_I9 — Today's version (same style, modern setting)
+A modern street: the same RICH MAN (bushy black beard, big grin, jade ring) in a purple modern jacket carries a dozen shopping bags (plain, no logos) and proudly holds up an empty piggy bank. Beside him the same JI LIANG (short grey beard) in a grey-green cardigan facepalms. No text, no signs, no logos.
+
+THANK YOU. Any question: reply in this thread with subject starting [IDIOM-QUESTION] EP17.

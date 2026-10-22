@@ -30,5 +30,7 @@ Ones marked ★☆☆ have no story in the book, so they would need a different 
 | 14 | 狐假虎威 hú jiǎ hǔ wēi | 战国策·楚策一 | images requested 2026-10-20 |
 | 15 | 拔苗助长 bá miáo zhù zhǎng | 孟子·公孙丑上 | images requested 2026-10-21 |
 | 16 | 买椟还珠 mǎi dú huán zhū | 韩非子·外储说左上 | images requested 2026-10-21 |
-Next up from §7: 南辕北辙, 叶公好龙, 杞人忧天, 滥竽充数, 邯郸学步, 削足适履, 指鹿为马.
+| 17 | 南辕北辙 nán yuán běi zhé | 战国策·魏策四 | images requested 2026-10-22 |
+| 18 | 叶公好龙 yè gōng hào lóng | 新序·杂事 | images requested 2026-10-22 |
+Next up from §7: 杞人忧天, 滥竽充数, 邯郸学步, 削足适履, 指鹿为马.
 

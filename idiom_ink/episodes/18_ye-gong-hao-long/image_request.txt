@@ -1,0 +1,68 @@
+Subject: [IDIOM-SCRIPT] EP18 · 2026-10-22
+From/To: kennytseng4@gmail.com   (sent 2026-10-22 00:58 UTC, Gmail thread 1a1611aaa6f55bf8)
+
+IDIOM INK SHORTS — IMAGE REQUEST
+EPISODE: EP18
+DATE: 2026-10-22
+IDIOM: 叶公好龙 (yè gōng hào lóng) — "Lord Ye loves dragons" = claiming to love something you are actually afraid of
+SERIES: Idiom Ink | Chinese Idioms (TikTok @kingkingking8888). A 30-second vertical short: still images, cut fast, with narration.
+IMAGES NEEDED: 9 (EP18_I1 ... EP18_I9)
+
+FORMAT (most important; applies to every image)
+Vertical 9:16 aspect ratio, full-frame composition, edge-to-edge illustration that completely fills the canvas: no top or bottom margins, no borders, no letterbox or padding bands, no empty brown or paper-coloured space. Cinematic framing: wide shots unless a scene asks for a close-up. Render natively in portrait: 9:16 (--ar 9:16, at least 1080x1920) if your tool offers it, otherwise 2:3 portrait (1024x1536); keep faces and key action inside the central 85% of the width. Never render landscape or square, and never pad, upscale or stretch an image into a vertical frame.
+
+HOW TO DELIVER
+1. Generate each image in the style below. Vertical 9:16, at least 1080x1920 (if the native render is smaller, say so in your reply). No text of any kind in the images: no letters, no Chinese characters, no calligraphy, no seal stamps, no signature, no watermark, no speech bubbles, no UI text.
+2. Upload to Google Drive folder "Idiom-Ink-images" (https://drive.google.com/drive/folders/15czEGROIuVWytFksZepM2S8y62_h4Ybp), into the subfolder that already exists, named exactly: EP18_2026-10-22 (https://drive.google.com/drive/folders/1rSbi_qziH1w750DXX7bdy903L1-LMUAz)
+3. File names exactly: EP18_I1.png, EP18_I2.png, EP18_I3.png, EP18_I4.png, EP18_I5.png, EP18_I6.png, EP18_I7.png, EP18_I8.png, EP18_I9.png
+4. Reply in this email thread with subject: [IDIOM-IMAGES] EP18 · 2026-10-22
+   Body: the Drive subfolder link, the list of file names, the native render size, and any image you could not make or had to change (with the reason).
+
+STYLE (the series look; keep it identical in all 9 images)
+"Ink-wash manhua": a Chinese manhua comic panel painted like a traditional ink-wash (shuimo) storybook. Bold, confident black ink outlines; flat muted washes of ochre, rust red, slate blue and moss green; warm aged rice-paper texture showing through; soft grey ink washes for the background; calm, uncluttered backgrounds that still fill the whole frame. Faces are expressive and a little exaggerated, like a comic (smug grins, wide shocked eyes, sweat drops) but never grotesque. Slightly humorous, family-friendly. One full-bleed panel per image: no panel borders, no frames, no split panels.
+Match the look of the earlier Idiom Ink episodes (EP10 画蛇添足) exactly.
+
+COMPOSITION RULES (the video is viewed on phones with TikTok buttons on top)
+- The illustration runs to all four edges. Put the main subject in the middle 60% of the height; the top 15% and bottom 25% still contain the scene (wall, sky, ground), just with less detail, because captions go there. Keep key action out of the right-hand 15% (TikTok buttons).
+- Characters large and readable at thumbnail size; faces clearly visible unless said otherwise.
+- Only the people listed for each image. Correct hands (5 fingers), no extra limbs, no duplicate people.
+
+STORY CONTEXT (so the images make sense)
+Ancient China. Lord Ye loves dragons more than anything: dragons carved on his pillars, painted on his walls, embroidered on his clothes, even on his cups. He tells everyone how much he loves dragons. A real dragon in the sky hears about this, is very touched, and flies down to visit him. It happily pokes its head through Lord Ye's window to say hello. Lord Ye screams in terror and runs away. He never loved real dragons, only the idea of them.
+
+CONTINUITY (keep these exactly the same in every image they appear in)
+- LORD YE: chubby noble about 40, round face, thin curled mustache, tall black hat, rich green robe embroidered with little dragon patterns (pictures only, no characters).
+- THE DRAGON: a long, friendly Chinese dragon with jade-green scales, a golden mane and whiskers, big round curious eyes and a gentle, happy, shy smile. Never scary, never angry, no fire.
+- LORD YE'S HOUSE: a grand wooden hall with red pillars carved with dragons, dragon paintings on the walls, a round wooden lattice window, a courtyard outside.
+- SETTING: ancient China, soft daylight; the sky with soft grey ink-wash clouds.
+
+SCENES
+
+EP18_I1 — The twist (used as the hook, first frame of the video)
+Inside Lord Ye's hall full of carved and painted dragons: the friendly real dragon pokes its big head through the round window with a happy, hopeful smile. Lord Ye leaps backwards in terror, hat flying off, mouth wide open screaming, arms flailing. Both faces clear. This is the most important image; the editor will push in on it.
+
+EP18_I2 — Dragon fan
+Lord Ye stands in his hall hugging a small carved wooden dragon statue, eyes closed in bliss, surrounded by dragon carvings on the pillars. (Only Lord Ye.)
+
+EP18_I3 — Dragons everywhere
+Wide shot of Lord Ye's hall: dragons carved on every pillar, painted on the walls and screens, dragon patterns on his robe; Lord Ye sips from a cup with a dragon painted on it, very pleased. (Only Lord Ye.)
+
+EP18_I4 — 'I love dragons!'
+Lord Ye stands in his courtyard with arms spread wide, shouting happily to the sky, chest puffed out, clearly boasting. (Only Lord Ye.)
+
+EP18_I5 — The real dragon hears
+Up in the clouds, the friendly jade-green dragon hears him, its eyes sparkling, a big touched smile, a tiny happy tear. It starts to fly down. (Only the dragon.)
+
+EP18_I6 — Knock knock
+Outside the house: the dragon curls its long body around the roof and gently pokes its head toward the round lattice window, shy and excited, like a fan meeting its hero. (Only the dragon.)
+
+EP18_I7 — Run!
+Lord Ye runs out of the back of his hall in total panic, robe flying, one shoe falling off, hat gone, arms in the air. Behind him through the doorway the dragon looks confused and sad.
+
+EP18_I8 — The window (background for the big title)
+The round wooden lattice window from inside, now empty, with a single golden dragon whisker lying on the windowsill in the lower half of the frame. The upper half is a calm, plain wall with soft grey ink washes and almost nothing on it (we place the big title there). No people, no dragon.
+
+EP18_I9 — Today's version (same style, modern setting)
+A modern apartment: the same LORD YE (round face, curled mustache) in a green hoodie printed with simple tree pictures (no text), standing among nature posters (pictures only, no text), leaps onto a chair screaming at one tiny spider on the floor. No other people. No text, no logos.
+
+THANK YOU. Any question: reply in this thread with subject starting [IDIOM-QUESTION] EP18.

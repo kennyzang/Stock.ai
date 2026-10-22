@@ -1,0 +1,254 @@
+{
+ "out": "ep18_ye-gong-hao-long.mp4",
+ "idiom": "叶公好龙",
+ "pinyin": [
+  [
+   "yè",
+   4
+  ],
+  [
+   "gōng",
+   1
+  ],
+  [
+   "hào",
+   4
+  ],
+  [
+   "lóng",
+   2
+  ]
+ ],
+ "gloss": [
+  [
+   "叶",
+   "Ye"
+  ],
+  [
+   "公",
+   "lord"
+  ],
+  [
+   "好",
+   "love"
+  ],
+  [
+   "龙",
+   "dragon"
+  ]
+ ],
+ "cover_text": "He LOVED dragons…\\Nuntil he met one.",
+ "beats": [
+  {
+   "id": "B01",
+   "img": "EP18_I1.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "hook": "He LOVED dragons…\\Nuntil he met one.",
+   "lines": [
+    {
+     "id": "B01_N",
+     "voice": "N",
+     "text": "He loved dragons more than anything, until he met one."
+    }
+   ]
+  },
+  {
+   "id": "B02",
+   "img": "EP18_I2.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B02_N",
+     "voice": "N",
+     "text": "Lord Ye was crazy about dragons.",
+     "hl": [
+      "crazy"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B03",
+   "img": "EP18_I3.png",
+   "move": "pan_right",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B03_N",
+     "voice": "N",
+     "text": "Dragons on his walls, his cups, his clothes.",
+     "hl": [
+      "walls,",
+      "cups,",
+      "clothes."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B04",
+   "img": "EP18_I4.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B04_N",
+     "voice": "N",
+     "text": "He told everyone: I love dragons!",
+     "hl": [
+      "love",
+      "dragons!"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B05",
+   "img": "EP18_I5.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B05_N",
+     "voice": "N",
+     "text": "A real dragon heard, and came to visit.",
+     "hl": [
+      "real",
+      "dragon"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B06",
+   "img": "EP18_I6.png",
+   "move": "pan_left",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B06_N",
+     "voice": "N",
+     "text": "It poked its head through his window.",
+     "hl": [
+      "window."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B07",
+   "img": "EP18_I7.png",
+   "move": "punch",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B07_N",
+     "voice": "N",
+     "text": "Lord Ye screamed and ran away!",
+     "hl": [
+      "screamed"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B08",
+   "img": "EP18_I8.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "card": true,
+   "nosplit": true,
+   "lines": [
+    {
+     "id": "B08_M",
+     "voice": "M",
+     "text": "叶公好龙。"
+    },
+    {
+     "id": "B08_N",
+     "voice": "N",
+     "text": "Lord Ye loves dragons."
+    }
+   ]
+  },
+  {
+   "id": "B09",
+   "img": "EP18_I8.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "meaning": "= loving the idea, not the real thing",
+   "lines": [
+    {
+     "id": "B09_N",
+     "voice": "N",
+     "text": "It means you only love the idea of something."
+    }
+   ]
+  },
+  {
+   "id": "B10",
+   "img": "EP18_I9.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B10_N",
+     "voice": "N",
+     "text": "Like loving nature… until you see a spider.",
+     "hl": [
+      "spider."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B11",
+   "img": "EP18_I1.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "close": "Ever done that?",
+   "lines": [
+    {
+     "id": "B11_N",
+     "voice": "N",
+     "text": "Ever done that?"
+    }
+   ]
+  }
+ ]
+}
