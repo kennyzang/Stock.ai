@@ -2,8 +2,8 @@
 
 | EP | Idiom | Image request sent (UTC) | Gmail thread | Drive folder | Images | Redo rounds | Voices + ASR | Built + QC | Handed to publication | Scheduled / live |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 20 | 滥竽充数 | 2026-10-23 00:56 | 1a166445981c3ff8 | EP20_2026-10-23 (1KmUg_zzTywbsskAeFNH7GMshDrIoezzM) | waiting for ChatGPT | 0 | Jennifer, all pass ASR (pre-check) | – | – | – |
-| 19 | 杞人忧天 | 2026-10-23 00:56 | 1a16644139dae849 | EP19_2026-10-23 (1EQKPH6Z-LSLY5z-SBFCCFqb5w619gYwf) | waiting for ChatGPT | 0 | Jennifer, all pass ASR (pre-check) | – | – | – |
+| 20 | 滥竽充数 | 2026-10-23 00:56 | 1a166445981c3ff8 | EP20_2026-10-23 (1KmUg_zzTywbsskAeFNH7GMshDrIoezzM) | accepted 03:30 (ChatGPT 9/9, 1024×1536) | 0 | Jennifer, all pass ASR | ✅ 37.0 s, −14.8 LUFS, 9.1 MB (releases/EP20) | held until EP18 is live | – |
+| 19 | 杞人忧天 | 2026-10-23 00:56 | 1a16644139dae849 | EP19_2026-10-23 (1EQKPH6Z-LSLY5z-SBFCCFqb5w619gYwf) | accepted 03:30 (ChatGPT 9/9, 1024×1536) | 0 | Jennifer, all pass ASR | ✅ 33.8 s, −15.4 LUFS, 8.9 MB (releases/EP19) | held until EP17 is live | – |
 | 18 | 叶公好龙 | 2026-10-22 00:58 | 1a1611aaa6f55bf8 | EP18_2026-10-22 (1rSbi_qziH1w750DXX7bdy903L1-LMUAz) | accepted 02:40 (ChatGPT 9/9, 1024×1536) | 0 | Jennifer, all pass ASR | ✅ 31.3 s, −14.3 LUFS, 8.8 MB (releases/EP18) | Publication 2026-10-22 13:50 (sha256 OK) | queued: 11–13 h after EP17 (music 东方既白) |
 | 17 | 南辕北辙 | 2026-10-22 00:58 | 1a1611a655a97b94 | EP17_2026-10-22 (1e9t8YakM7g6rMIhjfo7C6FTLGjLPnAF4) | accepted 02:32 (ChatGPT 9/9, 1024×1536) | 0 | Jennifer, all pass ASR | ✅ 32.8 s, −15.6 LUFS, 9.1 MB (releases/EP17) | Publication 2026-10-22 02:40 | queued: 2026-10-23 ~00:49 UTC (music 星漢倦歌) |
 | 16 | 买椟还珠 | 2026-10-21 00:57 | 1a15bf41ca37f59d | EP16_2026-10-21 (1CNumd59Ru6pfl8uMBdHlD8b_weg_08HX) | accepted 03:10 (ChatGPT 9/9, 1024×1536) | 0 | Jennifer, all pass ASR | ✅ 31.3 s, −15.1 LUFS, 8.7 MB (releases/EP16) | Publication 2026-10-21 14:52 (sha256 OK) | ✅ LIVE 2026-10-22 13:36 UTC, record 564573, https://www.tiktok.com/@kingkingking8888/video/7699485452125932821 |
@@ -85,3 +85,4 @@
 - 2026-10-22 02:45: EP18 images accepted (no redo), built, QC'd (I1/I7 focus 0.6 so the dragon stays in frame, I7 punch→push_in, close_y 1300). Released; hand-off after EP16 is live (~13:34 UTC).
 - 2026-10-22 13:50: EP16 live (record 564573, 238 points). EP18 handed to Publication. Send EP19 after EP17 is live.
 - 2026-10-23 00:58 (scripts run): EP19 杞人忧天 and EP20 滥竽充数 written and requested. Pre-check: all lines pass (est. ~34 s / ~37 s). alitts fetch now retries on CDN read errors. Credits: CompShare 54.97 CNY, SocialEcho 232 points.
+- 2026-10-23 03:35: EP19/EP20 images accepted (no redo), built, QC'd (hooks at y=1480 / 1300 to clear faces; EP20 B06 focus on the new king). Builder maxrate now scales with duration (EP20 first came out 10.4 MB). Released; EP19 goes to Publication after EP17 is live, EP20 after EP18.

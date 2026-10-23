@@ -54,7 +54,8 @@
      "voice": "N",
      "text": "He was in the royal band for years. He never played a note."
     }
-   ]
+   ],
+   "hook_y": 1300
   },
   {
    "id": "B02",
@@ -138,7 +139,7 @@
    "img": "EP20_I6.png",
    "move": "pan_left",
    "focus": [
-    0.5,
+    0.6,
     0.5
    ],
    "lines": [

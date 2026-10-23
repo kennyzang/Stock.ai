@@ -321,8 +321,9 @@ def main():
 
     # burn text + mux
     (tmp / "text.ass").write_text(ass(spec, beats, total), encoding="utf-8-sig")
+    vmax = min(2100, int(9.4e6 * 8 / total / 1000) - 220)   # keep the file under ~10 MB even near the 39.5 s cap
     sh(["ffmpeg", "-nostdin", "-y", "-i", "video.mp4", "-i", "audio.wav", "-vf", "subtitles=text.ass",
-        "-map", "0:v", "-map", "1:a", "-c:v", "libx264", "-crf", "20", "-maxrate", "2100k", "-bufsize", "4200k", "-preset", "slow", "-pix_fmt", "yuv420p",
+        "-map", "0:v", "-map", "1:a", "-c:v", "libx264", "-crf", "20", "-maxrate", f"{vmax}k", "-bufsize", f"{2 * vmax}k", "-preset", "slow", "-pix_fmt", "yuv420p",
         "-r", str(FPS), "-c:a", "aac", "-b:a", "192k", "-t", f"{total:.3f}", "-movflags", "+faststart", str(out)], cwd=tmp)
 
     # cover (hook image + idiom + hook text) and a QC frame grid
