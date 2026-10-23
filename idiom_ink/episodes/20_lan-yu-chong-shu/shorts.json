@@ -1,0 +1,251 @@
+{
+ "out": "ep20_lan-yu-chong-shu.mp4",
+ "idiom": "滥竽充数",
+ "pinyin": [
+  [
+   "làn",
+   4
+  ],
+  [
+   "yú",
+   2
+  ],
+  [
+   "chōng",
+   1
+  ],
+  [
+   "shù",
+   4
+  ]
+ ],
+ "gloss": [
+  [
+   "滥",
+   "fake"
+  ],
+  [
+   "竽",
+   "pipes"
+  ],
+  [
+   "充",
+   "fill"
+  ],
+  [
+   "数",
+   "number"
+  ]
+ ],
+ "cover_text": "300 players.\\NOne was FAKE.",
+ "beats": [
+  {
+   "id": "B01",
+   "img": "EP20_I1.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "hook": "300 players.\\NOne was FAKE.",
+   "lines": [
+    {
+     "id": "B01_N",
+     "voice": "N",
+     "text": "He was in the royal band for years. He never played a note."
+    }
+   ]
+  },
+  {
+   "id": "B02",
+   "img": "EP20_I2.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B02_N",
+     "voice": "N",
+     "text": "The king loved one big band: three hundred players at once.",
+     "hl": [
+      "three",
+      "hundred"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B03",
+   "img": "EP20_I3.png",
+   "move": "pan_right",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B03_N",
+     "voice": "N",
+     "text": "This man could not play at all, but he joined anyway.",
+     "hl": [
+      "not"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B04",
+   "img": "EP20_I4.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B04_N",
+     "voice": "N",
+     "text": "He just puffed his cheeks and moved his fingers.",
+     "hl": [
+      "puffed"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B05",
+   "img": "EP20_I5.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B05_N",
+     "voice": "N",
+     "text": "Nobody noticed, and he got paid every day.",
+     "hl": [
+      "paid"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B06",
+   "img": "EP20_I6.png",
+   "move": "pan_left",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B06_N",
+     "voice": "N",
+     "text": "Then a new king came. He liked solos, one by one.",
+     "hl": [
+      "solos,"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B07",
+   "img": "EP20_I7.png",
+   "move": "punch",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B07_N",
+     "voice": "N",
+     "text": "That night, the faker ran away!",
+     "hl": [
+      "ran"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B08",
+   "img": "EP20_I8.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "card": true,
+   "nosplit": true,
+   "lines": [
+    {
+     "id": "B08_M",
+     "voice": "M",
+     "text": "滥竽充数。"
+    },
+    {
+     "id": "B08_N",
+     "voice": "N",
+     "text": "A fake player just fills a seat."
+    }
+   ]
+  },
+  {
+   "id": "B09",
+   "img": "EP20_I8.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "meaning": "= faking it among experts",
+   "lines": [
+    {
+     "id": "B09_N",
+     "voice": "N",
+     "text": "It means faking it in a group of experts."
+    }
+   ]
+  },
+  {
+   "id": "B10",
+   "img": "EP20_I9.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B10_N",
+     "voice": "N",
+     "text": "Like nodding in a meeting with no idea what is going on.",
+     "hl": [
+      "nodding"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B11",
+   "img": "EP20_I1.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "close": "Ever done that?",
+   "lines": [
+    {
+     "id": "B11_N",
+     "voice": "N",
+     "text": "Ever done that?"
+    }
+   ]
+  }
+ ]
+}

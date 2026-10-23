@@ -1,0 +1,252 @@
+{
+ "out": "ep19_qi-ren-you-tian.mp4",
+ "idiom": "杞人忧天",
+ "pinyin": [
+  [
+   "qǐ",
+   3
+  ],
+  [
+   "rén",
+   2
+  ],
+  [
+   "yōu",
+   1
+  ],
+  [
+   "tiān",
+   1
+  ]
+ ],
+ "gloss": [
+  [
+   "杞",
+   "Qi"
+  ],
+  [
+   "人",
+   "man"
+  ],
+  [
+   "忧",
+   "worry"
+  ],
+  [
+   "天",
+   "sky"
+  ]
+ ],
+ "cover_text": "He was scared…\\Nof the SKY.",
+ "beats": [
+  {
+   "id": "B01",
+   "img": "EP19_I1.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "hook": "He was scared…\\Nof the SKY.",
+   "lines": [
+    {
+     "id": "B01_N",
+     "voice": "N",
+     "text": "He was sure the sky would fall on his head."
+    }
+   ]
+  },
+  {
+   "id": "B02",
+   "img": "EP19_I2.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B02_N",
+     "voice": "N",
+     "text": "This man worried all day, every day.",
+     "hl": [
+      "worried"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B03",
+   "img": "EP19_I3.png",
+   "move": "pan_right",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B03_N",
+     "voice": "N",
+     "text": "What if the sky falls? What if the ground breaks?",
+     "hl": [
+      "sky",
+      "ground"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B04",
+   "img": "EP19_I4.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B04_N",
+     "voice": "N",
+     "text": "He could not eat. He could not sleep.",
+     "hl": [
+      "eat.",
+      "sleep."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B05",
+   "img": "EP19_I5.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B05_N",
+     "voice": "N",
+     "text": "His friend said: the sky is just air.",
+     "hl": [
+      "air."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B06",
+   "img": "EP19_I6.png",
+   "move": "pan_left",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B06_N",
+     "voice": "N",
+     "text": "And the ground is solid everywhere. Relax!",
+     "hl": [
+      "solid"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B07",
+   "img": "EP19_I7.png",
+   "move": "punch",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B07_N",
+     "voice": "N",
+     "text": "Finally, he smiled and slept like a baby.",
+     "hl": [
+      "slept"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B08",
+   "img": "EP19_I8.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "card": true,
+   "nosplit": true,
+   "lines": [
+    {
+     "id": "B08_M",
+     "voice": "M",
+     "text": "杞人忧天。"
+    },
+    {
+     "id": "B08_N",
+     "voice": "N",
+     "text": "The man of Qi worries about the sky."
+    }
+   ]
+  },
+  {
+   "id": "B09",
+   "img": "EP19_I8.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "meaning": "= worrying about nothing",
+   "lines": [
+    {
+     "id": "B09_N",
+     "voice": "N",
+     "text": "It means worrying about things that will never happen."
+    }
+   ]
+  },
+  {
+   "id": "B10",
+   "img": "EP19_I9.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B10_N",
+     "voice": "N",
+     "text": "Like losing sleep over a test that is a month away.",
+     "hl": [
+      "month"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B11",
+   "img": "EP19_I1.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "close": "Ever done that?",
+   "lines": [
+    {
+     "id": "B11_N",
+     "voice": "N",
+     "text": "Ever done that?"
+    }
+   ]
+  }
+ ]
+}

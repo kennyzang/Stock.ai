@@ -1,0 +1,68 @@
+Subject: [IDIOM-SCRIPT] EP19 · 2026-10-23
+From/To: kennytseng4@gmail.com   (sent 2026-10-23 00:56 UTC, Gmail thread 1a16644139dae849)
+
+IDIOM INK SHORTS — IMAGE REQUEST
+EPISODE: EP19
+DATE: 2026-10-23
+IDIOM: 杞人忧天 (qǐ rén yōu tiān) — "the man of Qi worries about the sky" = worrying about things that will never happen
+SERIES: Idiom Ink | Chinese Idioms (TikTok @kingkingking8888). A 30-second vertical short: still images, cut fast, with narration.
+IMAGES NEEDED: 9 (EP19_I1 ... EP19_I9)
+
+FORMAT (most important; applies to every image)
+Vertical 9:16 aspect ratio, full-frame composition, edge-to-edge illustration that completely fills the canvas: no top or bottom margins, no borders, no letterbox or padding bands, no empty brown or paper-coloured space. Cinematic framing: wide shots unless a scene asks for a close-up. Render natively in portrait: 9:16 (--ar 9:16, at least 1080x1920) if your tool offers it, otherwise 2:3 portrait (1024x1536); keep faces and key action inside the central 85% of the width. Never render landscape or square, and never pad, upscale or stretch an image into a vertical frame.
+
+HOW TO DELIVER
+1. Generate each image in the style below. Vertical 9:16, at least 1080x1920 (if the native render is smaller, say so in your reply). No text of any kind in the images: no letters, no Chinese characters, no calligraphy, no seal stamps, no signature, no watermark, no speech bubbles, no UI text.
+2. Upload to Google Drive folder "Idiom-Ink-images" (https://drive.google.com/drive/folders/15czEGROIuVWytFksZepM2S8y62_h4Ybp), into the subfolder that already exists, named exactly: EP19_2026-10-23 (https://drive.google.com/drive/folders/1EQKPH6Z-LSLY5z-SBFCCFqb5w619gYwf)
+3. File names exactly: EP19_I1.png, EP19_I2.png, EP19_I3.png, EP19_I4.png, EP19_I5.png, EP19_I6.png, EP19_I7.png, EP19_I8.png, EP19_I9.png
+4. Reply in this email thread with subject: [IDIOM-IMAGES] EP19 · 2026-10-23
+   Body: the Drive subfolder link, the list of file names, the native render size, and any image you could not make or had to change (with the reason).
+
+STYLE (the series look; keep it identical in all 9 images)
+"Ink-wash manhua": a Chinese manhua comic panel painted like a traditional ink-wash (shuimo) storybook. Bold, confident black ink outlines; flat muted washes of ochre, rust red, slate blue and moss green; warm aged rice-paper texture showing through; soft grey ink washes for the background; calm, uncluttered backgrounds that still fill the whole frame. Faces are expressive and a little exaggerated, like a comic (smug grins, wide shocked eyes, sweat drops) but never grotesque. Slightly humorous, family-friendly. One full-bleed panel per image: no panel borders, no frames, no split panels.
+Match the look of the earlier Idiom Ink episodes (EP10 画蛇添足) exactly.
+
+COMPOSITION RULES (the video is viewed on phones with TikTok buttons on top)
+- The illustration runs to all four edges. Put the main subject in the middle 60% of the height; the top 15% and bottom 25% still contain the scene (wall, sky, ground), just with less detail, because captions go there. Keep key action out of the right-hand 15% (TikTok buttons).
+- Characters large and readable at thumbnail size; faces clearly visible unless said otherwise.
+- Only the people listed for each image. Correct hands (5 fingers), no extra limbs, no duplicate people.
+
+STORY CONTEXT (so the images make sense)
+Ancient China, the small state of Qi. A nervous man is sure that one day the sky will fall on his head and the ground will crack open under his feet. He worries so much that he cannot eat or sleep, and even wears a cooking pot on his head as a helmet. His cheerful friend comes to visit and explains: the sky is just air, and the ground is solid everywhere, so nothing is going to fall or break. The man finally relaxes, laughs, and sleeps peacefully.
+
+CONTINUITY (keep these exactly the same in every image they appear in)
+- THE WORRIER: thin, nervous man about 35, messy topknot, big worried eyes with dark circles under them, thin droopy mustache, faded slate-blue robe; in I1 and I3 he wears a round iron cooking pot on his head like a helmet.
+- THE FRIEND: cheerful, stocky man about 40, round smiling face, short black beard, ochre robe, relaxed and calm.
+- THE WORRIER'S HOME: a small village house with a courtyard, a low wooden table, a simple bed under a round window.
+- SETTING: a peaceful ancient village with soft grey ink-wash hills, and a calm, ordinary sky with a few soft clouds.
+
+SCENES
+
+EP19_I1 — The twist (used as the hook, first frame of the video)
+Sunny, peaceful courtyard under a perfectly calm blue sky. The worrier crouches under the low wooden table with an iron cooking pot on his head, clutching an open paper umbrella, staring up at the harmless sky in pure terror, sweat drops flying. His friend stands beside the table looking down at him, puzzled, one eyebrow raised. Both faces clear. This is the most important image; the editor will push in on it.
+
+EP19_I2 — Staring at the sky
+The worrier stands in his courtyard looking straight up at the sky, biting his nails, eyes huge and anxious, shoulders hunched. (Only the worrier.)
+
+EP19_I3 — His nightmare
+His imagined nightmare, painted with swirling ink edges: the sky above the village cracks like a broken porcelain bowl, pieces of blue sky falling, the ground splitting into cracks, and the worrier, small, running in panic with the pot on his head. (Only the worrier.)
+
+EP19_I4 — No food, no sleep
+Night. The worrier sits at the low table in front of a full, untouched bowl of rice, dark circles under his eyes, staring nervously out of the round window at the night sky. (Only the worrier.)
+
+EP19_I5 — 'The sky is just air'
+Daytime in the courtyard: the friend smiles kindly and points up at the sky, explaining with an open hand. The worrier listens nervously, hugging himself.
+
+EP19_I6 — 'The ground is solid'
+The friend cheerfully stamps one foot on the solid ground and spreads his arms. The worrier looks down at the ground in surprise, starting to calm down.
+
+EP19_I7 — Finally asleep
+Night: the worrier sleeps peacefully in his bed under the round window full of calm stars, a big happy smile, the iron pot set aside on the floor. (Only the worrier.)
+
+EP19_I8 — The pot (background for the big title)
+The iron cooking pot lying upside down on the grass of the courtyard in the lower half of the frame. The upper half is a calm, plain sky with soft grey ink washes and almost nothing in it (we place the big title there). No people.
+
+EP19_I9 — Today's version (same style, modern setting)
+A modern bedroom at night: the same WORRIER (thin, droopy mustache, dark circles) in slate-blue pajamas sits wide awake in bed, hugging his knees and sweating, staring at a wall calendar (plain grid, no numbers, no text) with one day circled far away at the bottom. No other people. No text, no logos, no screens.
+
+THANK YOU. Any question: reply in this thread with subject starting [IDIOM-QUESTION] EP19.

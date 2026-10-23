@@ -1,0 +1,68 @@
+Subject: [IDIOM-SCRIPT] EP20 · 2026-10-23
+From/To: kennytseng4@gmail.com   (sent 2026-10-23 00:56 UTC, Gmail thread 1a166445981c3ff8)
+
+IDIOM INK SHORTS — IMAGE REQUEST
+EPISODE: EP20
+DATE: 2026-10-23
+IDIOM: 滥竽充数 (làn yú chōng shù) — "a fake pipe player fills a seat" = faking it among people who really have the skill
+SERIES: Idiom Ink | Chinese Idioms (TikTok @kingkingking8888). A 30-second vertical short: still images, cut fast, with narration.
+IMAGES NEEDED: 9 (EP20_I1 ... EP20_I9)
+
+FORMAT (most important; applies to every image)
+Vertical 9:16 aspect ratio, full-frame composition, edge-to-edge illustration that completely fills the canvas: no top or bottom margins, no borders, no letterbox or padding bands, no empty brown or paper-coloured space. Cinematic framing: wide shots unless a scene asks for a close-up. Render natively in portrait: 9:16 (--ar 9:16, at least 1080x1920) if your tool offers it, otherwise 2:3 portrait (1024x1536); keep faces and key action inside the central 85% of the width. Never render landscape or square, and never pad, upscale or stretch an image into a vertical frame.
+
+HOW TO DELIVER
+1. Generate each image in the style below. Vertical 9:16, at least 1080x1920 (if the native render is smaller, say so in your reply). No text of any kind in the images: no letters, no Chinese characters, no calligraphy, no seal stamps, no signature, no watermark, no speech bubbles, no UI text.
+2. Upload to Google Drive folder "Idiom-Ink-images" (https://drive.google.com/drive/folders/15czEGROIuVWytFksZepM2S8y62_h4Ybp), into the subfolder that already exists, named exactly: EP20_2026-10-23 (https://drive.google.com/drive/folders/1KmUg_zzTywbsskAeFNH7GMshDrIoezzM)
+3. File names exactly: EP20_I1.png, EP20_I2.png, EP20_I3.png, EP20_I4.png, EP20_I5.png, EP20_I6.png, EP20_I7.png, EP20_I8.png, EP20_I9.png
+4. Reply in this email thread with subject: [IDIOM-IMAGES] EP20 · 2026-10-23
+   Body: the Drive subfolder link, the list of file names, the native render size, and any image you could not make or had to change (with the reason).
+
+STYLE (the series look; keep it identical in all 9 images)
+"Ink-wash manhua": a Chinese manhua comic panel painted like a traditional ink-wash (shuimo) storybook. Bold, confident black ink outlines; flat muted washes of ochre, rust red, slate blue and moss green; warm aged rice-paper texture showing through; soft grey ink washes for the background; calm, uncluttered backgrounds that still fill the whole frame. Faces are expressive and a little exaggerated, like a comic (smug grins, wide shocked eyes, sweat drops) but never grotesque. Slightly humorous, family-friendly. One full-bleed panel per image: no panel borders, no frames, no split panels.
+Match the look of the earlier Idiom Ink episodes (EP10 画蛇添足) exactly.
+
+COMPOSITION RULES (the video is viewed on phones with TikTok buttons on top)
+- The illustration runs to all four edges. Put the main subject in the middle 60% of the height; the top 15% and bottom 25% still contain the scene (wall, sky, ground), just with less detail, because captions go there. Keep key action out of the right-hand 15% (TikTok buttons).
+- Characters large and readable at thumbnail size; faces clearly visible unless said otherwise.
+- Only the people listed for each image. Correct hands (5 fingers), no extra limbs, no duplicate people.
+
+STORY CONTEXT (so the images make sense)
+Ancient China, the state of Qi. The old king loves the yu, a bamboo mouth organ, and always has three hundred musicians play it together. A man who cannot play at all joins the band anyway: he just puffs his cheeks and wiggles his fingers, and in such a big band nobody notices. He gets paid like everyone else for years. Then the old king dies, and the new young king prefers solos: each musician must play for him alone, one by one. That night the faker climbs over the palace wall and runs away.
+
+CONTINUITY (keep these exactly the same in every image they appear in)
+- THE FAKER: skinny man about 40, long face, thin pointy goatee, shifty sideways eyes, sly grin, the only musician in a rust-red robe with a black sash and a small black musician's cap.
+- THE YU: a Chinese bamboo mouth organ: a cluster of tall thin bamboo pipes standing in a round wooden base with a short mouthpiece. Every musician holds one.
+- THE KINGS: the OLD KING is grey-bearded and kindly; the NEW KING is young, clean-shaven, with sharp curious eyes. Both wear a golden robe and a flat crown with a beaded fringe.
+- SETTING: a grand palace music hall with red pillars and a polished floor; the other musicians all wear identical slate-blue robes and are simple, smaller background figures.
+
+SCENES
+
+EP20_I1 — The twist (used as the hook, first frame of the video)
+Medium shot in the palace music hall: the faker stands in a row of musicians, cheeks puffed out hugely, holding his yu clearly upside down, eyes darting sideways, sweat drops on his forehead. The musician right next to him (slate-blue robe) has noticed and stares at him, one eyebrow raised. Both faces clear; more musicians blurred behind. This is the most important image; the editor will push in on it.
+
+EP20_I2 — The big band
+Wide shot: the old king sits on his throne smiling blissfully with his eyes closed, listening; in front of him, long rows of musicians in slate-blue robes all play their yu together.
+
+EP20_I3 — He joins
+At the palace gate the faker eagerly joins the end of a line of musicians walking in, grinning, holding his yu awkwardly like a broom. (Other musicians only from behind.)
+
+EP20_I4 — Pretending
+Close-ish shot of the faker in the band: cheeks puffed like a balloon, fingers wiggling over the pipes, eyes squeezed shut as if lost in the music, a little sweat drop. No sound lines needed. (Only the faker in focus.)
+
+EP20_I5 — Payday
+The faker happily holds a heavy cloth purse of round bronze coins (plain, no characters) in each hand, grinning widely, in a palace corridor. (Only the faker.)
+
+EP20_I6 — Solos only
+The new young king sits on the throne, smiling, raising one finger: one at a time. A single musician in a slate-blue robe stands alone in front of him playing. Far behind, at the edge of the hall, the faker peeks from behind a pillar, horrified.
+
+EP20_I7 — The escape
+Night: the faker scrambles over the palace wall with a small bundle on his back, legs kicking, panicked face looking back over his shoulder, moonlight. (Only the faker.)
+
+EP20_I8 — The empty seat (background for the big title)
+A single yu lying on its side on the empty polished floor of the music hall in the lower half of the frame. The upper half is a calm, plain hall wall with soft grey ink washes and almost nothing on it (we place the big title there). No people.
+
+EP20_I9 — Today's version (same style, modern setting)
+A modern meeting room: the same FAKER (long face, pointy goatee, shifty eyes) in a rust-red shirt nods eagerly with a fake confident smile, while two colleagues point at a whiteboard covered only in simple shapes and arrows (no words, no numbers). A few nervous sweat drops show he has no idea. No text, no logos, no screens.
+
+THANK YOU. Any question: reply in this thread with subject starting [IDIOM-QUESTION] EP20.

@@ -32,5 +32,7 @@ Ones marked ★☆☆ have no story in the book, so they would need a different 
 | 16 | 买椟还珠 mǎi dú huán zhū | 韩非子·外储说左上 | images requested 2026-10-21 |
 | 17 | 南辕北辙 nán yuán běi zhé | 战国策·魏策四 | images requested 2026-10-22 |
 | 18 | 叶公好龙 yè gōng hào lóng | 新序·杂事 | images requested 2026-10-22 |
-Next up from §7: 杞人忧天, 滥竽充数, 邯郸学步, 削足适履, 指鹿为马.
+| 19 | 杞人忧天 qǐ rén yōu tiān | 列子·天瑞 | images requested 2026-10-23 |
+| 20 | 滥竽充数 làn yú chōng shù | 韩非子·内储说上 | images requested 2026-10-23 |
+Next up from §7: 邯郸学步, 削足适履, 指鹿为马. Then (added 2026-10-23, all public-domain classics): 守株待兔 (韩非子·五蠹), 井底之蛙 (庄子·秋水), 亡羊补牢 (战国策·楚策四), 朝三暮四 (庄子·齐物论), 三人成虎 (战国策·魏策二), 塞翁失马 (淮南子·人间训), 画龙点睛 (历代名画记).
 

@@ -46,9 +46,16 @@ def post(path, body, tries=4):
     raise RuntimeError(f"DashScope {path} failed: {err}")
 
 
-def fetch(url, dest):
-    with urllib.request.urlopen(url, context=CTX, timeout=180) as resp:
-        Path(dest).write_bytes(resp.read())
+def fetch(url, dest, tries=4):
+    for i in range(tries):
+        try:
+            with urllib.request.urlopen(url, context=CTX, timeout=180) as resp:
+                Path(dest).write_bytes(resp.read())
+            return
+        except Exception:  # IncompleteRead / reset on the audio CDN
+            if i == tries - 1:
+                raise
+            time.sleep(2 ** (i + 1))
 
 
 def tts(text, out, voice="N"):
