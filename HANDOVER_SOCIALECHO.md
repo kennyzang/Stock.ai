@@ -188,3 +188,7 @@ its scheduled-task tools, but a scheduled cloud run has no access to the GPU box
 - Untested: whether `extra.music` is accepted for a normal TikTok `video` post (docs only show it for TikTok Shop).
   Verify on the first post and note the result here.
 - Points: 275 remaining on 2026-10-20 after the music lookups.
+
+
+## 11. Music change (2026-10-23)
+The TikTok music list (SocialEcho /v1/tiktokshop/music/trending) returned 0 tracks from 00:49 UTC. Owner decision: use a different sound source. From EP17 on the publisher mixes an ORIGINAL synthesized D-pentatonic loop (guzheng-like plucks + soft pad, no external samples, no licence issue) under the narration before upload: `idiom_ink/publisher/add_bgm.sh IN.mp4 OUT.mp4` (music ~13 dB under speech, mild ducking, video stream copied unchanged). Publish WITHOUT `extra.music`. The mixed file differs from the producer's release (so its sha256 differs); verify the producer's sha256 on the download BEFORE mixing. If the TikTok list works again the owner may switch back (§10).
