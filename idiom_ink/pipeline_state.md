@@ -86,3 +86,4 @@
 - 2026-10-22 13:50: EP16 live (record 564573, 238 points). EP18 handed to Publication. Send EP19 after EP17 is live.
 - 2026-10-23 00:58 (scripts run): EP19 杞人忧天 and EP20 滥竽充数 written and requested. Pre-check: all lines pass (est. ~34 s / ~37 s). alitts fetch now retries on CDN read errors. Credits: CompShare 54.97 CNY, SocialEcho 232 points.
 - 2026-10-23 03:35: EP19/EP20 images accepted (no redo), built, QC'd (hooks at y=1480 / 1300 to clear faces; EP20 B06 focus on the new king). Builder maxrate now scales with duration (EP20 first came out 10.4 MB). Released; EP19 goes to Publication after EP17 is live, EP20 after EP18.
+- 2026-10-23 03:40: Publication PAUSED: TikTok music list empty since 00:49 UTC, EP17 held (no record). Asked not to send more episodes until it confirms posting is back; keep building. Owner emailed (kennyzang@163.com) for a decision: post without music, or wait.
