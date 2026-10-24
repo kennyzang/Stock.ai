@@ -44,7 +44,7 @@
    "img": "EP22_I1.png",
    "move": "push_in",
    "focus": [
-    0.5,
+    0.4,
     0.48
    ],
    "hook": "He called a deer\\Na HORSE.",
@@ -54,7 +54,8 @@
      "voice": "N",
      "text": "He pointed at a deer and said: what a fine horse!"
     }
-   ]
+   ],
+   "hook_y": 1300
   },
   {
    "id": "B02",
@@ -118,7 +119,7 @@
    "img": "EP22_I5.png",
    "move": "push_in_more",
    "focus": [
-    0.5,
+    0.68,
     0.5
    ],
    "lines": [
@@ -137,7 +138,7 @@
    "img": "EP22_I6.png",
    "move": "pan_left",
    "focus": [
-    0.5,
+    0.6,
     0.5
    ],
    "lines": [
@@ -235,7 +236,7 @@
    "img": "EP22_I1.png",
    "move": "pull_out",
    "focus": [
-    0.5,
+    0.4,
     0.48
    ],
    "close": "Ever seen that?",
