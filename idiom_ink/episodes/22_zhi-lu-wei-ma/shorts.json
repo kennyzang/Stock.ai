@@ -1,0 +1,251 @@
+{
+ "out": "ep22_zhi-lu-wei-ma.mp4",
+ "idiom": "指鹿为马",
+ "pinyin": [
+  [
+   "zhǐ",
+   3
+  ],
+  [
+   "lù",
+   4
+  ],
+  [
+   "wéi",
+   2
+  ],
+  [
+   "mǎ",
+   3
+  ]
+ ],
+ "gloss": [
+  [
+   "指",
+   "point"
+  ],
+  [
+   "鹿",
+   "deer"
+  ],
+  [
+   "为",
+   "as"
+  ],
+  [
+   "马",
+   "horse"
+  ]
+ ],
+ "cover_text": "He called a deer\\Na HORSE.",
+ "beats": [
+  {
+   "id": "B01",
+   "img": "EP22_I1.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "hook": "He called a deer\\Na HORSE.",
+   "lines": [
+    {
+     "id": "B01_N",
+     "voice": "N",
+     "text": "He pointed at a deer and said: what a fine horse!"
+    }
+   ]
+  },
+  {
+   "id": "B02",
+   "img": "EP22_I2.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B02_N",
+     "voice": "N",
+     "text": "This minister was the most powerful man at court.",
+     "hl": [
+      "powerful"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B03",
+   "img": "EP22_I3.png",
+   "move": "pan_right",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B03_N",
+     "voice": "N",
+     "text": "He brought a deer to the young emperor.",
+     "hl": [
+      "deer"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B04",
+   "img": "EP22_I4.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B04_N",
+     "voice": "N",
+     "text": "Your Majesty, here is a fine horse!",
+     "hl": [
+      "horse!"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B05",
+   "img": "EP22_I5.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B05_N",
+     "voice": "N",
+     "text": "The emperor laughed: that is a deer!",
+     "hl": [
+      "deer!"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B06",
+   "img": "EP22_I6.png",
+   "move": "pan_left",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B06_N",
+     "voice": "N",
+     "text": "But the officials were scared, and said: yes, a horse!",
+     "hl": [
+      "scared,",
+      "horse!"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B07",
+   "img": "EP22_I7.png",
+   "move": "punch",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B07_N",
+     "voice": "N",
+     "text": "The few who said deer got into big trouble.",
+     "hl": [
+      "trouble."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B08",
+   "img": "EP22_I8.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "card": true,
+   "nosplit": true,
+   "lines": [
+    {
+     "id": "B08_M",
+     "voice": "M",
+     "text": "指鹿为马。"
+    },
+    {
+     "id": "B08_N",
+     "voice": "N",
+     "text": "Point at a deer, call it a horse."
+    }
+   ]
+  },
+  {
+   "id": "B09",
+   "img": "EP22_I8.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "meaning": "= twisting the truth on purpose",
+   "lines": [
+    {
+     "id": "B09_N",
+     "voice": "N",
+     "text": "It means twisting the truth, and making others agree."
+    }
+   ]
+  },
+  {
+   "id": "B10",
+   "img": "EP22_I9.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B10_N",
+     "voice": "N",
+     "text": "Like a boss who calls a bad idea brilliant, and everyone nods.",
+     "hl": [
+      "brilliant,"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B11",
+   "img": "EP22_I1.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "close": "Ever seen that?",
+   "lines": [
+    {
+     "id": "B11_N",
+     "voice": "N",
+     "text": "Ever seen that?"
+    }
+   ]
+  }
+ ]
+}

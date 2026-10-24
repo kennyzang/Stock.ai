@@ -2,6 +2,8 @@
 
 | EP | Idiom | Image request sent (UTC) | Gmail thread | Drive folder | Images | Redo rounds | Voices + ASR | Built + QC | Handed to publication | Scheduled / live |
 |---|---|---|---|---|---|---|---|---|---|---|
+| 22 | 指鹿为马 | 2026-10-24 00:58 | 1a16b688e56d56c9 | EP22_2026-10-24 (1V-WIFTImQqz0gydYp1eX2wypOzdH_acP) | waiting for ChatGPT | 0 | Jennifer, all pass ASR (pre-check) | – | – | – |
+| 21 | 邯郸学步 | 2026-10-24 00:58 | 1a16b684b4897c8a | EP21_2026-10-24 (1QkERH6m1OdhubmklK4reCl2jtehyIQ8Q) | waiting for ChatGPT | 0 | Jennifer, all pass ASR (pre-check) | – | – | – |
 | 20 | 滥竽充数 | 2026-10-23 00:56 | 1a166445981c3ff8 | EP20_2026-10-23 (1KmUg_zzTywbsskAeFNH7GMshDrIoezzM) | accepted 03:30 (ChatGPT 9/9, 1024×1536) | 0 | Jennifer, all pass ASR | ✅ 37.0 s, −14.8 LUFS, 9.1 MB (releases/EP20) | held until EP18 is live | – |
 | 19 | 杞人忧天 | 2026-10-23 00:56 | 1a16644139dae849 | EP19_2026-10-23 (1EQKPH6Z-LSLY5z-SBFCCFqb5w619gYwf) | accepted 03:30 (ChatGPT 9/9, 1024×1536) | 0 | Jennifer, all pass ASR | ✅ 33.8 s, −15.4 LUFS, 8.9 MB (releases/EP19) | Publication 2026-10-23 17:15 (sha256 OK) | – |
 | 18 | 叶公好龙 | 2026-10-22 00:58 | 1a1611aaa6f55bf8 | EP18_2026-10-22 (1rSbi_qziH1w750DXX7bdy903L1-LMUAz) | accepted 02:40 (ChatGPT 9/9, 1024×1536) | 0 | Jennifer, all pass ASR | ✅ 31.3 s, −14.3 LUFS, 8.8 MB (releases/EP18) | Publication 2026-10-22 13:50 (sha256 OK) | queued: 2026-10-24 ~05:17 UTC (publisher's own background track) |
@@ -88,3 +90,4 @@
 - 2026-10-23 03:35: EP19/EP20 images accepted (no redo), built, QC'd (hooks at y=1480 / 1300 to clear faces; EP20 B06 focus on the new king). Builder maxrate now scales with duration (EP20 first came out 10.4 MB). Released; EP19 goes to Publication after EP17 is live, EP20 after EP18.
 - 2026-10-23 03:40: Publication PAUSED: TikTok music list empty since 00:49 UTC, EP17 held (no record). Asked not to send more episodes until it confirms posting is back; keep building. Owner emailed (kennyzang@163.com) for a decision: post without music, or wait.
 - 2026-10-23 17:15: posting back after ~16 h pause; the owner chose a different sound source: Publication now mixes an original synthesized background track itself (publisher/add_bgm.sh), so releases stay music-free. EP17 live (record 568021, 216 points). EP19 handed to Publication (slot 11–13 h after EP18). Send EP20 after EP18 is live.
+- 2026-10-24 00:58 (scripts run): EP21 邯郸学步 and EP22 指鹿为马 written and requested (削足适履 skipped: its core image is self-harm, not family-friendly). Pre-check: all pass (EP22 B06 reworded; 'here's' added to the ASR contraction map). Credits: CompShare 53.53 CNY, SocialEcho 215 points.

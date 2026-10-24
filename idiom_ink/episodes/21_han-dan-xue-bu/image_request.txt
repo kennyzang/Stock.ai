@@ -1,0 +1,68 @@
+Subject: [IDIOM-SCRIPT] EP21 · 2026-10-24
+From/To: kennytseng4@gmail.com   (sent 2026-10-24 00:58 UTC, Gmail thread 1a16b684b4897c8a)
+
+IDIOM INK SHORTS — IMAGE REQUEST
+EPISODE: EP21
+DATE: 2026-10-24
+IDIOM: 邯郸学步 (hán dān xué bù) — "learning to walk in Handan" = copying others so much that you lose your own skills
+SERIES: Idiom Ink | Chinese Idioms (TikTok @kingkingking8888). A 30-second vertical short: still images, cut fast, with narration.
+IMAGES NEEDED: 9 (EP21_I1 ... EP21_I9)
+
+FORMAT (most important; applies to every image)
+Vertical 9:16 aspect ratio, full-frame composition, edge-to-edge illustration that completely fills the canvas: no top or bottom margins, no borders, no letterbox or padding bands, no empty brown or paper-coloured space. Cinematic framing: wide shots unless a scene asks for a close-up. Render natively in portrait: 9:16 (--ar 9:16, at least 1080x1920) if your tool offers it, otherwise 2:3 portrait (1024x1536); keep faces and key action inside the central 85% of the width. Never render landscape or square, and never pad, upscale or stretch an image into a vertical frame.
+
+HOW TO DELIVER
+1. Generate each image in the style below. Vertical 9:16, at least 1080x1920 (if the native render is smaller, say so in your reply). No text of any kind in the images: no letters, no Chinese characters, no calligraphy, no seal stamps, no signature, no watermark, no speech bubbles, no UI text.
+2. Upload to Google Drive folder "Idiom-Ink-images" (https://drive.google.com/drive/folders/15czEGROIuVWytFksZepM2S8y62_h4Ybp), into the subfolder that already exists, named exactly: EP21_2026-10-24 (https://drive.google.com/drive/folders/1QkERH6m1OdhubmklK4reCl2jtehyIQ8Q)
+3. File names exactly: EP21_I1.png, EP21_I2.png, EP21_I3.png, EP21_I4.png, EP21_I5.png, EP21_I6.png, EP21_I7.png, EP21_I8.png, EP21_I9.png
+4. Reply in this email thread with subject: [IDIOM-IMAGES] EP21 · 2026-10-24
+   Body: the Drive subfolder link, the list of file names, the native render size, and any image you could not make or had to change (with the reason).
+
+STYLE (the series look; keep it identical in all 9 images)
+"Ink-wash manhua": a Chinese manhua comic panel painted like a traditional ink-wash (shuimo) storybook. Bold, confident black ink outlines; flat muted washes of ochre, rust red, slate blue and moss green; warm aged rice-paper texture showing through; soft grey ink washes for the background; calm, uncluttered backgrounds that still fill the whole frame. Faces are expressive and a little exaggerated, like a comic (smug grins, wide shocked eyes, sweat drops) but never grotesque. Slightly humorous, family-friendly. One full-bleed panel per image: no panel borders, no frames, no split panels.
+Match the look of the earlier Idiom Ink episodes (EP10 画蛇添足) exactly.
+
+COMPOSITION RULES (the video is viewed on phones with TikTok buttons on top)
+- The illustration runs to all four edges. Put the main subject in the middle 60% of the height; the top 15% and bottom 25% still contain the scene (wall, sky, ground), just with less detail, because captions go there. Keep key action out of the right-hand 15% (TikTok buttons).
+- Characters large and readable at thumbnail size; faces clearly visible unless said otherwise.
+- Only the people listed for each image. Correct hands (5 fingers), no extra limbs, no duplicate people.
+
+STORY CONTEXT (so the images make sense)
+Ancient China. A young man from a small village in the state of Yan thinks his own way of walking is boring. He hears that the people of Handan, the elegant capital of Zhao, walk more beautifully than anyone. So he travels to Handan and copies their every step. He never manages to walk like them, and worse, he forgets his own way of walking. In the end he has to crawl all the way home.
+
+CONTINUITY (keep these exactly the same in every image they appear in)
+- THE YOUNG MAN: about 20, skinny, big ears, short messy topknot tied with a small cloth band, plain moss-green short tunic, brown trousers, straw sandals, a small cloth bundle on his back.
+- THE HANDAN LOCALS: an elegant tall man and woman in long flowing pale-ochre and slate-blue silk robes, walking gracefully with perfect posture and calm, refined faces.
+- HANDAN: a busy, elegant ancient city street with stone paving, wooden shops with plain cloth awnings (no signs, no writing) and a big city gate.
+- SETTING: ancient China; his home village is simple and rural, with soft grey ink-wash hills.
+
+SCENES
+
+EP21_I1 — The twist (used as the hook, first frame of the video)
+On the elegant stone street of Handan: the young man crawls on his hands and knees with his bundle on his back, red-faced and embarrassed, while the two elegant Handan locals stand gracefully beside him and look down at him, puzzled. The young man's face and at least one local's face clear. This is the most important image; the editor will push in on it.
+
+EP21_I2 — Boring walk
+His home village: the young man walks along a dirt path looking down at his own feet with a bored, unhappy face, shoulders slumped. (Only the young man.)
+
+EP21_I3 — Off to the big city
+At his village gate the young man gazes dreamily toward a faraway walled city on the horizon, eyes sparkling, bundle on his back, ready to set off. (Only the young man.)
+
+EP21_I4 — Copying every step
+On the Handan street: the young man walks right behind the elegant local man, copying his graceful pose with stiff, exaggerated steps, tongue sticking out in concentration. The local walks on, unaware.
+
+EP21_I5 — It never looks right
+The young man trips over his own legs on the stone street, wobbling, arms flailing, sweat drops flying, legs tangled. (Only the young man.)
+
+EP21_I6 — He forgot how to walk
+The young man stands frozen in the middle of the street on one leg, staring down at his own feet in total confusion, completely unsure how to take the next step. (Only the young man.)
+
+EP21_I7 — Crawling home
+A long dusty country road at sunset: the young man crawls home on hands and knees with his bundle, exhausted, the walls of Handan small in the distance behind him. (Only the young man.)
+
+EP21_I8 — The tracks (background for the big title)
+Low close-up of a dusty road: a messy zigzag of footprints that turns into hand and knee prints, in the lower half of the frame. The upper half is a calm, plain sky with soft grey ink washes and almost nothing in it (we place the big title there). No people.
+
+EP21_I9 — Today's version (same style, modern setting)
+A modern city sidewalk: the same YOUNG MAN (skinny, big ears, messy topknot) in trendy, mismatched oversized clothes and sunglasses awkwardly copies a catwalk model strut, wobbling and about to trip, a sweat drop on his face. No other people. No text, no logos, no screens.
+
+THANK YOU. Any question: reply in this thread with subject starting [IDIOM-QUESTION] EP21.

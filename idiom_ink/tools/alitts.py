@@ -86,7 +86,7 @@ def asr(path):
 
 CONTRACTIONS = {"i'm": "i am", "you're": "you are", "it's": "it is", "don't": "do not", "can't": "cannot",
                 "won't": "will not", "he's": "he is", "she's": "she is", "that's": "that is", "isn't": "is not",
-                "doesn't": "does not", "didn't": "did not", "couldn't": "could not", "i'll": "i will", "let's": "let us"}
+                "doesn't": "does not", "didn't": "did not", "couldn't": "could not", "i'll": "i will", "let's": "let us", "here's": "here is", "there's": "there is", "what's": "what is"}
 
 
 def norm_en(s):

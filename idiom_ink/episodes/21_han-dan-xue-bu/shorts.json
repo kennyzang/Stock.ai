@@ -1,0 +1,252 @@
+{
+ "out": "ep21_han-dan-xue-bu.mp4",
+ "idiom": "邯郸学步",
+ "pinyin": [
+  [
+   "hán",
+   2
+  ],
+  [
+   "dān",
+   1
+  ],
+  [
+   "xué",
+   2
+  ],
+  [
+   "bù",
+   4
+  ]
+ ],
+ "gloss": [
+  [
+   "邯",
+   "Han-"
+  ],
+  [
+   "郸",
+   "-dan"
+  ],
+  [
+   "学",
+   "learn"
+  ],
+  [
+   "步",
+   "walk"
+  ]
+ ],
+ "cover_text": "He copied their walk…\\Nand forgot his own.",
+ "beats": [
+  {
+   "id": "B01",
+   "img": "EP21_I1.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "hook": "He copied their walk…\\Nand forgot his own.",
+   "lines": [
+    {
+     "id": "B01_N",
+     "voice": "N",
+     "text": "He tried to copy a fancy walk, and forgot how to walk at all."
+    }
+   ]
+  },
+  {
+   "id": "B02",
+   "img": "EP21_I2.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B02_N",
+     "voice": "N",
+     "text": "This young man thought his walk was boring.",
+     "hl": [
+      "boring."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B03",
+   "img": "EP21_I3.png",
+   "move": "pan_right",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B03_N",
+     "voice": "N",
+     "text": "He heard people in the big city walked beautifully.",
+     "hl": [
+      "beautifully."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B04",
+   "img": "EP21_I4.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B04_N",
+     "voice": "N",
+     "text": "So he went there, and copied every step.",
+     "hl": [
+      "every",
+      "step."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B05",
+   "img": "EP21_I5.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B05_N",
+     "voice": "N",
+     "text": "He tried and tried, but it never looked right.",
+     "hl": [
+      "never"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B06",
+   "img": "EP21_I6.png",
+   "move": "pan_left",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B06_N",
+     "voice": "N",
+     "text": "Worse, he forgot his own way of walking!",
+     "hl": [
+      "forgot"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B07",
+   "img": "EP21_I7.png",
+   "move": "punch",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B07_N",
+     "voice": "N",
+     "text": "In the end, he crawled all the way home.",
+     "hl": [
+      "crawled"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B08",
+   "img": "EP21_I8.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "card": true,
+   "nosplit": true,
+   "lines": [
+    {
+     "id": "B08_M",
+     "voice": "M",
+     "text": "邯郸学步。"
+    },
+    {
+     "id": "B08_N",
+     "voice": "N",
+     "text": "Learning to walk in Handan."
+    }
+   ]
+  },
+  {
+   "id": "B09",
+   "img": "EP21_I8.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "meaning": "= copying others, losing yourself",
+   "lines": [
+    {
+     "id": "B09_N",
+     "voice": "N",
+     "text": "It means copying others until you lose yourself."
+    }
+   ]
+  },
+  {
+   "id": "B10",
+   "img": "EP21_I9.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B10_N",
+     "voice": "N",
+     "text": "Like copying every trend, and losing your own style.",
+     "hl": [
+      "own",
+      "style."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B11",
+   "img": "EP21_I1.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "close": "Ever done that?",
+   "lines": [
+    {
+     "id": "B11_N",
+     "voice": "N",
+     "text": "Ever done that?"
+    }
+   ]
+  }
+ ]
+}

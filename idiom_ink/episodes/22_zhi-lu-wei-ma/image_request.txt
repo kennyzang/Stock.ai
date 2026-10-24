@@ -1,0 +1,68 @@
+Subject: [IDIOM-SCRIPT] EP22 · 2026-10-24
+From/To: kennytseng4@gmail.com   (sent 2026-10-24 00:58 UTC, Gmail thread 1a16b688e56d56c9)
+
+IDIOM INK SHORTS — IMAGE REQUEST
+EPISODE: EP22
+DATE: 2026-10-24
+IDIOM: 指鹿为马 (zhǐ lù wéi mǎ) — "point at a deer and call it a horse" = deliberately twisting the truth and making others go along with it
+SERIES: Idiom Ink | Chinese Idioms (TikTok @kingkingking8888). A 30-second vertical short: still images, cut fast, with narration.
+IMAGES NEEDED: 9 (EP22_I1 ... EP22_I9)
+
+FORMAT (most important; applies to every image)
+Vertical 9:16 aspect ratio, full-frame composition, edge-to-edge illustration that completely fills the canvas: no top or bottom margins, no borders, no letterbox or padding bands, no empty brown or paper-coloured space. Cinematic framing: wide shots unless a scene asks for a close-up. Render natively in portrait: 9:16 (--ar 9:16, at least 1080x1920) if your tool offers it, otherwise 2:3 portrait (1024x1536); keep faces and key action inside the central 85% of the width. Never render landscape or square, and never pad, upscale or stretch an image into a vertical frame.
+
+HOW TO DELIVER
+1. Generate each image in the style below. Vertical 9:16, at least 1080x1920 (if the native render is smaller, say so in your reply). No text of any kind in the images: no letters, no Chinese characters, no calligraphy, no seal stamps, no signature, no watermark, no speech bubbles, no UI text.
+2. Upload to Google Drive folder "Idiom-Ink-images" (https://drive.google.com/drive/folders/15czEGROIuVWytFksZepM2S8y62_h4Ybp), into the subfolder that already exists, named exactly: EP22_2026-10-24 (https://drive.google.com/drive/folders/1V-WIFTImQqz0gydYp1eX2wypOzdH_acP)
+3. File names exactly: EP22_I1.png, EP22_I2.png, EP22_I3.png, EP22_I4.png, EP22_I5.png, EP22_I6.png, EP22_I7.png, EP22_I8.png, EP22_I9.png
+4. Reply in this email thread with subject: [IDIOM-IMAGES] EP22 · 2026-10-24
+   Body: the Drive subfolder link, the list of file names, the native render size, and any image you could not make or had to change (with the reason).
+
+STYLE (the series look; keep it identical in all 9 images)
+"Ink-wash manhua": a Chinese manhua comic panel painted like a traditional ink-wash (shuimo) storybook. Bold, confident black ink outlines; flat muted washes of ochre, rust red, slate blue and moss green; warm aged rice-paper texture showing through; soft grey ink washes for the background; calm, uncluttered backgrounds that still fill the whole frame. Faces are expressive and a little exaggerated, like a comic (smug grins, wide shocked eyes, sweat drops) but never grotesque. Slightly humorous, family-friendly. One full-bleed panel per image: no panel borders, no frames, no split panels.
+Match the look of the earlier Idiom Ink episodes (EP10 画蛇添足) exactly.
+
+COMPOSITION RULES (the video is viewed on phones with TikTok buttons on top)
+- The illustration runs to all four edges. Put the main subject in the middle 60% of the height; the top 15% and bottom 25% still contain the scene (wall, sky, ground), just with less detail, because captions go there. Keep key action out of the right-hand 15% (TikTok buttons).
+- Characters large and readable at thumbnail size; faces clearly visible unless said otherwise.
+- Only the people listed for each image. Correct hands (5 fingers), no extra limbs, no duplicate people.
+
+STORY CONTEXT (so the images make sense)
+Ancient China, the Qin dynasty. Zhao Gao is the most powerful minister at court, and he wants to know who dares to disagree with him. He brings a deer to the young emperor and says: 'Your Majesty, here is a fine horse!' The emperor laughs: 'That is a deer!' Zhao Gao turns to the officials. Most of them are scared of him, so they say: 'Yes, it is a horse!' The few honest officials who say 'deer' soon get into big trouble.
+
+CONTINUITY (keep these exactly the same in every image they appear in)
+- ZHAO GAO, the minister: tall, thin man about 50, narrow sly eyes, long thin black mustache and a pointed beard, tall black official hat, dark purple robe, a smug smirk.
+- THE YOUNG EMPEROR: a teenager with a round, innocent face, golden robe and a flat crown with a beaded fringe, sitting on a big throne.
+- THE DEER: a gentle spotted brown deer with small antlers and big, confused eyes, led on a red rope.
+- THE COURT: a grand throne hall with red pillars and a polished floor; the officials wear identical slate-blue robes and black hats and are simple background figures.
+
+SCENES
+
+EP22_I1 — The twist (used as the hook, first frame of the video)
+In the throne hall: Zhao Gao points at the confused deer on its red rope with a grand, smug gesture, smirking; behind him a row of nervous officials sweat and nod. Zhao Gao's face and the deer's face clear. This is the most important image; the editor will push in on it.
+
+EP22_I2 — The powerful minister
+Zhao Gao strides proudly down a palace corridor with his nose in the air while officials on both sides bow deeply and nervously.
+
+EP22_I3 — The 'gift'
+Zhao Gao leads the deer by its red rope into the throne hall; the young emperor on the throne leans forward, curious.
+
+EP22_I4 — 'A fine horse!'
+Zhao Gao bows with a theatrical flourish, presenting the deer with an open hand and a sly smirk. The deer blinks, confused. (Only Zhao Gao and the deer.)
+
+EP22_I5 — 'That is a deer!'
+The young emperor laughs on his throne, pointing at the deer and holding his belly. (Only the emperor, with the deer at the edge of the frame.)
+
+EP22_I6 — 'Yes, a horse!'
+A row of officials, sweating and pale, nod and bow eagerly toward the deer, forcing big fake smiles; Zhao Gao watches them with narrow, satisfied eyes.
+
+EP22_I7 — Big trouble
+One honest official in a slate-blue robe is led out of the hall by two palace guards, looking back sadly; in the background Zhao Gao smirks. No weapons drawn, nobody hurt.
+
+EP22_I8 — The rope (background for the big title)
+The deer's red rope lying loose on the polished hall floor next to a few small hoofprints, in the lower half of the frame. The upper half is a calm, plain hall wall with soft grey ink washes and almost nothing on it (we place the big title there). No people, no animals.
+
+EP22_I9 — Today's version (same style, modern setting)
+A modern meeting room: the same ZHAO GAO (narrow sly eyes, thin mustache, pointed beard) as a boss in a dark purple suit proudly points at a whiteboard with a clumsy, obviously wrong drawing of a deer (simple lines, no words, no numbers), while three employees nod nervously, sweating, with forced smiles. No text, no logos, no screens.
+
+THANK YOU. Any question: reply in this thread with subject starting [IDIOM-QUESTION] EP22.
