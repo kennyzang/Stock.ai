@@ -2,6 +2,7 @@
 
 | EP | Idiom | Image request sent (UTC) | Gmail thread | Drive folder | Images | Redo rounds | Voices + ASR | Built + QC | Handed to publication | Scheduled / live |
 |---|---|---|---|---|---|---|---|---|---|---|
+| 25 | 亡羊补牢 (v4 pilot, Idiom Quiz #1) | – (drawn in code) | – | – | – | – | Jennifer ×1.12 + Cherry, all pass ASR; final mix ASR clean | ✅ 25.6 s, −14.8 LUFS, 8.4 MB (releases/EP25) | Publication 2026-10-25, owner: post now, no added music | – |
 | 24 | 井底之蛙 | 2026-10-25 00:58 | 1a1708e8f13aa76b | EP24_2026-10-25 (12Mo-idVTZ2Hk6slbWykpgf9AWbRurq0t) | accepted 03:40 (ChatGPT 9/9 at ~02:00, 1024×1536) | 0 | Jennifer, all pass ASR | ✅ 33.4 s, −14.9 LUFS, 9.0 MB (releases/EP24) | held; goes to Publication after EP21 is live (takes EP23's slot) | – |
 | 23 | 守株待兔 | 2026-10-25 00:58 | 1a1708e4a9cd62c2 | EP23_2026-10-25 (1eKlPJ1lxLUfOMp15SKO7V0GI5lGC_X6Y) | accepted 03:40 (ChatGPT 9/9 at ~02:00, 1024×1536) | 0 | Jennifer, all pass ASR | ✅ 31.9 s, −15.2 LUFS, 9.0 MB (releases/EP23) | WITHDRAWN: duplicate (守株待兔 already posted 2026-10-18, video 7697969888802983220) | – |
 | 22 | 指鹿为马 | 2026-10-24 00:58 | 1a16b688e56d56c9 | EP22_2026-10-24 (1V-WIFTImQqz0gydYp1eX2wypOzdH_acP) | accepted 12:30 (ChatGPT 9/9 at ~09:55, 1024×1536; the 01:30 run missed them) | 0 | Jennifer, all pass ASR | ✅ 34.5 s, −14.7 LUFS, 9.1 MB (releases/EP22) | Publication 2026-10-25 07:00 (sha256 OK) | – |
