@@ -96,4 +96,4 @@
 - 2026-10-24 05:30: EP18 live (record 568485, 211 points); EP19 timed ~18:01 UTC. EP20 handed to Publication. Send EP21 after EP19 is live.
 - 2026-10-24 12:35: EP21/EP22 images arrived ~09:55 (ChatGPT's 09:30 run; its 01:30 run did not pick them up, no email reply sent). Accepted (no redo), built, QC'd (hooks at 1560 / 1300 to clear faces; EP22 I1/I5/I6 focus). Released; EP21 goes after EP19 is live, EP22 after EP20.
 - 2026-10-24 18:15: EP19 live (record 570055, 206 points); EP20 timed 10-25 ~06:47 UTC. EP21 handed to Publication. Send EP22 after EP20 is live.
-- 2026-10-25 00:58 (scripts run): EP23 守株待兔 and EP24 井底之蛙 written and requested. Pre-check: all lines pass first try (est. ~32 s / ~34 s). Credits: CompShare ? CNY, SocialEcho 205 points.
+- 2026-10-25 00:58 (scripts run): EP23 守株待兔 and EP24 井底之蛙 written and requested. Pre-check: all lines pass first try (est. ~32 s / ~34 s). Credits: CompShare 52.09 CNY (first try 502, retried), SocialEcho 205 points.
