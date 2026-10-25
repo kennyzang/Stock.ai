@@ -36,5 +36,7 @@ Ones marked ★☆☆ have no story in the book, so they would need a different 
 | 20 | 滥竽充数 làn yú chōng shù | 韩非子·内储说上 | images requested 2026-10-23 |
 | 21 | 邯郸学步 hán dān xué bù | 庄子·秋水 | images requested 2026-10-24 |
 | 22 | 指鹿为马 zhǐ lù wéi mǎ | 史记·秦始皇本纪 | images requested 2026-10-24 |
-Skipped: 削足适履 (core image is self-harm; not family-friendly). Next up (added 2026-10-23, all public-domain classics): 守株待兔 (韩非子·五蠹), 井底之蛙 (庄子·秋水), 亡羊补牢 (战国策·楚策四), 朝三暮四 (庄子·齐物论), 三人成虎 (战国策·魏策二), 塞翁失马 (淮南子·人间训), 画龙点睛 (历代名画记).
+| 23 | 守株待兔 shǒu zhū dài tù | 韩非子·五蠹 | images requested 2026-10-25 |
+| 24 | 井底之蛙 jǐng dǐ zhī wā | 庄子·秋水 | images requested 2026-10-25 |
+Skipped: 削足适履 (core image is self-harm; not family-friendly). Next up (added 2026-10-23, all public-domain classics): 亡羊补牢 (战国策·楚策四), 朝三暮四 (庄子·齐物论), 三人成虎 (战国策·魏策二), 塞翁失马 (淮南子·人间训), 画龙点睛 (历代名画记).
 

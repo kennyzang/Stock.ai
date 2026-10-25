@@ -1,0 +1,251 @@
+{
+ "out": "ep23_shou-zhu-dai-tu.mp4",
+ "idiom": "守株待兔",
+ "pinyin": [
+  [
+   "shǒu",
+   3
+  ],
+  [
+   "zhū",
+   1
+  ],
+  [
+   "dài",
+   4
+  ],
+  [
+   "tù",
+   4
+  ]
+ ],
+ "gloss": [
+  [
+   "守",
+   "guard"
+  ],
+  [
+   "株",
+   "stump"
+  ],
+  [
+   "待",
+   "wait"
+  ],
+  [
+   "兔",
+   "rabbit"
+  ]
+ ],
+ "cover_text": "He waited all year\\Nfor a FREE rabbit.",
+ "beats": [
+  {
+   "id": "B01",
+   "img": "EP23_I1.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "hook": "He waited all year\\Nfor a FREE rabbit.",
+   "lines": [
+    {
+     "id": "B01_N",
+     "voice": "N",
+     "text": "He waited all year for a free rabbit."
+    }
+   ]
+  },
+  {
+   "id": "B02",
+   "img": "EP23_I2.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B02_N",
+     "voice": "N",
+     "text": "This farmer worked hard in his field every day.",
+     "hl": [
+      "hard"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B03",
+   "img": "EP23_I3.png",
+   "move": "pan_right",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B03_N",
+     "voice": "N",
+     "text": "Suddenly, a rabbit ran straight into a tree stump!",
+     "hl": [
+      "stump!"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B04",
+   "img": "EP23_I4.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B04_N",
+     "voice": "N",
+     "text": "He took it home. What luck!",
+     "hl": [
+      "luck!"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B05",
+   "img": "EP23_I5.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B05_N",
+     "voice": "N",
+     "text": "The next day, he dropped his hoe and waited by the stump.",
+     "hl": [
+      "waited"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B06",
+   "img": "EP23_I6.png",
+   "move": "pan_left",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B06_N",
+     "voice": "N",
+     "text": "Day after day, no rabbit came.",
+     "hl": [
+      "no",
+      "rabbit"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B07",
+   "img": "EP23_I7.png",
+   "move": "punch",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B07_N",
+     "voice": "N",
+     "text": "His field filled with weeds, and everyone laughed.",
+     "hl": [
+      "weeds,"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B08",
+   "img": "EP23_I8.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "card": true,
+   "nosplit": true,
+   "lines": [
+    {
+     "id": "B08_M",
+     "voice": "M",
+     "text": "守株待兔。"
+    },
+    {
+     "id": "B08_N",
+     "voice": "N",
+     "text": "Guard the stump, wait for a rabbit."
+    }
+   ]
+  },
+  {
+   "id": "B09",
+   "img": "EP23_I8.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "meaning": "= waiting for luck, not working",
+   "lines": [
+    {
+     "id": "B09_N",
+     "voice": "N",
+     "text": "It means waiting for luck instead of working."
+    }
+   ]
+  },
+  {
+   "id": "B10",
+   "img": "EP23_I9.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B10_N",
+     "voice": "N",
+     "text": "Like waiting to get lucky, instead of doing the work.",
+     "hl": [
+      "lucky,"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B11",
+   "img": "EP23_I1.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "close": "Ever done that?",
+   "lines": [
+    {
+     "id": "B11_N",
+     "voice": "N",
+     "text": "Ever done that?"
+    }
+   ]
+  }
+ ]
+}

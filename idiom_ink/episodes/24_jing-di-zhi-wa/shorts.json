@@ -1,0 +1,253 @@
+{
+ "out": "ep24_jing-di-zhi-wa.mp4",
+ "idiom": "井底之蛙",
+ "pinyin": [
+  [
+   "jǐng",
+   3
+  ],
+  [
+   "dǐ",
+   3
+  ],
+  [
+   "zhī",
+   1
+  ],
+  [
+   "wā",
+   1
+  ]
+ ],
+ "gloss": [
+  [
+   "井",
+   "well"
+  ],
+  [
+   "底",
+   "bottom"
+  ],
+  [
+   "之",
+   "of"
+  ],
+  [
+   "蛙",
+   "frog"
+  ]
+ ],
+ "cover_text": "He thought his well\\Nwas the WHOLE world.",
+ "beats": [
+  {
+   "id": "B01",
+   "img": "EP24_I1.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "hook": "He thought his well\\Nwas the WHOLE world.",
+   "lines": [
+    {
+     "id": "B01_N",
+     "voice": "N",
+     "text": "He thought his little well was the whole world."
+    }
+   ]
+  },
+  {
+   "id": "B02",
+   "img": "EP24_I2.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B02_N",
+     "voice": "N",
+     "text": "This frog lived at the bottom of an old well.",
+     "hl": [
+      "bottom"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B03",
+   "img": "EP24_I3.png",
+   "move": "pan_right",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B03_N",
+     "voice": "N",
+     "text": "He looked up at a tiny circle of sky, so proud.",
+     "hl": [
+      "tiny"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B04",
+   "img": "EP24_I4.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B04_N",
+     "voice": "N",
+     "text": "One day, a big sea turtle came by.",
+     "hl": [
+      "sea",
+      "turtle"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B05",
+   "img": "EP24_I5.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B05_N",
+     "voice": "N",
+     "text": "Come in! My home is the best in the world!",
+     "hl": [
+      "best"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B06",
+   "img": "EP24_I6.png",
+   "move": "pan_left",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B06_N",
+     "voice": "N",
+     "text": "The turtle could not even fit one foot inside.",
+     "hl": [
+      "one",
+      "foot"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B07",
+   "img": "EP24_I7.png",
+   "move": "punch",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B07_N",
+     "voice": "N",
+     "text": "Then he told the frog about the endless sea.",
+     "hl": [
+      "endless",
+      "sea."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B08",
+   "img": "EP24_I8.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "card": true,
+   "nosplit": true,
+   "lines": [
+    {
+     "id": "B08_M",
+     "voice": "M",
+     "text": "井底之蛙。"
+    },
+    {
+     "id": "B08_N",
+     "voice": "N",
+     "text": "A frog at the bottom of a well."
+    }
+   ]
+  },
+  {
+   "id": "B09",
+   "img": "EP24_I8.png",
+   "move": "push_in_more",
+   "focus": [
+    0.5,
+    0.7
+   ],
+   "meaning": "= a very narrow view",
+   "lines": [
+    {
+     "id": "B09_N",
+     "voice": "N",
+     "text": "It means someone with a very narrow view."
+    }
+   ]
+  },
+  {
+   "id": "B10",
+   "img": "EP24_I9.png",
+   "move": "push_in",
+   "focus": [
+    0.5,
+    0.5
+   ],
+   "lines": [
+    {
+     "id": "B10_N",
+     "voice": "N",
+     "text": "Like thinking your hometown is the center of the world.",
+     "hl": [
+      "center"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "B11",
+   "img": "EP24_I1.png",
+   "move": "pull_out",
+   "focus": [
+    0.5,
+    0.48
+   ],
+   "close": "Ever met one?",
+   "lines": [
+    {
+     "id": "B11_N",
+     "voice": "N",
+     "text": "Ever met one?"
+    }
+   ]
+  }
+ ]
+}

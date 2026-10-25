@@ -1,0 +1,68 @@
+Subject: [IDIOM-SCRIPT] EP24 · 2026-10-25
+From/To: kennytseng4@gmail.com   (sent 2026-10-25 00:58 UTC, Gmail thread 1a1708e8f13aa76b)
+
+IDIOM INK SHORTS — IMAGE REQUEST
+EPISODE: EP24
+DATE: 2026-10-25
+IDIOM: 井底之蛙 (jǐng dǐ zhī wā) — "a frog at the bottom of a well" = someone with a very narrow view of the world
+SERIES: Idiom Ink | Chinese Idioms (TikTok @kingkingking8888). A 30-second vertical short: still images, cut fast, with narration.
+IMAGES NEEDED: 9 (EP24_I1 ... EP24_I9)
+
+FORMAT (most important; applies to every image)
+Vertical 9:16 aspect ratio, full-frame composition, edge-to-edge illustration that completely fills the canvas: no top or bottom margins, no borders, no letterbox or padding bands, no empty brown or paper-coloured space. Cinematic framing: wide shots unless a scene asks for a close-up. Render natively in portrait: 9:16 (--ar 9:16, at least 1080x1920) if your tool offers it, otherwise 2:3 portrait (1024x1536); keep faces and key action inside the central 85% of the width. Never render landscape or square, and never pad, upscale or stretch an image into a vertical frame.
+
+HOW TO DELIVER
+1. Generate each image in the style below. Vertical 9:16, at least 1080x1920 (if the native render is smaller, say so in your reply). No text of any kind in the images: no letters, no Chinese characters, no calligraphy, no seal stamps, no signature, no watermark, no speech bubbles, no UI text.
+2. Upload to Google Drive folder "Idiom-Ink-images" (https://drive.google.com/drive/folders/15czEGROIuVWytFksZepM2S8y62_h4Ybp), into the subfolder that already exists, named exactly: EP24_2026-10-25 (https://drive.google.com/drive/folders/12Mo-idVTZ2Hk6slbWykpgf9AWbRurq0t)
+3. File names exactly: EP24_I1.png, EP24_I2.png, EP24_I3.png, EP24_I4.png, EP24_I5.png, EP24_I6.png, EP24_I7.png, EP24_I8.png, EP24_I9.png
+4. Reply in this email thread with subject: [IDIOM-IMAGES] EP24 · 2026-10-25
+   Body: the Drive subfolder link, the list of file names, the native render size, and any image you could not make or had to change (with the reason).
+
+STYLE (the series look; keep it identical in all 9 images)
+"Ink-wash manhua": a Chinese manhua comic panel painted like a traditional ink-wash (shuimo) storybook. Bold, confident black ink outlines; flat muted washes of ochre, rust red, slate blue and moss green; warm aged rice-paper texture showing through; soft grey ink washes for the background; calm, uncluttered backgrounds that still fill the whole frame. Faces are expressive and a little exaggerated, like a comic (smug grins, wide shocked eyes, sweat drops) but never grotesque. Slightly humorous, family-friendly. One full-bleed panel per image: no panel borders, no frames, no split panels.
+Match the look of the earlier Idiom Ink episodes (EP10 画蛇添足) exactly.
+
+COMPOSITION RULES (the video is viewed on phones with TikTok buttons on top)
+- The illustration runs to all four edges. Put the main subject in the middle 60% of the height; the top 15% and bottom 25% still contain the scene (wall, sky, ground), just with less detail, because captions go there. Keep key action out of the right-hand 15% (TikTok buttons).
+- Characters large and readable at thumbnail size; faces clearly visible unless said otherwise.
+- Only the people listed for each image. Correct hands (5 fingers), no extra limbs, no duplicate people.
+
+STORY CONTEXT (so the images make sense)
+Ancient China. A little frog lives at the bottom of an old well. Looking up at the small circle of sky, he is sure his well is the best place in the world. One day a huge sea turtle passes by, and the frog proudly invites him in. The turtle cannot even fit one foot into the well. Then the turtle tells the frog about the sea: so vast that no flood can make it rise and no drought can make it fall. The frog is speechless.
+
+CONTINUITY (keep these exactly the same in every image they appear in)
+- THE FROG: a small, round, bright-green frog with big golden eyes, a cheeky proud grin and a puffed-out chest; expressive like a comic character.
+- THE SEA TURTLE: a huge, wise old sea turtle with a moss-green shell, kind droopy eyes, a few barnacles and a calm smile; much bigger than the well.
+- THE WELL: an old round stone well in a quiet village courtyard, mossy stones inside, a little water at the bottom; from inside, only a small circle of sky is visible far above.
+- SETTING: ancient China, soft daylight; the sea (in I7) is an endless calm ocean with soft grey ink-wash waves.
+
+SCENES
+
+EP24_I1 — The twist (used as the hook, first frame of the video)
+At the well in the courtyard: the huge sea turtle has tried to step into the well and one big flipper is stuck in the narrow well mouth, the turtle looking down puzzled and a little embarrassed; perched on the well rim, the tiny frog spreads his arms wide in proud welcome. Both faces clear. This is the most important image; the editor will push in on it.
+
+EP24_I2 — Home sweet well
+Inside, at the bottom of the well: the frog lounges happily on a mossy stone in the shallow water, hands behind his head, very content. (Only the frog.)
+
+EP24_I3 — The whole sky
+Low view from the bottom of the well: the frog looks up at the small circle of blue sky far above, chest puffed out, very proud, as if it were the whole world. (Only the frog.)
+
+EP24_I4 — A visitor
+In the courtyard outside the well: the huge sea turtle crawls slowly by and peers curiously over the well's stone rim. (Only the turtle.)
+
+EP24_I5 — 'Come in!'
+The frog jumps up onto the well rim, waving his arms and boasting, inviting the turtle in; the turtle looks at the tiny well, doubtful.
+
+EP24_I6 — Stuck
+Close-ish: the turtle's huge flipper is jammed in the well mouth, a few stones creaking, the turtle smiling awkwardly; the frog stares at the flipper, shocked.
+
+EP24_I7 — The endless sea
+The turtle sits beside the well telling a story; above them, a dreamy ink-wash vision of an endless calm ocean stretching to the horizon fills the sky. The frog on the rim listens, jaw dropped, eyes huge.
+
+EP24_I8 — The well (background for the big title)
+The mossy stone rim of the well with a few water drops and one tiny lily pad on the ledge, in the lower half of the frame. The upper half is a calm, plain sky with soft grey ink washes and almost nothing in it (we place the big title there). No animals.
+
+EP24_I9 — Today's version (same style, modern setting)
+A tiny modern room: the same FROG wearing a small green hoodie stands on a tiny chair with his arms spread proudly, showing off his little room, while through the big window behind him a huge, bright city and the sea stretch to the horizon. No people. No text, no logos, no screens.
+
+THANK YOU. Any question: reply in this thread with subject starting [IDIOM-QUESTION] EP24.
