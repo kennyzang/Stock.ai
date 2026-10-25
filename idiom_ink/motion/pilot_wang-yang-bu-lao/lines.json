@@ -80,9 +80,19 @@
    "id": "C",
    "lines": [
     {
+     "id": "C1_N",
+     "voice": "N",
+     "text": "Did you get it right?"
+    },
+    {
      "id": "C_N",
      "voice": "N",
-     "text": "Did you get it right? A, B, or C?"
+     "text": "Did you get it right? A, B, or C?",
+     "compose": [
+      "C1_N",
+      "Q2_N"
+     ],
+     "note": "TTS read the A in 'right? A, B' as the article 'a'. C_N = C1_N 'Did you get it right?' + short pause + the Q2_N 'A, B, or C?' recording (pause sized to keep the timeline)."
     }
    ]
   }

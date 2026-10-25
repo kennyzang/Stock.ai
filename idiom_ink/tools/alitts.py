@@ -103,7 +103,7 @@ def norm_zh(s):
 def matches(line, heard, idiom):
     if line["voice"] == "M":
         return norm_zh(heard) == norm_zh(idiom or line["text"])
-    return norm_en(heard) == norm_en(line["text"])
+    return norm_en(heard) in (norm_en(line["text"]), norm_en(line.get("tts", line["text"])))
 
 
 def episode(spec_path, outdir, only=None, retries=3):
@@ -115,7 +115,7 @@ def episode(spec_path, outdir, only=None, retries=3):
             if only and li["id"] not in only:
                 continue
             for k in range(1, retries + 1):
-                wav = tts(li["text"], out / f"{li['id']}.wav", li["voice"])
+                wav = tts(li.get("tts", li["text"]), out / f"{li['id']}.wav", li["voice"])  # "tts": spelling for the voice only
                 heard = asr(wav)
                 ok = matches(li, heard, spec.get("idiom"))
                 print(f"{li['id']} try {k}: {'OK ' if ok else 'BAD'} | {li['text']} | heard: {heard}")

@@ -16,7 +16,7 @@ episode: `motion/pilot_wang-yang-bu-lao/` (亡羊补牢).
 | slam | `R_M` the idiom in Mandarin | big idiom card, tiles slam per syllable, tone-coloured pinyin, glosses |
 | answer | `A_N` **the correct option read aloud** (around 0:18) | the correct chip moves centre and grows |
 | usage | `U_M` a short Mandarin saying/sentence with the idiom | speech bubble: Chinese + pinyin + big English (literal sense, not a repeat of the answer) |
-| close | `C_N` "Did you get it right? A, B, or C?" | title + chips + "Comment A, B or C!" → hard cut back to the quiz frame (loop) |
+| close | `C_N` = `C1_N` "Did you get it right?" + the **same `Q2_N` "A, B, or C?" recording** from the opening (TTS reads a fresh "right? A" as the article "a") | title + chips + "Comment A, B or C!" → hard cut back to the quiz frame (loop) |
 
 Timing is generated, not hand-set: `motion/make_timeline.py EPISODE_DIR VO_DIR` (gaps, lock length, turn, answer
 placement). Total target 24–27 s, hard cap 29.5 s.
