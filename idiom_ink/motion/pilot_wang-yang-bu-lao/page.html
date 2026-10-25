@@ -537,12 +537,12 @@ function quizPieces() {
       g.save(); g.globalCompositeOperation = 'destination-out'; g.strokeStyle = '#000'; g.lineWidth = 2; g.strokeRect(387, 303, 206, 32); g.restore();
       g.font = '400 30px "Lilita One"'; g.textAlign = 'center'; g.fillStyle = C.cream; g.fillText('IDIOM QUIZ #1', 490, 331);
     }, { seed: 4 });
-    S.l1 = textPiece('4 characters.', '400 100px "Lilita One"', 100, C.cream, 486, 452, { seed: 21, fat: 3, lite: 'rgba(255,255,255,.7)', dark: 'rgba(80,50,20,.5)' });
-    X.font = '400 80px "Lilita One"'; const w2 = X.measureText('1 costly mistake.').width + 130;
+    S.l1 = textPiece('What does this', '400 96px "Lilita One"', 96, C.cream, 486, 452, { seed: 21, fat: 3, lite: 'rgba(255,255,255,.7)', dark: 'rgba(80,50,20,.5)' });
+    X.font = '400 80px "Lilita One"'; const w2 = X.measureText('Chinese idiom mean?').width + 130;
     S.ban = banner(486 - w2 / 2, 474, w2, 108, C.redDeep, 4);
-    S.l2 = textPiece('1 costly mistake.', '400 80px "Lilita One"', 80, C.cream, 486, 556, { seed: 22, fat: 2, lite: 'rgba(255,255,255,.7)', dark: 'rgba(80,30,20,.6)' });
-    S.l3 = textPiece('Guess the meaning', '400 54px "Lilita One"', 54, C.gold, 446, 650, { seed: 23, fat: 2, lite: 'rgba(255,255,230,.7)', dark: 'rgba(90,50,0,.5)' });
-    X.font = '400 54px "Lilita One"'; const ax = 446 + X.measureText('Guess the meaning').width / 2 + 44; S.ax = ax;
+    S.l2 = textPiece('Chinese idiom mean?', '400 80px "Lilita One"', 80, C.cream, 486, 556, { seed: 22, fat: 2, lite: 'rgba(255,255,255,.7)', dark: 'rgba(80,30,20,.6)' });
+    S.l3 = textPiece('Pick A, B or C', '400 54px "Lilita One"', 54, C.gold, 446, 650, { seed: 23, fat: 2, lite: 'rgba(255,255,230,.7)', dark: 'rgba(90,50,0,.5)' });
+    X.font = '400 54px "Lilita One"'; const ax = 446 + X.measureText('Pick A, B or C').width / 2 + 44; S.ax = ax;
     S.arrow = piece([ax - 35, 600, ax + 35, 680], g => {
       const o = Pl([[ax - 12, 606], [ax + 12, 606], [ax + 12, 634], [ax + 29, 634], [ax, 672], [ax - 29, 634], [ax - 12, 634]], .4, 3); fillP(g, o, C.gold);
       cut(g, q => { q.moveTo(ax, 656); q.lineTo(ax - 7, 644); q.lineTo(ax + 7, 644); q.closePath(); });
