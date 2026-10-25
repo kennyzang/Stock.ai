@@ -355,28 +355,31 @@ const LITE_CREAM = { lite: 'rgba(255,255,255,.75)', dark: 'rgba(60,20,10,.5)' };
 // =====================================================================
 const T = {};
 (() => {
-  const q = LN.Q_N, qd = q.t1 - q.t0, fc = 'Four characters'.length;
-  T.stamps = [0, 1, 2, 3].map(i => q.t0 + qd * (i * fc / 4) / q.text.length);
-  T.guess = wordT('Q_N', 'Can you guess');
-  const L = SC.lock; T.fly = [L.t0 + 2 / 12, L.t1 - .03];   /* chips start once the header has folded flat */ T.wipe = [L.t0 + (L.t1 - L.t0) * .3, L.t1];
+  T.chars = LN.Q_M.chars;                                     // each tile lights as its syllable is spoken
+  const q2 = LN.Q2_N, q2d = (q2.t1 - q2.t0) / 3; T.abc = [0, 1, 2].map(i => q2.t0 + i * q2d);   // "A, B, or C?" in thirds
+  const L = SC.lock, ld = L.t1 - L.t0;
+  T.glide = [L.t0 + .04, L.t0 + ld * .82];                    // options glide (smooth, every frame) into the top-left bar
+  T.fold = [L.t0, L.t0 + ld * .4];                            // header + tiles fold away
+  T.wipe = [L.t0 + ld * .45, L.t1];                           // S1 comes in behind in the second half
   const s1 = SC.S1, d1 = s1.t1 - s1.t0;
-  T.count = [s1.t0 + d1 * .06, s1.t0 + d1 * .2, s1.t0 + d1 * .34];
-  T.scratch = s1.t0 + d1 * .5;
+  T.count = [s1.t0 + d1 * .05, s1.t0 + d1 * .19, s1.t0 + d1 * .33];
+  T.scratch = s1.t0 + d1 * .45;
   T.hole = wordT('S1_N', 'hole');
   T.push = [T.hole - .15, Math.min(s1.t1 - .1, T.hole + .45)];
   T.cut2 = wordT('S2_N', 'He shrugged');
   T.shrug = T.cut2 + .12;
-  T.turn = wordT('S2_N', "It's gone");
-  const w = SC.wolf_silence; T.night = [w.t0, w.t0 + .17]; T.eyes = w.t0 + .22;
+  T.turn = SC.S2.t1 - .55;
+  const w = SC.turn; T.night = [w.t0, w.t0 + .17]; T.eyes = w.t0 + .22;
   const s3 = SC.S3; T.tail = [s3.t0, s3.t0 + .8]; T.another = wordT('S3_N', 'another');
   const s4 = SC.S4, d4 = s4.t1 - s4.t0;
   T.knocks = [0, 1, 2, 3].map(i => s4.t0 + .14 + i * d4 * .11);
   T.unfold = [T.knocks[3] + .12, T.knocks[3] + .5];
   T.cheer = T.unfold[1] + .08; T.eyesAway = [T.cheer + .1, T.cheer + .45]; T.wipeBrow = [T.cheer + .3, s4.t1];
   const r = SC.reveal, dr = r.t1 - r.t0; T.barDrop = [r.t0, r.t0 + dr * .28]; T.ding = r.t0 + dr * .36; T.drop = r.t0 + dr * .5;
-  const m = LN.R_M, md = m.t1 - m.t0; T.slams = [0, 1, 2, 3].map(i => Math.max(SC.slam.t0 + .06, m.t0 + md * i / 4 - .04));
+  T.slams = LN.R_M.chars.map(c => c[0]);
   T.card = SC.slam.t0;
-  const u = SC.usage; T.shrink = [u.t0, u.t0 + .3]; T.bubble = u.t0 + .25;
+  const an = SC.answer; T.shrink = [an.t0, an.t0 + .4]; T.ansLand = an.t0 + .4;
+  const u = SC.usage; T.bubble = u.t0 + .2;
   const c = SC.close; T.title = c.t0 + .04; T.chipsC = [c.t0 + .3, c.t0 + .38, c.t0 + .46]; T.hint = c.t0 + .7;
 })();
 
@@ -423,9 +426,9 @@ function drawCaption(t) {
 // =====================================================================
 const EV = [];
 const ev = (t, type, gain) => EV.push(gain === undefined ? { t: +t.toFixed(3), type } : { t: +t.toFixed(3), type, gain });
-T.stamps.forEach((t, i) => ev(t, 'stamp', .55));
-ev(T.guess, 'tick', .8);
-ev(T.fly[0], 'whoosh', .6); ev(T.wipe[0], 'wipe', .8);
+T.chars.forEach(c => ev(c[0], 'stamp', .55));
+T.abc.forEach(t => ev(t, 'tick', .8));
+ev(T.glide[0], 'whoosh', .45); ev(T.wipe[0], 'wipe', .7);
 T.count.forEach((t, i) => ev(t, 'pop', .45)); ev(T.count[1] + .05, 'baa', .8); ev(T.scratch + .1, 'pop', .5);
 ev(T.push[0], 'whoosh', .35);
 ev(SC.S2.t0 + .05, 'rustle', .5); ev(SC.S2.t0 + .3, 'pop', .5);
@@ -436,7 +439,7 @@ T.knocks.forEach(t => ev(t, 'knock', .9)); ev(T.unfold[0], 'whoosh', .5); ev(T.u
 ev(T.cheer, 'baa', .9); ev(T.eyesAway[0], 'rustle', .4);
 ev(T.barDrop[0], 'whoosh', .6); ev(T.ding, 'ding', 1); ev(T.ding + .01, 'stamp', .5); ev(T.drop, 'drop', .8);
 ev(T.card, 'pop', .5); T.slams.forEach((t, i) => { if (i === 0) ev(t, 'boom', 1); ev(t, 'stamp', .9); });
-ev(T.shrink[0], 'whoosh', .5); ev(T.bubble, 'pop', .8);
+ev(T.shrink[0], 'whoosh', .5); ev(T.ansLand, 'ding', .55); ev(T.ansLand + .01, 'pop', .6); ev(T.bubble, 'pop', .8);
 ev(T.title, 'pop', .7); ev(T.chipsC[0], 'pop', .5); ev(T.hint, 'pop', .35);
 CAPS.forEach(c => { if (c.id !== 'C_N') ev(c.t0, 'pop', .22); });
 EV.sort((a, b) => a.t - b.t);
@@ -496,33 +499,34 @@ function drawChip(i, gold, sc = 1, dx = 0, dy = 0, rot = 0) {
   const c = chipPieces(i, gold);
   put(c.strip, 1.2, sc, c.cx, c.cy, rot, dx, dy); put(c.badge, .8, sc, c.cx, c.cy, rot, dx, dy); put(c.tx, .6, sc, c.cx, c.cy, rot, dx, dy);
 }
-// mini chips for the persistent bar
-const BAR_X = 44, BAR_W = 440, BAR_H = 54, BAR_Y = [330, 392, 454], MINI_SC = BAR_W / CHIP_W;   // three stacked chips, y ≈ 300–482
-const BAR_CX = BAR_X + BAR_W / 2, BAR_CY = 392;
-function miniChip(i) {
-  return get('mini' + i, () => {
-    const w = BAR_W, h = BAR_H, x0 = BAR_X, y0 = BAR_Y[i] - h / 2, sd = 80 + i;
-    const strip = banner(x0, y0, w, h, i === 0 ? '#8e0f1c' : '#7a0e1c', sd, { flecks: false });
-    const badge = piece([x0 + 22, y0 - 2, x0 + 82, y0 + h + 2], g => {
-      fillP(g, P(ell(x0 + 52, y0 + h / 2, 25, 25, 0, 20), .3, sd), C.cream);
-      g.font = '400 34px "Lilita One"'; g.textAlign = 'center'; g.textBaseline = 'middle';
-      g.save(); g.globalCompositeOperation = 'destination-out'; g.fillText('ABC'[i], x0 + 52, y0 + h / 2 + 2); g.restore();
-    }, { seed: sd + 1, ...LITE_CREAM });
-    const tx = textPiece(CHIP_SHORT[i], '400 40px "Lilita One"', 40, C.cream, x0 + 92, y0 + h / 2 + 14, { align: 'left', seed: sd + 2, fat: 1, edge: 1.2 });
-    return { strip, badge, tx, cx: x0 + w / 2, cy: BAR_Y[i] };
-  });
-}
+// the persistent bar: the same three option chips, glided to the top-left at bar scale (text ≈ 40 px)
+const BAR_SC = .9, BAR_X = 40, BAR_Y = [334, 396, 458];
+const barPos = i => ({ cx: BAR_X + CHIP_W * BAR_SC / 2, cy: BAR_Y[i] });
 function barPiece() {
-  return get('bar', () => piece([BAR_X - 26, 288, BAR_X + BAR_W + 26, 496], g => {
-    const o = [[BAR_X - 18, 296], [BAR_X + BAR_W + 18, 296], [BAR_X + BAR_W + 18, 488], [BAR_X - 18, 488], [BAR_X - 18, 296]];
+  return get('bar', () => { const x0 = BAR_X - 16, x1 = BAR_X + CHIP_W * BAR_SC + 16; return piece([x0 - 10, 284, x1 + 10, 508], g => {
+    const o = [[x0, 292], [x1, 292], [x1, 500], [x0, 500], [x0, 292]];
     fillP(g, wob(sawEdge(densify(o, false, 6), 6, 12, -1), .4, 3), '#141a3c');
-    g.save(); g.globalCompositeOperation = 'destination-out'; g.strokeStyle = '#000'; g.lineWidth = 2; g.strokeRect(BAR_X - 8, 305, BAR_W + 16, 174); g.restore();
-  }, { seed: 5, lite: 'rgba(170,190,255,.45)', dark: 'rgba(0,0,0,.5)' }));
+    g.save(); g.globalCompositeOperation = 'destination-out'; g.strokeStyle = '#000'; g.lineWidth = 2; g.strokeRect(x0 + 9, 301, x1 - x0 - 18, 190); g.restore();
+  }, { seed: 5, lite: 'rgba(170,190,255,.45)', dark: 'rgba(0,0,0,.5)' }); });
 }
-function drawBar(t, sc = 1, dy = 0) {
-  screen(); put(barPiece(), 1.2, sc, BAR_CX, BAR_CY, 0, 0, dy);
-  for (let i = 0; i < 3; i++) { const m = miniChip(i), b = 1 + .015 * Math.sin(st(t) * 4 + i); const ox = (m.cx - BAR_CX) * (sc - 1), oy = (m.cy - BAR_CY) * (sc - 1); put(m.strip, 1, sc * b, m.cx, m.cy, 0, ox, dy + oy); put(m.badge, .6, sc * b, m.cx, m.cy, 0, ox, dy + oy); put(m.tx, .4, sc * b, m.cx, m.cy, 0, ox, dy + oy); }
+// chip i placed at a blend u (0 = quiz position, 1 = bar position)
+function chipAt(i, u, gold = false, extra = 1) {
+  const c = chipPieces(i, gold), b = barPos(i);
+  drawChip(i, gold, lerp(1, BAR_SC, u) * extra, lerp(0, b.cx - c.cx, u), lerp(0, b.cy - c.cy, u));
 }
+function drawBar(t, a = 1) {
+  screen();
+  if (a > 0) { X.globalAlpha = a; put(barPiece(), 1.2); X.globalAlpha = 1; }
+  for (let i = 0; i < 3; i++) chipAt(i, 1);
+}
+// smooth highlight envelope (not stepped): rise in .07 s, hold, fall over .25 s
+const env = (t, a, b, up = .07, dn = .25) => t < a ? 0 : Math.min(ss((t - a) / up), 1 - ss((t - b) / dn));
+let GLOWC = null;
+function glowSprite() {
+  if (GLOWC) return GLOWC; const [c, g] = mk(256, 256), gr = g.createRadialGradient(128, 128, 10, 128, 128, 128);
+  gr.addColorStop(0, 'rgba(255,205,90,.9)'); gr.addColorStop(.45, 'rgba(240,170,50,.45)'); gr.addColorStop(1, 'rgba(240,170,50,0)'); g.fillStyle = gr; g.fillRect(0, 0, 256, 256); return GLOWC = c;
+}
+function glow(x, y, rx, ry, a) { if (a <= 0) return; X.save(); X.globalCompositeOperation = 'lighter'; X.globalAlpha = a; X.drawImage(glowSprite(), x - rx, y - ry, rx * 2, ry * 2); X.restore(); }
 
 const QCH = ['亡', '羊', '补', '牢'], QPY = ['wáng', 'yáng', 'bǔ', 'láo'], QGL = ['lose', 'sheep', 'mend', 'pen'];
 function quizPieces() {
@@ -560,7 +564,13 @@ function quizPieces() {
       const pin = textPiece(QPY[i], '700 40px "DejaVu Sans"', 40, '#e9d9b4', cx0 + T + 84, cy0 + 48, { seed: sd + 4, edge: 1, lite: 'rgba(255,255,255,.6)', dark: 'rgba(0,0,0,.4)' });
       const gls = textPiece(QGL[i], '400 44px "Lilita One"', 44, C.cream, cx0 + T + 84, cy0 + T - 4, { seed: sd + 5, fat: 1, lite: 'rgba(255,255,255,.7)', dark: 'rgba(0,0,0,.4)' });
       const icon = clueIcon(i, cx0 + T + 84, cy0 + 126, sd + 6);
-      return { frame, tile, glyph, pin, gls, icon, ccx, ccy, ix: cx0 + T + 84, iy: cy0 + 126 };
+      const rim = piece([cx0 - 30, cy0 - 30, cx0 + T + 30, cy0 + T + 30], g => {
+        const sq = [[cx0 - 14, cy0 - 14], [cx0 + T + 14, cy0 - 14], [cx0 + T + 14, cy0 + T + 14], [cx0 - 14, cy0 + T + 14], [cx0 - 14, cy0 - 14]];
+        fillP(g, wob(sawEdge(densify(sq, false, 6), 12, 16, -1), .4, sd), C.gold);
+      }, { seed: sd + 7, lite: 'rgba(255,255,230,.8)', dark: 'rgba(110,60,0,.5)' });
+      const pinG = textPiece(QPY[i], '700 40px "DejaVu Sans"', 40, C.gold, cx0 + T + 84, cy0 + 48, { seed: sd + 8, edge: 1, lite: 'rgba(255,255,230,.8)', dark: 'rgba(90,50,0,.5)' });
+      const glsG = textPiece(QGL[i], '400 44px "Lilita One"', 44, C.gold, cx0 + T + 84, cy0 + T - 4, { seed: sd + 9, fat: 1, lite: 'rgba(255,255,230,.8)', dark: 'rgba(90,50,0,.5)' });
+      return { frame, tile, glyph, pin, gls, icon, rim, pinG, glsG, ccx, ccy, ix: cx0 + T + 84, iy: cy0 + 126 };
     });
     return S;
   });
@@ -598,17 +608,19 @@ function drawQuiz(tq, pulses) {
   put(S.l3, 1);
   put(S.arrow, 1, 1, S.ax, 640, 0, 0, Math.round(Math.sin(s * 5) * 6));
   S.cells.forEach((c, i) => {
-    let sc = 1 + .012 * Math.sin(s * 3.2 + i * 1.3);
-    if (pulses) { const d = s - st(T.stamps[i]); if (d >= 0 && d < 1 / 12 - 1e-6) sc = 1.12; else if (d >= 1 / 12 - 1e-6 && d < 2 / 12 - 1e-6) sc = 1.04; }
+    const k = pulses ? env(tq, T.chars[i][0], T.chars[i][1]) : 0;        // smooth, on every frame
+    const sc = (1 + .012 * Math.sin(s * 3.2 + i * 1.3)) * (1 + .08 * k);
     const tilt = [-.03, .025, .02, -.025][i];
+    glow(c.ccx, c.ccy, 230, 230, .85 * k);
+    if (k > 0) { X.globalAlpha = k; put(c.rim, 1.6, sc, c.ccx, c.ccy, tilt); X.globalAlpha = 1; }
     put(c.frame, 1.4, sc, c.ccx, c.ccy, tilt); put(c.tile, 1, sc, c.ccx, c.ccy, tilt); put(c.glyph, 1.1, sc, c.ccx, c.ccy, tilt);
-    put(c.icon, 1.1, 1, c.ix, c.iy, Math.sin(s * 2.4 + i) * .05); put(c.pin, .6); put(c.gls, .8);
+    put(c.icon, 1.1, 1 + .1 * k, c.ix, c.iy, Math.sin(s * 2.4 + i) * .05);
+    if (k < 1) { put(c.pin, .6); put(c.gls, .8); }
+    if (k > 0) { X.globalAlpha = k; put(c.pinG, .6, 1 + .12 * k, c.ix, c.iy - 78); put(c.glsG, .8, 1 + .12 * k, c.ix, c.iy + 94); X.globalAlpha = 1; }
   });
-  for (let i = 0; i < 3; i++) {
-    let sc = 1; if (pulses) { const d = s - st(T.guess) - i / 12; if (d >= 0 && d < 1 / 12 - 1e-6) sc = 1.07; }
-    drawChip(i, false, sc);
-  }
+  for (let i = 0; i < 3; i++) drawChip(i, false, 1 + .07 * (pulses ? chipPulse(i, tq) : 0));
 }
+const chipPulse = (i, t) => env(t, T.abc[i], T.abc[i] + .12, .06, .22);
 
 // =====================================================================
 // STORY WORLD: sets
@@ -1068,7 +1080,7 @@ function sceneS2(t) {
     });
   } else {   // shot 2: close on Wang — lazy shrug, smug, turns away
     const u = prog(t, T.cut2, s2.t1);
-    cam(lerp(225, 245, u), lerp(870, 880, u), lerp(2.2, 1.95, u));
+    cam(lerp(225, 245, u), lerp(935, 945, u), lerp(2.2, 1.95, u));
     const wp = { ...WANG_HOME, expr: 'smug' };
     const sh = ss(prog(tc, st(T.shrug), st(T.shrug) + 3 / 12));
     wp.shrug = 10 * sh; wp.armL = [lerp(.12, .62, sh), lerp(0, 1.65, sh), 'open', lerp(0, -.9, sh)]; wp.armR = [lerp(.12, .62, sh), lerp(0, 1.65, sh), 'open', lerp(0, -.9, sh)];
@@ -1084,7 +1096,7 @@ function sceneS2(t) {
   }
 }
 function sceneWolf(t) {
-  const w = SC.wolf_silence, u = prog(t, w.t0, w.t1), tc = st(t);
+  const w = SC.turn, u = prog(t, w.t0, w.t1), tc = st(t);
   cam(HOLE.x, HOLE.y + 10, lerp(2.2, 2.4, u));
   const na = .7 * ss(prog(tc, st(T.night[0]), st(T.night[1])));
   const open = tc < st(T.eyes) ? 0 : tc < st(T.eyes) + 1 / 12 ? .35 : 1;
@@ -1147,37 +1159,30 @@ function wipeBand() {
   }, { seed: 141 }));
 }
 function sceneLock(t) {
-  const L = SC.lock, tc = st(t);
-  const wy = lerp(H + 200, -220, ss(prog(t, T.wipe[0], T.wipe[1])));   // band centre moves up
-  // new scene below the band
-  X.save(); screen(); X.beginPath(); X.rect(0, wy, W, H); X.clip();
-  sceneS1(SC.S1.t0);
-  X.restore();
-  // old scene above the band
+  const L = SC.lock;
+  const wy = lerp(H + 200, -220, ss(prog(t, T.wipe[0], T.wipe[1])));   // red sawtooth band rises: S1 below it, quiz above
+  X.save(); screen(); X.beginPath(); X.rect(0, wy, W, H); X.clip(); sceneS1(SC.S1.t0); X.restore();
   X.save(); screen(); X.beginPath(); X.rect(0, 0, W, Math.max(0, wy)); X.clip();
   const S = quizPieces(); drawQuizBG(t);
-  const fy = k => Math.max(0, Math.cos(Math.PI / 2 * prog(tc, st(L.t0), st(L.t0) + 2 / 12)));   // header folds flat in place, top to bottom
-  let y; if ((y = fy(0)) > .01) put(S.badge, 1, 1, 490, 319, 0, 0, 0, y);
-  if ((y = fy(1)) > .01) put(S.l1, 1.2, 1, 486, 418, 0, 0, 0, y);
-  if ((y = fy(2)) > .01) { put(S.ban, 1.2, 1, 486, 528, 0, 0, 0, y); put(S.l2, 1, 1, 486, 528, 0, 0, 0, y); }
-  if ((y = fy(3)) > .01) { put(S.l3, 1, 1, 446, 632, 0, 0, 0, y); put(S.arrow, 1, 1, S.ax, 640, 0, 0, 0, y); }
+  const fo = k => Math.max(0, Math.cos(Math.PI / 2 * ss(prog(t, T.fold[0] + k * .05, T.fold[1] + k * .05))));   // smooth fold, top to bottom
+  let y;
+  if ((y = fo(0)) > .01) { put(S.badge, 1, 1, 490, 319, 0, 0, 0, y); put(S.l1, 1.2, 1, 486, 418, 0, 0, 0, y); }
+  if ((y = fo(1)) > .01) { put(S.ban, 1.2, 1, 486, 528, 0, 0, 0, y); put(S.l2, 1, 1, 486, 528, 0, 0, 0, y); }
+  if ((y = fo(2)) > .01) { put(S.l3, 1, 1, 446, 632, 0, 0, 0, y); put(S.arrow, 1, 1, S.ax, 640, 0, 0, 0, y); }
   S.cells.forEach((c, i) => {
-    const fu = prog(tc, st(L.t0) + i / 24, st(L.t0) + i / 24 + 3 / 12), sy = Math.max(.02, Math.cos(fu * Math.PI / 2));
+    const sy = fo(2 + i * .6); if (sy <= .06) return;
     put(c.frame, 1.4, 1, c.ccx, c.ccy, 0, 0, 0, sy); put(c.tile, 1, 1, c.ccx, c.ccy, 0, 0, 0, sy); put(c.glyph, 1.1, 1, c.ccx, c.ccy, 0, 0, 0, sy);
-    if (fu < .5) { put(c.icon, 1, 1 - fu * 2, c.ix, c.iy); }
+    X.globalAlpha = sy; put(c.icon, 1, 1, c.ix, c.iy); put(c.pin, 0); put(c.gls, 0); X.globalAlpha = 1;
   });
   X.restore();
-  // band
   screen(); put(wipeBand(), 2, 1, 0, 0, -.04, 0, wy);
-  // chips fly into the bar (on top of everything)
-  const fl = eOut(prog(t, T.fly[0], T.fly[1]));
+  // the bar backing fades in under the arriving chips; the chips glide continuously on top of everything
+  X.globalAlpha = ss(prog(t, T.glide[1] - .3, T.glide[1])); put(barPiece(), 1.2); X.globalAlpha = 1;
   for (let i = 0; i < 3; i++) {
-    const c = chipPieces(i, false), m = miniChip(i);
-    if (fl < 1) { const dx = lerp(0, m.cx - c.cx, fl), dy = lerp(0, m.cy - c.cy, fl), sc = lerp(1, MINI_SC, fl); drawChip(i, false, sc, dx, dy); }
+    const u = ss(prog(t, T.glide[0] + i * .05, T.glide[1] - (2 - i) * .05));
+    chipAt(i, u, false, 1 + .07 * chipPulse(i, t));
   }
-  if (fl >= 1) drawBar(t, popS(t, T.fly[1]));
 }
-
 // ---------------- reveal / slam / usage / close ----------------
 const BIG_Y = [790, 880, 970];
 function sceneReveal(t) {
@@ -1185,9 +1190,9 @@ function sceneReveal(t) {
   drawQuizBG(t);
   const d = eOut(prog(t, T.barDrop[0], T.barDrop[1]));
   for (let i = 0; i < 3; i++) {
-    const c = chipPieces(i, false), m = miniChip(i);
-    const gold = i === 0 && tc >= st(T.ding);
-    const tx = lerp(m.cx - c.cx, 0, d), ty = lerp(m.cy - c.cy, BIG_Y[i] - c.cy, d), sc = lerp(MINI_SC, 1, d) * (gold ? popS(t, T.ding) : 1);
+    const c = chipPieces(i, false), m = barPos(i);
+    const gold = i === 0 && t >= T.ding;
+    const tx = lerp(m.cx - c.cx, 0, d), ty = lerp(m.cy - c.cy, BIG_Y[i] - c.cy, d), sc = lerp(BAR_SC, 1, d) * (gold ? popS(t, T.ding) : 1);
     if (i > 0 && t >= T.drop) { const k = t - T.drop; drawChip(i, false, 1, (i === 1 ? -1 : 1) * 160 * k, BIG_Y[i] - c.cy + 2400 * k * k, (i === 1 ? -1 : 1) * 1.4 * k); continue; }
     drawChip(i, gold, sc, tx, ty);
   }
@@ -1258,6 +1263,58 @@ function sceneSlam(t) {
   drawCard(t, popS(t, T.card), 480, 960);
   X.restore(); SHAKE = 0;
 }
+function answerPieces() {
+  return get('answer', () => {
+    const S = {}, cx = 480, cy = 1010, w = 860, h = 270, x0 = cx - w / 2, y0 = cy - h / 2;
+    S.card = piece([x0 - 14, y0 - 14, x0 + w + 14, y0 + h + 14], g => {
+      const sq = [[x0, y0], [x0 + w, y0], [x0 + w, y0 + h], [x0, y0 + h], [x0, y0]];
+      fillP(g, wob(sawEdge(densify(sq, false, 6), 10, 16, -1), .4, 3), C.gold);
+      inset(g, Pl([[x0 + 12, y0 + 12], [x0 + w - 12, y0 + 12], [x0 + w - 12, y0 + h - 12], [x0 + 12, y0 + h - 12]], .4, 4), 5, 2.4, C.gold);
+      for (const [x, y] of [[x0 + 30, y0 + 30], [x0 + w - 30, y0 + 30], [x0 + 30, y0 + h - 30], [x0 + w - 30, y0 + h - 30]]) petals(g, x, y, 12, 6, 0, .25);
+    }, { seed: 251, lite: 'rgba(255,255,230,.85)', dark: 'rgba(110,60,0,.55)' });
+    S.badge = piece([x0 + 30, cy - 60, x0 + 150, cy + 60], g => {
+      fillP(g, P(ell(x0 + 90, cy, 52, 52, 0, 28), .4, 5), C.redDeep);
+      g.font = '400 70px "Lilita One"'; g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.save(); g.globalCompositeOperation = 'destination-out'; g.fillText('A', x0 + 90, cy + 4); g.restore();
+    }, { seed: 252 });
+    const L1 = "It's never too late", L2 = 'to fix it.', tx = x0 + 172;
+    S.lines = [[L1, cy - 18], [L2, cy + 70]].map(([s, y], k) => ({
+      dim: textPiece(s, '400 70px "Lilita One"', 70, '#9b6a1c', tx, y, { align: 'left', seed: 253 + k, fat: 1, edge: 1, lite: 'rgba(255,255,230,.5)', dark: 'rgba(90,50,0,.35)' }),
+      on: textPiece(s, '400 70px "Lilita One"', 70, '#5e0a14', tx, y, { align: 'left', seed: 255 + k, fat: 2, edge: 1.2, lite: 'rgba(255,230,210,.6)', dark: 'rgba(40,0,0,.5)' }),
+      len: s.length, y }));
+    S.tx = tx; S.cx = cx; S.cy = cy; S.w = w; S.h = h;
+    return S;
+  });
+}
+function drawAnswerCard(t, s, a = 1) {
+  const S = answerPieces(); if (s <= 0) return;
+  X.save(); screen(); X.translate(S.cx, S.cy); X.scale(s, s); X.translate(-S.cx, -S.cy); X.globalAlpha = a;
+  put(S.card, 1.8); put(S.badge, .8);
+  const l = LN.A_N, u = clamp((t - l.t0) / (l.t1 - l.t0 - .25)), tot = S.lines[0].len + S.lines[1].len;   // words darken as A_N reads them
+  S.lines.forEach((ln, k) => {
+    put(ln.dim, 0);
+    const done = clamp((u * tot - (k ? S.lines[0].len : 0)) / ln.len); if (done <= 0) return;
+    X.save(); X.beginPath(); X.rect(ln.on.x0, ln.on.y0, ln.on.w * done, ln.on.h); X.clip(); put(ln.on, .5); X.restore();
+  });
+  X.restore(); X.globalAlpha = 1;
+  drawSeal(S.cx + S.w / 2 * s - 44, S.cy - S.h / 2 * s + 10, .95 * s);
+}
+const CARD_TOP = { y: 470, s: .56 };
+function sceneAnswer(t) {
+  const an = SC.answer;
+  drawQuizBG(t, .06);
+  const k = ss(prog(t, T.shrink[0], T.shrink[1]));
+  glow(480, 1010, 620, 330, .7 * ss(prog(t, T.ansLand - .1, T.ansLand + .2)) * (.85 + .15 * Math.sin(t * 5)));
+  drawCard(SC.slam.t1, lerp(1, CARD_TOP.s, k), 480, lerp(960, CARD_TOP.y, k));
+  if (t < T.ansLand) {   // chip A glides from its slot above the card to the centre, growing
+    const c = chipPieces(0, true), u = ss(prog(t, an.t0, T.ansLand));
+    drawChip(0, true, lerp(.86, 1.02, u), 0, lerp(520, 1010, u) - c.cy); drawSeal(lerp(810, 850, u), lerp(520, 1010, u), .8);
+  } else {
+    const pk = prog(t, T.ansLand, T.ansLand + .12), s = pk < 1 ? lerp(.98, 1.06, pk) : lerp(1.06, 1, ss(prog(t, T.ansLand + .12, T.ansLand + .3)));
+    drawAnswerCard(t, s);
+  }
+  scraps(t, 12, [60, 820, 900, 1200], 97, [C.gold, C.red, C.cream], .7);
+}
 function bubblePieces() {
   return get('bubble', () => {
     const S = {}, y0 = 760, y1 = 1290;
@@ -1273,8 +1330,9 @@ function bubblePieces() {
     const zh = '亡羊补牢，为时未晚。';
     S.zh = [...zh].map((ch, i) => ({ dim: textPiece(ch, '900 62px "NotoSerifSC"', 62, '#c9b48e', 182 + i * 66, 880, { seed: 210 + i, edge: 1 }), on: textPiece(ch, '900 62px "NotoSerifSC"', 62, C.red, 182 + i * 66, 880, { seed: 220 + i, edge: 1.2 }) }));
     S.py = textPiece('wáng yáng bǔ láo, wéi shí wèi wǎn', 'italic 34px "DejaVu Sans"', 34, '#5a4a3a', 480, 940, { seed: 231, edge: 0, tex: false });
-    S.en1 = richPiece([['Mend the pen ', C.sky], ['now:', C.redDeep]], '400 84px "Lilita One"', 84, 480, 1080, { fat: 2, seed: 232, ...LITE_CREAM });
-    S.en2 = richPiece([["it's ", C.sky], ['not too late!', C.redDeep]], '400 84px "Lilita One"', 84, 480, 1190, { fat: 2, seed: 233, ...LITE_CREAM });
+    S.en1 = richPiece([['Lose a sheep,', C.sky]], '400 76px "Lilita One"', 76, 480, 1064, { fat: 2, seed: 232, ...LITE_CREAM });
+    S.en2 = richPiece([['mend the pen:', C.redDeep]], '400 76px "Lilita One"', 76, 480, 1146, { fat: 2, seed: 233, ...LITE_CREAM });
+    S.en3 = richPiece([["it's ", C.sky], ['not too late.', C.redDeep]], '400 76px "Lilita One"', 76, 480, 1228, { fat: 2, seed: 235, ...LITE_CREAM });
     S.rule = piece([200, 970, 760, 990], g => { fillP(g, Pl([[220, 976], [740, 976], [740, 982], [220, 982]], .3, 2), C.redDeep); petals(g, 480, 979, 9, 6, 0, .25); }, { seed: 234 });
     return S;
   });
@@ -1282,10 +1340,8 @@ function bubblePieces() {
 function sceneUsage(t) {
   const u = SC.usage, tc = st(t);
   drawQuizBG(t, .08);
-  const k = eOut(prog(t, T.shrink[0], T.shrink[1]));
-  const c = chipPieces(0, true);
-  if (k < 1) { drawChip(0, true, .86, 0, lerp(520, -200, k) - c.cy); drawSeal(810, lerp(520, -200, k), .8); }
-  drawCard(SC.slam.t1, lerp(1, .6, k), 480, lerp(960, 520, k));
+  drawCard(SC.slam.t1, CARD_TOP.s, 480, CARD_TOP.y);
+  const k = eIn(prog(t, u.t0, u.t0 + .25)); if (k < 1) { X.save(); X.translate(0, 1100 * k); drawAnswerCard(SC.answer.t1, 1 - .3 * k); X.restore(); }
   if (t >= T.bubble) {
     const B = bubblePieces(), s = popS(t, T.bubble);
     X.save(); screen(); X.translate(480, 1025); X.scale(s, s); X.translate(-480, -1025);
@@ -1293,7 +1349,7 @@ function sceneUsage(t) {
     const m = LN.U_M, n = B.zh.length;
     B.zh.forEach((z, i) => { const on = t >= m.t0 + (m.t1 - m.t0) * i / n; put(on ? z.on : z.dim, on ? .5 : 0, on ? popS(t, m.t0 + (m.t1 - m.t0) * i / n) : 1, 182 + i * 66, 860); });
     put(B.py, 0); put(B.rule, .3);
-    if (t >= T.bubble + .25) { put(B.en1, .7, popS(t, T.bubble + .25), 480, 1050); put(B.en2, .7, popS(t, T.bubble + .4), 480, 1160); }
+    if (t >= T.bubble + .25) put(B.en1, .7, popS(t, T.bubble + .25), 480, 1040); if (t >= T.bubble + .4) put(B.en2, .7, popS(t, T.bubble + .4), 480, 1122); if (t >= T.bubble + .55) put(B.en3, .7, popS(t, T.bubble + .55), 480, 1204);
     X.restore();
     // relieved Wang pokes in at bottom-left
     CAM_DY = 0; cam(540, 960, 1);
@@ -1328,18 +1384,19 @@ function render(t) {
   else if (inS('lock')) sceneLock(t);
   else if (inS('S1')) sceneS1(t);
   else if (inS('S2')) sceneS2(t);
-  else if (inS('wolf_silence')) sceneWolf(t);
+  else if (inS('turn')) sceneWolf(t);
   else if (inS('S3')) sceneS3(t);
   else if (inS('S4')) sceneS4(t);
   else if (inS('reveal')) sceneReveal(t);
   else if (inS('slam')) sceneSlam(t);
+  else if (inS('answer')) sceneAnswer(t);
   else if (inS('usage')) sceneUsage(t);
   else if (inS('close')) sceneClose(t);
   else { drawQuiz(t - SC.loop.t0, false); }   // loop: hard cut back to exactly the quiz frame
   const story = t >= SC.S1.t0 && t < SC.reveal.t0;
-  if (story) { drawBar(t); }
+  if (story) drawBar(t);
   screen();
-  if (story) drawCaption(t);
+  if (t >= SC.lock.t0 && t < SC.reveal.t0) drawCaption(t);   // S1's first words start while the options settle
 }
 window.DUR = TL.DUR;
 window.render = render;
