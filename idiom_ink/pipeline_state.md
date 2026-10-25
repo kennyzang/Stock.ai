@@ -2,8 +2,8 @@
 
 | EP | Idiom | Image request sent (UTC) | Gmail thread | Drive folder | Images | Redo rounds | Voices + ASR | Built + QC | Handed to publication | Scheduled / live |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 24 | 井底之蛙 | 2026-10-25 00:58 | 1a1708e8f13aa76b | EP24_2026-10-25 (12Mo-idVTZ2Hk6slbWykpgf9AWbRurq0t) | waiting for ChatGPT | 0 | Jennifer, all pass ASR (pre-check) | – | – | – |
-| 23 | 守株待兔 | 2026-10-25 00:58 | 1a1708e4a9cd62c2 | EP23_2026-10-25 (1eKlPJ1lxLUfOMp15SKO7V0GI5lGC_X6Y) | waiting for ChatGPT | 0 | Jennifer, all pass ASR (pre-check) | – | – | – |
+| 24 | 井底之蛙 | 2026-10-25 00:58 | 1a1708e8f13aa76b | EP24_2026-10-25 (12Mo-idVTZ2Hk6slbWykpgf9AWbRurq0t) | accepted 03:40 (ChatGPT 9/9 at ~02:00, 1024×1536) | 0 | Jennifer, all pass ASR | ✅ 33.4 s, −14.9 LUFS, 9.0 MB (releases/EP24) | held until EP22 is live | – |
+| 23 | 守株待兔 | 2026-10-25 00:58 | 1a1708e4a9cd62c2 | EP23_2026-10-25 (1eKlPJ1lxLUfOMp15SKO7V0GI5lGC_X6Y) | accepted 03:40 (ChatGPT 9/9 at ~02:00, 1024×1536) | 0 | Jennifer, all pass ASR | ✅ 31.9 s, −15.2 LUFS, 9.0 MB (releases/EP23) | held until EP21 is live | – |
 | 22 | 指鹿为马 | 2026-10-24 00:58 | 1a16b688e56d56c9 | EP22_2026-10-24 (1V-WIFTImQqz0gydYp1eX2wypOzdH_acP) | accepted 12:30 (ChatGPT 9/9 at ~09:55, 1024×1536; the 01:30 run missed them) | 0 | Jennifer, all pass ASR | ✅ 34.5 s, −14.7 LUFS, 9.1 MB (releases/EP22) | held until EP20 is live | – |
 | 21 | 邯郸学步 | 2026-10-24 00:58 | 1a16b684b4897c8a | EP21_2026-10-24 (1QkERH6m1OdhubmklK4reCl2jtehyIQ8Q) | accepted 12:30 (ChatGPT 9/9 at ~09:55, 1024×1536; the 01:30 run missed them) | 0 | Jennifer, all pass ASR | ✅ 35.4 s, −14.8 LUFS, 9.1 MB (releases/EP21) | Publication 2026-10-24 18:15 (sha256 OK) | – |
 | 20 | 滥竽充数 | 2026-10-23 00:56 | 1a166445981c3ff8 | EP20_2026-10-23 (1KmUg_zzTywbsskAeFNH7GMshDrIoezzM) | accepted 03:30 (ChatGPT 9/9, 1024×1536) | 0 | Jennifer, all pass ASR | ✅ 37.0 s, −14.8 LUFS, 9.1 MB (releases/EP20) | Publication 2026-10-24 05:30 (sha256 OK) | – |
@@ -97,3 +97,4 @@
 - 2026-10-24 12:35: EP21/EP22 images arrived ~09:55 (ChatGPT's 09:30 run; its 01:30 run did not pick them up, no email reply sent). Accepted (no redo), built, QC'd (hooks at 1560 / 1300 to clear faces; EP22 I1/I5/I6 focus). Released; EP21 goes after EP19 is live, EP22 after EP20.
 - 2026-10-24 18:15: EP19 live (record 570055, 206 points); EP20 timed 10-25 ~06:47 UTC. EP21 handed to Publication. Send EP22 after EP20 is live.
 - 2026-10-25 00:58 (scripts run): EP23 守株待兔 and EP24 井底之蛙 written and requested. Pre-check: all lines pass first try (est. ~32 s / ~34 s). Credits: CompShare 52.09 CNY (first try 502, retried), SocialEcho 205 points.
+- 2026-10-25 03:45: EP23/EP24 images arrived ~02:00 (no reply email again; checked Drive directly). Accepted (no redo), built, QC'd (hooks/close at 1560; EP24 frog shots focus 0.8, I7 punch→push_in). Released; EP23 goes after EP21 is live, EP24 after EP22.

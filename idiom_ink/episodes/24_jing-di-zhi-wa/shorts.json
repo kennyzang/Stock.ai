@@ -44,7 +44,7 @@
    "img": "EP24_I1.png",
    "move": "push_in",
    "focus": [
-    0.5,
+    0.8,
     0.48
    ],
    "hook": "He thought his well\\Nwas the WHOLE world.",
@@ -54,7 +54,8 @@
      "voice": "N",
      "text": "He thought his little well was the whole world."
     }
-   ]
+   ],
+   "hook_y": 1560
   },
   {
    "id": "B02",
@@ -117,9 +118,9 @@
   {
    "id": "B05",
    "img": "EP24_I5.png",
-   "move": "push_in_more",
+   "move": "push_in",
    "focus": [
-    0.5,
+    0.8,
     0.5
    ],
    "lines": [
@@ -138,7 +139,7 @@
    "img": "EP24_I6.png",
    "move": "pan_left",
    "focus": [
-    0.5,
+    0.8,
     0.5
    ],
    "lines": [
@@ -156,9 +157,9 @@
   {
    "id": "B07",
    "img": "EP24_I7.png",
-   "move": "punch",
+   "move": "push_in",
    "focus": [
-    0.5,
+    0.7,
     0.5
    ],
    "lines": [
@@ -237,7 +238,7 @@
    "img": "EP24_I1.png",
    "move": "pull_out",
    "focus": [
-    0.5,
+    0.8,
     0.48
    ],
    "close": "Ever met one?",
@@ -247,7 +248,8 @@
      "voice": "N",
      "text": "Ever met one?"
     }
-   ]
+   ],
+   "close_y": 1560
   }
  ]
 }

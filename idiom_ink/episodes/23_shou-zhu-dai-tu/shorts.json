@@ -54,7 +54,8 @@
      "voice": "N",
      "text": "He waited all year for a free rabbit."
     }
-   ]
+   ],
+   "hook_y": 1560
   },
   {
    "id": "B02",
@@ -245,7 +246,8 @@
      "voice": "N",
      "text": "Ever done that?"
     }
-   ]
+   ],
+   "close_y": 1560
   }
  ]
 }
