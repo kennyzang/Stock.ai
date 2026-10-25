@@ -1,13 +1,90 @@
 {
-  "idiom": "亡羊补牢",
-  "beats": [
-    {"id": "Q", "lines": [{"id": "Q_N", "voice": "N", "text": "Four characters, one costly mistake. Can you guess the meaning?"}]},
-    {"id": "S1", "lines": [{"id": "S1_N", "voice": "N", "text": "One morning, a sheep was missing. There was a hole in the pen."}]},
-    {"id": "S2", "lines": [{"id": "S2_N", "voice": "N", "text": "Fix it, said his neighbor. He shrugged. Why bother? It's gone."}]},
-    {"id": "S3", "lines": [{"id": "S3_N", "voice": "N", "text": "Next morning, another one was gone."}]},
-    {"id": "S4", "lines": [{"id": "S4_N", "voice": "N", "text": "So he fixed the pen, and never lost another sheep."}]},
-    {"id": "R", "lines": [{"id": "R_M", "voice": "M", "text": "亡羊补牢。"}]},
-    {"id": "U", "lines": [{"id": "U_N", "voice": "N", "text": "It means: fix it now. It's not too late."}]},
-    {"id": "C", "lines": [{"id": "C_N", "voice": "N", "text": "Did you get it right? A, B, or C?"}]}
-  ]
+ "idiom": "亡羊补牢",
+ "beats": [
+  {
+   "id": "Q",
+   "lines": [
+    {
+     "id": "Q1_N",
+     "voice": "N",
+     "text": "Guess what this Chinese idiom means:"
+    },
+    {
+     "id": "Q2_N",
+     "voice": "N",
+     "text": "A, B, or C?"
+    }
+   ]
+  },
+  {
+   "id": "S1",
+   "lines": [
+    {
+     "id": "S1_N",
+     "voice": "N",
+     "text": "One morning, a sheep was missing. There was a hole in the pen."
+    }
+   ]
+  },
+  {
+   "id": "S2",
+   "lines": [
+    {
+     "id": "S2_N",
+     "voice": "N",
+     "text": "His neighbor said: fix it! He shrugged: why bother?"
+    }
+   ]
+  },
+  {
+   "id": "S3",
+   "lines": [
+    {
+     "id": "S3_N",
+     "voice": "N",
+     "text": "Next morning, another one was gone."
+    }
+   ]
+  },
+  {
+   "id": "S4",
+   "lines": [
+    {
+     "id": "S4_N",
+     "voice": "N",
+     "text": "So he fixed the pen, and never lost another sheep."
+    }
+   ]
+  },
+  {
+   "id": "R",
+   "lines": [
+    {
+     "id": "R_M",
+     "voice": "M",
+     "text": "亡羊补牢。"
+    }
+   ]
+  },
+  {
+   "id": "U",
+   "lines": [
+    {
+     "id": "A_N",
+     "voice": "N",
+     "text": "It's never too late to fix it."
+    }
+   ]
+  },
+  {
+   "id": "C",
+   "lines": [
+    {
+     "id": "C_N",
+     "voice": "N",
+     "text": "Did you get it right? A, B, or C?"
+    }
+   ]
+  }
+ ]
 }

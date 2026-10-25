@@ -185,10 +185,13 @@ def score(T, sc):
 
     patt = [0, 2, 4, 2, 5, 4, 2, 1]  # bouncy, playful
     t = 0.0; k = 0
-    mute0, mute1 = sc["wolf_silence"]["t0"] - .15, sc["S3"]["t0"]
+    story = sorted((v["t0"], k) for k, v in sc.items() if k[0] == "S" and k[1:].isdigit())
+    turn = sc.get("turn")  # near-silence before the turn; the beat after it plays tense, until the last story beat
+    mute0, mute1 = (turn["t0"] - .15, turn["t1"]) if turn else (-1, -1)
+    tense0, tense1 = (turn["t1"], story[-1][0]) if turn else (-1, -1)
     while t < T - .4:
         if not (mute0 <= t < mute1):
-            tense = sc["S3"]["t0"] <= t < sc["S4"]["t0"]
+            tense = tense0 <= t < tense1
             deg = (patt[k % 8] - (3 if tense else 0))
             put(pluck(note(deg, 0 if not tense else -1), .9, .45), t, .5 if k % 2 == 0 else .35)
             if k % 4 == 0:  # bass + woodblock on the beat
