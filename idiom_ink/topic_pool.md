@@ -10,8 +10,8 @@ Only idioms from `Reference-book/` are used. Strongest stories first.
 | 4 | 覆水难收 fù shuǐ nán shōu | 33 | ★★★ Jiang Taigong pours water on the ground | Episode 04 (done) |
 | 5 | 打草惊蛇 dǎ cǎo jīng shé | 17 | ★★★ corrupt official writes the wrong words | Episode 05 (done) |
 | 6 | 瓜田李下 guā tián lǐ xià | 34 | ★★☆ melon field, plum tree, looking guilty | Episode 06 (done) |
-| 7 | 东窗事发 dōng chuāng shì fā | 27 | ★★☆ traitor's plot, ghost dream (needs care: dark) | |
-| 8 | 班门弄斧 bān mén nòng fǔ | 9 | ★★☆ showing off an axe at the master's door | |
+| 7 | 东窗事发 dōng chuāng shì fā | 27 | ★★☆ traitor's plot, ghost dream (needs care: dark) | Episode 07 (posted 2026-10-17) |
+| 8 | 班门弄斧 bān mén nòng fǔ | 9 | ★★☆ showing off an axe at the master's door | Episode 08 (posted 2026-10-18) |
 | 9 | 逼上梁山 bī shàng liáng shān | 14 | ★☆☆ Water Margin outlaws (no single story in book) | |
 | 10 | 好事多磨 hǎo shì duō mó | — | ★☆☆ Confucius's struggles (no single story) | |
 | 11 | 趁热打铁 chèn rè dǎ tiě | 21 | ★☆☆ no story; East-meets-West angle | |
@@ -36,7 +36,7 @@ Ones marked ★☆☆ have no story in the book, so they would need a different 
 | 20 | 滥竽充数 làn yú chōng shù | 韩非子·内储说上 | images requested 2026-10-23 |
 | 21 | 邯郸学步 hán dān xué bù | 庄子·秋水 | images requested 2026-10-24 |
 | 22 | 指鹿为马 zhǐ lù wéi mǎ | 史记·秦始皇本纪 | images requested 2026-10-24 |
-| 23 | 守株待兔 shǒu zhū dài tù | 韩非子·五蠹 | images requested 2026-10-25 |
+| 23 | 守株待兔 shǒu zhū dài tù | 韩非子·五蠹 | WITHDRAWN: duplicate, already posted 2026-10-18 (old EP09) |
 | 24 | 井底之蛙 jǐng dǐ zhī wā | 庄子·秋水 | images requested 2026-10-25 |
 Skipped: 削足适履 (core image is self-harm; not family-friendly). Reserved: 亡羊补牢 (taken by the "Chinese Idioms" session for the owner-approved v4 pilot, 2026-10-25; do not script it here). Next up (added 2026-10-23, all public-domain classics): 朝三暮四 (庄子·齐物论), 三人成虎 (战国策·魏策二), 塞翁失马 (淮南子·人间训), 画龙点睛 (历代名画记).
-
+Also posted before the shorts era: EP09 守株待兔 (2026-10-18). Before picking a topic, check it against every idiom above and publish_log.md.
