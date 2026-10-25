@@ -7,7 +7,7 @@ episode: `motion/pilot_wang-yang-bu-lao/` (亡羊补牢).
 ## Fixed voice and scene order (every episode)
 | Scene | Voice line | What the viewer sees |
 |---|---|---|
-| quiz | `Q1_N` "Guess what this Chinese idiom means:" | quiz card = frame 1 = cover: "IDIOM QUIZ #N", 4 tiles (character + pinyin + cut clue + gloss), answers A/B/C |
+| quiz | `Q1_N` "Guess what this Chinese idiom means:" | quiz card = frame 1 = cover: "IDIOM QUIZ #N", "What does this / Chinese idiom mean?" / "Pick A, B or C", 4 tiles (character + pinyin + cut clue + gloss), answers A/B/C |
 | quiz | `Q_M` the idiom in Mandarin, once | **each tile lights up exactly while its syllable is spoken** (`TL.lines[Q_M].chars`) |
 | quiz | `Q2_N` "A, B, or C?" | chips pulse A → B → C |
 | lock | (story voice starts while they settle) | the three options **glide slowly and smoothly (~1.3 s) to the top-left**, shrinking into the bar that stays visible through the story |
