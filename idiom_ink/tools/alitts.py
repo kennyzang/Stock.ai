@@ -47,6 +47,8 @@ def post(path, body, tries=4):
 
 
 def fetch(url, dest, tries=4):
+    if url.startswith("http://"):  # the audio CDN also serves https; some containers only proxy https
+        url = "https://" + url[len("http://"):]
     for i in range(tries):
         try:
             with urllib.request.urlopen(url, context=CTX, timeout=180) as resp:
