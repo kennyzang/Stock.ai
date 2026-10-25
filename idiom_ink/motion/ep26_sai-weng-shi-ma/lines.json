@@ -1,0 +1,100 @@
+{
+ "idiom": "塞翁失马",
+ "beats": [
+  {
+   "id": "Q",
+   "lines": [
+    {
+     "id": "Q1_N",
+     "voice": "N",
+     "text": "Guess what this Chinese idiom means:"
+    },
+    {
+     "id": "Q2_N",
+     "voice": "N",
+     "text": "A, B, or C?"
+    }
+   ]
+  },
+  {
+   "id": "S1",
+   "lines": [
+    {
+     "id": "S1_N",
+     "voice": "N",
+     "text": "An old man's only horse ran away."
+    }
+   ]
+  },
+  {
+   "id": "S2",
+   "lines": [
+    {
+     "id": "S2_N",
+     "voice": "N",
+     "text": "Neighbors said: so sad! He smiled: maybe it's luck."
+    }
+   ]
+  },
+  {
+   "id": "S3",
+   "lines": [
+    {
+     "id": "S3_N",
+     "voice": "N",
+     "text": "Then it came back with a wild horse!"
+    }
+   ]
+  },
+  {
+   "id": "S4",
+   "lines": [
+    {
+     "id": "S4_N",
+     "voice": "N",
+     "text": "Now he had two horses!"
+    }
+   ]
+  },
+  {
+   "id": "R",
+   "lines": [
+    {
+     "id": "R_M",
+     "voice": "M",
+     "text": "塞翁失马。"
+    }
+   ]
+  },
+  {
+   "id": "U",
+   "lines": [
+    {
+     "id": "A_N",
+     "voice": "N",
+     "text": "A loss can turn out to be lucky."
+    }
+   ]
+  },
+  {
+   "id": "C",
+   "lines": [
+    {
+     "id": "C1_N",
+     "voice": "N",
+     "text": "Did you get it right?"
+    },
+    {
+     "id": "C_N",
+     "voice": "N",
+     "text": "Did you get it right? A, B, or C?",
+     "compose": [
+      "C1_N",
+      "Q2_N"
+     ],
+     "note": "C_N = voice_kit C1_N + 0.18 s silence + voice_kit Q2_N."
+    }
+   ]
+  }
+ ]
+}
