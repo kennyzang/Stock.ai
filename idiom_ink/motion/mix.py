@@ -227,6 +227,13 @@ def main():
     venv = lp(np.abs(voice), 8); duck = 1 - .55 * np.clip(venv / (venv.max() * .25 + 1e-9), 0, 1)
     vr = np.sqrt(np.mean(voice[voice != 0] ** 2)); mr = np.sqrt(np.mean(mus ** 2)) or 1
     mus = mus / mr * vr * 10 ** (-17 / 20) * duck
+    # foley must never mask a word: duck it under the voice (with 60 ms look-ahead, since hits land on syllable
+    # onsets), and keep it very low under the Mandarin lines, where one masked syllable changes the idiom
+    look = int(.06 * SR); vahead = np.concatenate([venv[look:], np.zeros(look)])
+    fx *= 1 - .6 * np.clip(np.maximum(venv, vahead) / (venv.max() * .25 + 1e-9), 0, 1)
+    for li in tl["lines"]:
+        if li["id"].endswith("_M"):
+            a, b = int((li["t0"] - .12) * SR), int((li["t1"] + .05) * SR); fx[max(0, a):b] *= .15
     mix = voice + fx * .55 + mus
     mix = mix[:int(T * SR)]
     write_wav(outp, mix / max(1, np.abs(mix).max() / .95))
