@@ -1,0 +1,696 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Papercut Idiom</title>
+<link rel="stylesheet" href="file:///tmp/claude-0/-home-user-Stock-ai/bcb7fc1b-9dba-5aaf-9469-b8b3664e0f24/scratchpad/refs/lemo-opuscar/core/fonts/fonts.css">
+<style>html,body{margin:0;background:#1b2347}canvas{display:block}</style>
+</head><body><canvas id="c" width="1080" height="1920"></canvas>
+<script>
+// Red paper-cut style frames for "画蛇添足". Everything is a cut piece of paper laid on paper.
+const W = 1080, H = 1920, TAU = Math.PI * 2;
+const cv = document.getElementById('c'), X = cv.getContext('2d');
+const C = {
+  red: '#d2201f', rust: '#c8341c', rustFar: '#9c2416', redFar: '#6e1222', redDeep: '#a3101e',
+  sky: '#1b2347', skyL: '#232d5e', far: '#33437e', mid: '#273263', ground: '#182044', groundD: '#11173a',
+  ink: '#0f1328', cream: '#f3e7cc', skin: '#f2cfa0', slate: '#5f7fb0', slateD: '#48638f',
+  bronze: '#6d7038', gold: '#e8b54a', sand: '#d9c193', white: '#f8f3e8', legging: '#eadfc4', shoe: '#3b1416'
+};
+
+// ---------------- deterministic noise ----------------
+const h2 = (x, y, s = 0) => { const n = Math.sin(x * 127.1 + y * 311.7 + s * 74.7) * 43758.5453; return n - Math.floor(n); };
+const rnd = (k, s = 0) => h2(k * 1.37 + .5, s * 2.11 + .3, 9.1);
+function mk(w, h) { const c = document.createElement('canvas'); c.width = Math.max(1, Math.ceil(w)); c.height = Math.max(1, Math.ceil(h)); return [c, c.getContext('2d')]; }
+function vn(P, seed) {
+  return (x, y) => {
+    const i = Math.floor(x), j = Math.floor(y), fx = x - i, fy = y - j, u = fx * fx * (3 - 2 * fx), v = fy * fy * (3 - 2 * fy);
+    const w = (a, b) => h2(((a % P) + P) % P, ((b % P) + P) % P, seed);
+    return (w(i, j) * (1 - u) + w(i + 1, j) * u) * (1 - v) + (w(i, j + 1) * (1 - u) + w(i + 1, j + 1) * u) * v;
+  };
+}
+let GRAIN = null;
+function grain() {   // neutral grey fibre texture for soft-light
+  if (GRAIN) return GRAIN;
+  const N = 512, [c, g] = mk(N, N), id = g.createImageData(N, N), d = id.data;
+  const n1 = vn(4, 1), n2 = vn(16, 2), n3 = vn(64, 3);
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+    const f = (n1(x / 128, y / 128) - .5) + (n2(x / 32, y / 32) - .5) * .5 + (n3(x / 8, y / 8) - .5) * .3;
+    const sp = h2(x, y, 3) > .994 ? -40 : 0, v = 128 + f * 48 + sp, i = (y * N + x) * 4;
+    d[i] = d[i + 1] = d[i + 2] = Math.max(0, Math.min(255, v)); d[i + 3] = 255;
+  }
+  g.putImageData(id, 0, 0);
+  const fib = (n, col, a, len, w, s) => {
+    g.strokeStyle = col; g.lineWidth = w; g.lineCap = 'round';
+    for (let k = 0; k < n; k++) {
+      const x = rnd(k, s) * N, y = rnd(k, s + 1) * N, an = rnd(k, s + 2) * TAU, L = len * (.35 + rnd(k, s + 3));
+      g.globalAlpha = a * (.4 + .6 * rnd(k, s + 4));
+      for (const [ox, oy] of [[0, 0], [-N, 0], [N, 0], [0, -N], [0, N]]) {
+        g.beginPath(); g.moveTo(x + ox, y + oy);
+        g.quadraticCurveTo(x + ox + Math.cos(an + .4) * L * .5, y + oy + Math.sin(an + .4) * L * .5, x + ox + Math.cos(an) * L, y + oy + Math.sin(an) * L); g.stroke();
+      }
+    }
+    g.globalAlpha = 1;
+  };
+  fib(520, '#ffffff', .24, 30, 1.1, 11); fib(200, '#000000', .14, 24, .9, 17);
+  return GRAIN = c;
+}
+
+// ---------------- paths ----------------
+function cr(pts, closed = true, step = 3) {   // Catmull-Rom through points
+  const n = pts.length, out = [], G = i => closed ? pts[(i + n) % n] : pts[Math.max(0, Math.min(n - 1, i))];
+  const segs = closed ? n : n - 1;
+  for (let i = 0; i < segs; i++) {
+    const p0 = G(i - 1), p1 = G(i), p2 = G(i + 1), p3 = G(i + 2), L = Math.hypot(p2[0] - p1[0], p2[1] - p1[1]), k = Math.max(2, Math.ceil(L / step));
+    for (let j = 0; j < k; j++) {
+      const t = j / k, t2 = t * t, t3 = t2 * t, f = d => .5 * (2 * p1[d] + (-p0[d] + p2[d]) * t + (2 * p0[d] - 5 * p1[d] + 4 * p2[d] - p3[d]) * t2 + (-p0[d] + 3 * p1[d] - 3 * p2[d] + p3[d]) * t3);
+      out.push([f(0), f(1)]);
+    }
+  }
+  if (!closed) out.push(pts[n - 1]);
+  return out;
+}
+function densify(pts, closed = true, step = 4) {
+  const o = [], n = pts.length, m = closed ? n : n - 1;
+  for (let i = 0; i < m; i++) { const a = pts[i], b = pts[(i + 1) % n], L = Math.hypot(b[0] - a[0], b[1] - a[1]), k = Math.max(1, Math.ceil(L / step)); for (let j = 0; j < k; j++) o.push([a[0] + (b[0] - a[0]) * j / k, a[1] + (b[1] - a[1]) * j / k]); }
+  if (!closed) o.push(pts[n - 1]); return o;
+}
+function wob(poly, amp = .7, seed = 1, freq = .07) {   // hand-cut irregularity
+  let s = 0; const out = [];
+  for (let i = 0; i < poly.length; i++) {
+    if (i) s += Math.hypot(poly[i][0] - poly[i - 1][0], poly[i][1] - poly[i - 1][1]);
+    const a = poly[Math.max(0, i - 1)], b = poly[Math.min(poly.length - 1, i + 1)], dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1;
+    const x = s * freq, j = Math.floor(x), f = x - j, u = f * f * (3 - 2 * f);
+    const nz = (rnd(j, seed) * (1 - u) + rnd(j + 1, seed) * u - .5) * 2 + (rnd(i, seed + 7) - .5) * .3;
+    out.push([poly[i][0] - dy / l * nz * amp, poly[i][1] + dx / l * nz * amp]);
+  }
+  return out;
+}
+const P = (pts, amp = .7, seed = 1) => wob(cr(pts, true), amp, seed);
+const Pl = (pts, amp = .6, seed = 1) => wob(densify(pts, true), amp, seed);
+function tr(g, poly, closed = true) { g.moveTo(poly[0][0], poly[0][1]); for (let i = 1; i < poly.length; i++) g.lineTo(poly[i][0], poly[i][1]); if (closed) g.closePath(); }
+function fillP(g, poly, col) { g.beginPath(); tr(g, poly); g.fillStyle = col; g.fill(); }
+function ell(cx, cy, rx, ry, rot = 0, n = 48, a0 = 0, a1 = TAU) {
+  const o = []; for (let i = 0; i < n; i++) { const a = a0 + (a1 - a0) * i / n, x = Math.cos(a) * rx, y = Math.sin(a) * ry; o.push([cx + x * Math.cos(rot) - y * Math.sin(rot), cy + x * Math.sin(rot) + y * Math.cos(rot)]); } return o;
+}
+function capsule(a, b, ra, rb) {
+  const an = Math.atan2(b[1] - a[1], b[0] - a[0]), o = [];
+  for (let i = 0; i <= 12; i++) { const t = an + Math.PI / 2 + i / 12 * Math.PI; o.push([a[0] + Math.cos(t) * ra, a[1] + Math.sin(t) * ra]); }
+  for (let i = 0; i <= 12; i++) { const t = an - Math.PI / 2 + i / 12 * Math.PI; o.push([b[0] + Math.cos(t) * rb, b[1] + Math.sin(t) * rb]); }
+  return wob(densify(o, true, 3), .6, (a[0] * 7 + b[1]) | 0);
+}
+function ribbon(sp, wf) {
+  const L = [], R = [], n = sp.length;
+  for (let i = 0; i < n; i++) {
+    const a = sp[Math.max(0, i - 1)], b = sp[Math.min(n - 1, i + 1)], dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1, w = wf(i / (n - 1));
+    L.push([sp[i][0] - dy / l * w, sp[i][1] + dx / l * w]); R.push([sp[i][0] + dy / l * w, sp[i][1] - dx / l * w]);
+  }
+  return L.concat(R.reverse());
+}
+function along(pts, step) {
+  const L = [0]; for (let i = 1; i < pts.length; i++) L.push(L[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+  const tot = L[L.length - 1], n = Math.max(1, Math.round(tot / step)), out = []; let j = 0;
+  for (let k = 0; k <= n; k++) {
+    const s = tot * k / n; while (j < pts.length - 2 && L[j + 1] < s) j++;
+    const u = (s - L[j]) / ((L[j + 1] - L[j]) || 1), a = pts[j], b = pts[j + 1], dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1;
+    out.push({ x: a[0] + dx * u, y: a[1] + dy * u, nx: dy / l, ny: -dx / l, tx: dx / l, ty: dy / l, u: s / tot });
+  }
+  return out;
+}
+
+// ---------------- cutting ----------------
+function cut(g, fn, rule = 'nonzero') { g.save(); g.globalCompositeOperation = 'destination-out'; g.fillStyle = '#000'; g.beginPath(); fn(g); g.fill(rule); g.restore(); }
+function cutTaper(g, pts, w) {
+  const n = pts.length; if (n < 2) return; const L = [], R = [];
+  for (let i = 0; i < n; i++) {
+    const a = pts[Math.max(0, i - 1)], b = pts[Math.min(n - 1, i + 1)], dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1;
+    const k = Math.sin(Math.PI * (i / (n - 1))) * .92 + .08, ww = w * k / 2;
+    L.push([pts[i][0] - dy / l * ww, pts[i][1] + dx / l * ww]); R.push([pts[i][0] + dy / l * ww, pts[i][1] - dx / l * ww]);
+  }
+  cut(g, q => tr(q, L.concat(R.reverse())));
+}
+const tap = (g, pts, w) => cutTaper(g, cr(pts, false, 2), w);
+function inset(g, poly, ins = 5, gap = 2, col = C.red) {   // the double outline (yin line inside the edge)
+  g.save(); g.beginPath(); tr(g, poly); g.clip();
+  g.globalCompositeOperation = 'destination-out'; g.strokeStyle = '#000'; g.lineJoin = 'round'; g.lineWidth = 2 * (ins + gap); g.beginPath(); tr(g, poly); g.stroke();
+  g.globalCompositeOperation = 'source-over'; g.strokeStyle = col; g.lineWidth = 2 * ins; g.beginPath(); tr(g, poly); g.stroke();
+  g.restore();
+}
+function within(g, poly, fn) { g.save(); g.beginPath(); tr(g, poly); g.clip(); fn(); g.restore(); }
+function crescentPts(cx, cy, r, a0, a1, t, n = 18) {
+  const o = [], ins = [];
+  for (let i = 0; i <= n; i++) { const u = i / n, a = a0 + (a1 - a0) * u, k = Math.sin(Math.PI * u); o.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]); ins.push([cx + Math.cos(a) * (r - t * k), cy + Math.sin(a) * (r - t * k)]); }
+  return o.concat(ins.reverse());
+}
+const crescent = (g, cx, cy, r, a0, a1, t) => cut(g, q => tr(q, crescentPts(cx, cy, r, a0, a1, t)));
+function crescentRows(g, x0, y0, x1, y1, r = 10, t = 4, span = .7) {
+  cut(g, q => {
+    let row = 0;
+    for (let y = y0; y < y1 + r; y += r * 1.05, row++)
+      for (let x = x0 - r * 2 + (row % 2) * r; x < x1 + r * 2; x += r * 2) tr(q, crescentPts(x, y, r, Math.PI * (.5 - span / 2), Math.PI * (.5 + span / 2), t, 12));
+  });
+}
+function sawRow(g, pts, h = 10, sp = 6, side = 1, frac = .78) {
+  const S = along(pts, sp);
+  cut(g, q => {
+    for (let i = 0; i < S.length - 1; i++) {
+      const a = S[i], b = S[i + 1], mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2, hw = frac / 2;
+      q.moveTo(a.x + (b.x - a.x) * (.5 - hw), a.y + (b.y - a.y) * (.5 - hw)); q.lineTo(a.x + (b.x - a.x) * (.5 + hw), a.y + (b.y - a.y) * (.5 + hw));
+      q.lineTo(mx + a.nx * h * side, my + a.ny * h * side); q.closePath();
+    }
+  });
+}
+function sawEdge(pts, h = 12, sp = 14, side = 1) { const S = along(pts, sp / 2), out = []; S.forEach((p, i) => { const k = i % 2 ? h * side : 0; out.push([p.x + p.nx * k, p.y + p.ny * k]); }); return out; }
+function swirl(g, cx, cy, r, turns = 2, w = 4, rot = 0, dir = 1) {
+  const pts = [], n = Math.ceil(turns * 36);
+  for (let i = 0; i <= n; i++) { const u = i / n, a = rot + dir * u * turns * TAU, rr = r * (1 - u * .9); pts.push([cx + Math.cos(a) * rr, cy + Math.sin(a) * rr]); }
+  cutTaper(g, pts, w); const e = pts[pts.length - 1]; cut(g, q => q.arc(e[0], e[1], w * .7, 0, TAU));
+}
+function petals(g, cx, cy, r, n = 6, rot = 0, core = .2) {
+  cut(g, q => {
+    for (let k = 0; k < n; k++) {
+      const a = rot + k * TAU / n, ca = Math.cos(a), sa = Math.sin(a), r0 = r * (core + .08), wd = r * Math.sin(Math.PI / n) * .72, Q = (u, v) => [cx + ca * u - sa * v, cy + sa * u + ca * v];
+      q.moveTo(...Q(r0, 0)); q.quadraticCurveTo(...Q((r0 + r) * .5, wd * 1.25), ...Q(r, 0)); q.quadraticCurveTo(...Q((r0 + r) * .5, -wd * 1.25), ...Q(r0, 0)); q.closePath();
+    }
+  });
+  cut(g, q => { q.moveTo(cx + r * core * .55, cy); q.arc(cx, cy, r * core * .55, 0, TAU); });
+}
+function coin(g, cx, cy, r) { cut(g, q => { q.arc(cx, cy, r, 0, TAU); q.rect(cx - r * .42, cy - r * .42, r * .84, r * .84); }, 'evenodd'); }
+function plum(g, cx, cy, r, rot = -Math.PI / 2) { cut(g, q => { for (let k = 0; k < 5; k++) { const a = rot + k * TAU / 5, x = cx + Math.cos(a) * r * .6, y = cy + Math.sin(a) * r * .6; q.moveTo(x + r * .42, y); q.arc(x, y, r * .42, 0, TAU); } }); }
+
+// ---------------- pieces ----------------
+function finish(c, g, opt = {}) {
+  const w = c.width, h = c.height, [m, mg] = mk(w, h); mg.drawImage(c, 0, 0);
+  g.save(); g.setTransform(1, 0, 0, 1, 0, 0);
+  if (opt.tex !== false) {
+    const pat = g.createPattern(grain(), 'repeat'), s = opt.seed || 0;
+    pat.setTransform(new DOMMatrix([1, 0, 0, 1, (s * 137) % 512, (s * 71) % 512]));
+    g.globalCompositeOperation = 'soft-light'; g.globalAlpha = opt.gA ?? 1; g.fillStyle = pat; g.fillRect(0, 0, w, h); g.globalAlpha = 1;
+  }
+  const e = opt.edge ?? 1.6;
+  if (e > 0) {
+    const [r, rg] = mk(w, h);
+    rg.drawImage(m, 0, 0); rg.globalCompositeOperation = 'destination-out'; rg.drawImage(m, e, e);
+    rg.globalCompositeOperation = 'source-in'; rg.fillStyle = opt.lite || 'rgba(255,232,210,.55)'; rg.fillRect(0, 0, w, h);
+    g.globalCompositeOperation = 'source-atop'; g.drawImage(r, 0, 0);
+    rg.globalCompositeOperation = 'source-over'; rg.clearRect(0, 0, w, h);
+    rg.drawImage(m, 0, 0); rg.globalCompositeOperation = 'destination-out'; rg.drawImage(m, -e, -e);
+    rg.globalCompositeOperation = 'source-in'; rg.fillStyle = opt.dark || 'rgba(25,0,10,.5)'; rg.fillRect(0, 0, w, h);
+    g.drawImage(r, 0, 0);
+  }
+  g.globalCompositeOperation = 'destination-in'; g.drawImage(m, 0, 0);
+  g.restore();
+}
+function piece(box, draw, opt = {}) {
+  const [x0, y0, x1, y1] = box, [c, g] = mk(x1 - x0, y1 - y0);
+  g.translate(-x0, -y0); g.lineJoin = 'round'; g.lineCap = 'round';
+  draw(g); finish(c, g, opt);
+  return { c, x0, y0, w: c.width, h: c.height };
+}
+function put(p, z = 1, g = X, sc = 1, px = 0, py = 0, rot = 0) {   // place with a paper shadow; optional pop scale/rotation about (px,py)
+  g.save();
+  if (z > 0) { g.shadowColor = 'rgba(3,5,16,.55)'; g.shadowBlur = 7 * z; g.shadowOffsetX = 3 * z; g.shadowOffsetY = 5 * z; }
+  if (sc !== 1 || rot) { g.translate(px, py); g.rotate(rot); g.scale(sc, sc); g.translate(-px, -py); }
+  g.drawImage(p.c, p.x0, p.y0); g.restore();
+}
+function textPiece(s, font, size, col, x, y, opt = {}) {   // yang-cut letters
+  X.save(); X.font = `${font}`; if (opt.ls) X.letterSpacing = opt.ls + 'px'; const tw = X.measureText(s).width; X.restore();
+  const pad = (opt.fat || 0) + 12, al = opt.align || 'center', lx = al === 'center' ? x - tw / 2 : al === 'left' ? x : x - tw;
+  return piece([lx - pad, y - size * 1.05 - pad, lx + tw + pad, y + size * .35 + pad], g => {
+    g.font = font; if (opt.ls) g.letterSpacing = opt.ls + 'px'; g.textAlign = 'left'; g.textBaseline = 'alphabetic'; g.fillStyle = col;
+    if (opt.fat) { g.strokeStyle = col; g.lineWidth = opt.fat; g.lineJoin = 'round'; g.strokeText(s, lx, y); }
+    g.fillText(s, lx, y);
+  }, { seed: opt.seed || 3, edge: opt.edge ?? 1.6, lite: opt.lite, dark: opt.dark });
+}
+function bgPaper(col, seed, box = [0, 0, W, H]) { return piece(box, g => { g.fillStyle = col; g.fillRect(box[0], box[1], box[2] - box[0], box[3] - box[1]); }, { seed, edge: 0, gA: .9 }); }
+
+// banner strip (hengpi): serrated top/bottom, swallow tails
+function banner(x0, y0, w, h, col, seed = 5) {
+  return piece([x0 - 4, y0 - 6, x0 + w + 4, y0 + h + 6], g => {
+    const poly = [], st = 12;
+    for (let x = x0; x <= x0 + w; x += st) poly.push([x, y0 + ((x - x0) / st % 2) * 4]);
+    poly.push([x0 + w - 26, y0 + h / 2]);
+    for (let x = x0 + w; x >= x0; x -= st) poly.push([x, y0 + h - ((x - x0) / st % 2) * 4]);
+    poly.push([x0 + 26, y0 + h / 2]);
+    const pp = Pl(poly, .5, seed); fillP(g, pp, col);
+    // a yin line just inside, with bridges at the tails
+    g.save(); g.globalCompositeOperation = 'destination-out'; g.strokeStyle = '#000'; g.lineWidth = 2.2;
+    g.beginPath(); g.moveTo(x0 + 40, y0 + 11); g.lineTo(x0 + w - 40, y0 + 11); g.moveTo(x0 + 40, y0 + h - 11); g.lineTo(x0 + w - 40, y0 + h - 11); g.stroke(); g.restore();
+    for (let k = 0; k < 30; k++) { g.fillStyle = `rgba(232,181,74,${.18 + rnd(k, seed) * .3})`; g.beginPath(); g.arc(x0 + 30 + rnd(k, seed + 1) * (w - 60), y0 + 14 + rnd(k, seed + 2) * (h - 28), .8 + rnd(k, seed + 3) * 1.3, 0, TAU); g.fill(); }
+  }, { seed, edge: 1.4 });
+}
+
+// 8-fold rosette (tuanhua) designed as one wedge, mirrored D8
+function wedge(g, R) {
+  const A = Math.PI / 8, pol = (r, a) => [Math.cos(a) * r, Math.sin(a) * r];
+  cut(g, q => { const o = [], n = 10; for (let i = 0; i <= n; i++) o.push(pol(R * .91, .035 + (A - .07) * i / n)); for (let i = n; i >= 0; i--) o.push(pol(R * .86, .035 + (A - .07) * i / n)); tr(q, o); });
+  for (let i = 0; i < 3; i++) { const a = (i + .5) * A / 3; cut(g, q => { q.moveTo(...pol(R * .83, a - .03)); q.lineTo(...pol(R * .83, a + .03)); q.lineTo(...pol(R * .72, a)); q.closePath(); }); }
+  cut(g, q => { const a = A * .5, b = [R * .44, 0], t = [R * .68, 0], wd = R * .07; const rot = (p) => [p[0] * Math.cos(a) - p[1] * Math.sin(a), p[0] * Math.sin(a) + p[1] * Math.cos(a)];
+    q.moveTo(...rot(b)); q.quadraticCurveTo(...rot([R * .56, wd]), ...rot(t)); q.quadraticCurveTo(...rot([R * .56, -wd]), ...rot(b)); q.closePath(); });
+  crescent(g, ...pol(R * .58, A * .98), R * .05, A + Math.PI * .6, A + Math.PI * 1.4, R * .022);
+  for (let i = 0; i < 2; i++) { const a = (i + .5) * A / 2; cut(g, q => { q.moveTo(...pol(R * .4, a - .05)); q.lineTo(...pol(R * .4, a + .05)); q.lineTo(...pol(R * .27, a)); q.closePath(); }); }
+  crescent(g, 0, 0, R * .22, .02, A - .02, R * .05);
+}
+function tuanhua(cx, cy, R, col, seed = 4) {
+  return piece([cx - R - 12, cy - R - 12, cx + R + 12, cy + R + 12], g => {
+    const out = []; const N = 96;
+    for (let i = 0; i < N * 2; i++) { const a = i / (N * 2) * TAU, r = R * (i % 2 ? .975 : 1.0); out.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]); }
+    fillP(g, out, col);
+    g.save(); g.translate(cx, cy);
+    for (let k = 0; k < 8; k++) for (const m of [1, -1]) { g.save(); g.rotate(k * TAU / 8); g.scale(1, m); wedge(g, R); g.restore(); }
+    g.restore();
+    plum(g, cx, cy, R * .1);
+    // fold creases
+    g.strokeStyle = 'rgba(0,0,0,.12)'; g.lineWidth = 1;
+    for (let k = 0; k < 4; k++) { const a = k * Math.PI / 4; g.beginPath(); g.moveTo(cx - Math.cos(a) * R, cy - Math.sin(a) * R); g.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R); g.stroke(); }
+  }, { seed, edge: 1.2 });
+}
+// corner flower (quarter rosette)
+function cornerFlower(cx, cy, R, col, q0, seed) {
+  return piece([cx - R, cy - R, cx + R, cy + R], g => {
+    const o = [[cx, cy]]; for (let i = 0; i <= 40; i++) { const a = q0 + Math.PI / 2 * i / 40, r = R * (i % 2 ? .93 : 1); o.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]); }
+    fillP(g, wob(o, .4, seed), col);
+    g.save(); g.translate(cx, cy); g.rotate(q0);
+    for (let k = 0; k < 2; k++) for (const m of [1, -1]) { g.save(); g.rotate(Math.PI / 4 + (k - .5) * Math.PI / 4 * 0); g.scale(1, m); g.rotate(-Math.PI / 4 + Math.PI / 8 * (k ? 1 : -1) + Math.PI / 4); wedge(g, R * .98); g.restore(); }
+    g.restore();
+  }, { seed, edge: 1.2 });
+}
+
+// scraps (small cut triangles drifting)
+function scraps(t, n, box, seed, cols) {
+  for (let k = 0; k < n; k++) {
+    const [x0, y0, x1, y1] = box, sp = 20 + rnd(k, seed) * 40;
+    const x = x0 + rnd(k, seed + 1) * (x1 - x0) + Math.sin(t * 1.3 + k) * 14, y = y0 + ((rnd(k, seed + 2) * (y1 - y0) + t * sp) % (y1 - y0));
+    const s = 5 + rnd(k, seed + 3) * 9, a = t * (1 + rnd(k, seed + 4) * 2) + k;
+    X.save(); X.translate(x, y); X.rotate(a); X.fillStyle = cols[k % cols.length]; X.globalAlpha = .85;
+    X.shadowColor = 'rgba(0,0,0,.4)'; X.shadowBlur = 3; X.shadowOffsetX = 1.5; X.shadowOffsetY = 2.5;
+    X.beginPath(); X.moveTo(-s, -s * .6); X.lineTo(s, -s * .3); X.lineTo(-s * .2, s); X.closePath(); X.fill(); X.restore();
+  }
+}
+function stars(n, box, seed, col = '#e9dcb8') {
+  for (let k = 0; k < n; k++) {
+    const x = box[0] + rnd(k, seed) * (box[2] - box[0]), y = box[1] + rnd(k, seed + 1) * (box[3] - box[1]), s = 2 + rnd(k, seed + 2) * 4;
+    X.save(); X.fillStyle = col; X.globalAlpha = .5 + rnd(k, seed + 3) * .4; X.translate(x, y); X.rotate(.3);
+    X.beginPath(); X.moveTo(0, -s); X.lineTo(s * .4, 0); X.lineTo(0, s); X.lineTo(-s * .4, 0); X.closePath(); X.fill(); X.restore();
+  }
+}
+// rolling hill / ground layer with sawtooth top
+function hillLayer(pts, yBottom, col, seed, opt = {}) {
+  const top = cr(pts, false, 4), edge = opt.saw ? sawEdge(top, opt.saw, opt.sp || 16, -1) : top;
+  const poly = wob(edge, .6, seed).concat([[pts[pts.length - 1][0], yBottom], [pts[0][0], yBottom]]);
+  const ys = pts.map(p => p[1]); const ymin = Math.min(...ys) - 30;
+  return piece([pts[0][0], ymin, pts[pts.length - 1][0], yBottom], g => {
+    fillP(g, poly, col);
+    if (opt.deco) opt.deco(g, top);
+  }, { seed, edge: 1.4, lite: 'rgba(170,190,255,.35)', dark: 'rgba(0,0,10,.5)' });
+}
+
+// ============================ FRAME A ============================
+let A = null;
+function buildA() {
+  const S = {};
+  S.bg = bgPaper(C.sky, 2);
+  S.rose = tuanhua(470, 905, 610, C.skyL, 6);
+  S.cornerL = cornerFlower(0, 0, 250, C.redFar, 0, 7);
+  S.cornerR = cornerFlower(W, 0, 250, C.redFar, Math.PI / 2, 8);
+  S.hill1 = hillLayer([[-20, 1560], [200, 1520], [420, 1555], [640, 1505], [860, 1545], [1100, 1515]], H, C.far, 11, { saw: 12, deco: (g, top) => { crescentRows(g, -20, 1600, 1100, 1700, 14, 4); } });
+  S.hill2 = hillLayer([[-20, 1660], [260, 1630], [520, 1670], [780, 1625], [1100, 1660]], H, C.groundD, 12, { saw: 14 });
+  // hook text
+  S.l1 = textPiece('4 characters.', '400 100px "Lilita One"', 100, C.cream, 486, 392, { seed: 21, fat: 3, lite: 'rgba(255,255,255,.7)', dark: 'rgba(80,50,20,.5)' });
+  X.font = '400 84px "Lilita One"'; const w2 = X.measureText('1 crazy story.').width + 130;
+  S.ban = banner(486 - w2 / 2, 418, w2, 112, C.redDeep, 4);
+  S.l2 = textPiece('1 crazy story.', '400 84px "Lilita One"', 84, C.cream, 486, 504, { seed: 22, fat: 2, lite: 'rgba(255,255,255,.7)', dark: 'rgba(80,30,20,.6)' });
+  S.l3 = textPiece('Guess the meaning', '400 56px "Lilita One"', 56, C.gold, 446, 612, { seed: 23, fat: 2, lite: 'rgba(255,255,230,.7)', dark: 'rgba(90,50,0,.5)' });
+  X.font = '400 56px "Lilita One"'; const ax = 446 + X.measureText('Guess the meaning').width / 2 + 44; S.ax = ax;
+  S.arrow = piece([ax - 35, 560, ax + 35, 640], g => {
+    const o = Pl([[ax - 12, 566], [ax + 12, 566], [ax + 12, 594], [ax + 29, 594], [ax, 632], [ax - 29, 594], [ax - 12, 594]], .4, 3); fillP(g, o, C.gold);
+    cut(g, q => { q.moveTo(ax, 616); q.lineTo(ax - 7, 604); q.lineTo(ax + 7, 604); q.closePath(); });
+  }, { seed: 4, lite: 'rgba(255,255,230,.7)', dark: 'rgba(90,50,0,.5)' });
+  // tiles
+  const chars = ['画', '蛇', '添', '足'], py = ['huà', 'shé', 'tiān', 'zú'], gl = ['draw', 'snake', 'add', 'feet'];
+  S.cells = chars.map((ch, i) => {
+    const cx0 = i % 2 ? 494 : 50, cy0 = i < 2 ? 660 : 936, T = 240, ccx = cx0 + T / 2, ccy = cy0 + T / 2, sd = 30 + i * 5;
+    const frame = piece([cx0 - 22, cy0 - 22, cx0 + T + 22, cy0 + T + 22], g => {
+      const sq = [[cx0 - 8, cy0 - 8], [cx0 + T + 8, cy0 - 8], [cx0 + T + 8, cy0 + T + 8], [cx0 - 8, cy0 + T + 8], [cx0 - 8, cy0 - 8]];
+      const se = sawEdge(densify(sq, false, 6), 10, 16, -1); fillP(g, wob(se, .4, sd), C.redDeep);
+    }, { seed: sd });
+    const tile = piece([cx0, cy0, cx0 + T, cy0 + T], g => {
+      const sq = Pl([[cx0 + 4, cy0 + 4], [cx0 + T - 4, cy0 + 4], [cx0 + T - 4, cy0 + T - 4], [cx0 + 4, cy0 + T - 4]], .5, sd + 1);
+      fillP(g, sq, C.cream);
+      for (const [x, y, a] of [[cx0 + 4, cy0 + 4, 0], [cx0 + T - 4, cy0 + 4, Math.PI / 2], [cx0 + T - 4, cy0 + T - 4, Math.PI], [cx0 + 4, cy0 + T - 4, -Math.PI / 2]]) {
+        crescent(g, x, y, 26, a + .15, a + Math.PI / 2 - .15, 6);   // corner crescents (yin cut, show the red frame)
+        cut(g, q => { q.arc(x + Math.cos(a + Math.PI / 4) * 12, y + Math.sin(a + Math.PI / 4) * 12, 5, 0, TAU); });
+      }
+    }, { seed: sd + 2, lite: 'rgba(255,255,255,.8)', dark: 'rgba(90,60,20,.45)' });
+    const glyph = textPiece(ch, '500 212px "LXGW WenKai"', 212, C.red, ccx, ccy + 76, { seed: sd + 3, fat: 9 });
+    const pin = textPiece(py[i], '700 40px "DejaVu Sans"', 40, '#e9d9b4', cx0 + T + 82, cy0 + 48, { seed: sd + 4, fat: 0, edge: 1, lite: 'rgba(255,255,255,.6)', dark: 'rgba(0,0,0,.4)' });
+    const gls = textPiece(gl[i], '400 44px "Lilita One"', 44, C.cream, cx0 + T + 82, cy0 + T - 4, { seed: sd + 5, fat: 1, lite: 'rgba(255,255,255,.7)', dark: 'rgba(0,0,0,.4)' });
+    const icon = clueIcon(i, cx0 + T + 82, cy0 + 128, sd + 6);
+    return { frame, tile, glyph, pin, gls, icon, ccx, ccy };
+  });
+  // answer chips
+  const ans = [['A', 'Overdoing it'], ['B', 'Being lucky'], ['C', 'Drawing well']];
+  S.chips = ans.map(([k, s], i) => {
+    const y0 = 1232 + i * 76, x0 = 128, w = 660, h = 64, sd = 60 + i * 3;
+    const strip = banner(x0, y0, w, h, i === 0 ? '#8e0f1c' : '#7a0e1c', sd);
+    const badge = piece([x0 + 30, y0 - 4, x0 + 110, y0 + h + 4], g => {
+      fillP(g, P(ell(x0 + 70, y0 + h / 2, 34, 34, 0, 24), .4, sd), C.cream);
+      g.font = '400 44px "Lilita One"'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#000';
+      g.save(); g.globalCompositeOperation = 'destination-out'; g.fillText(k, x0 + 70, y0 + h / 2 + 3); g.restore();
+    }, { seed: sd + 1, lite: 'rgba(255,255,255,.8)', dark: 'rgba(60,20,0,.45)' });
+    const tx = textPiece(s, '400 46px "Lilita One"', 46, C.cream, x0 + 128, y0 + h / 2 + 17, { align: 'left', seed: sd + 2, fat: 1, lite: 'rgba(255,255,255,.6)', dark: 'rgba(0,0,0,.4)' });
+    return { strip, badge, tx };
+  });
+  return S;
+}
+function clueIcon(i, x, y, sd) {
+  return piece([x - 80, y - 75, x + 80, y + 75], g => {
+    if (i === 0) {   // brush
+      const h = capsule([x + 44, y - 58], [x - 2, y + 4], 9, 8); fillP(g, h, C.red);
+      const f = capsule([x - 2, y + 4], [x - 12, y + 18], 13, 13); fillP(g, f, C.red);
+      const tuft = P([[x - 24, y + 14], [x - 2, y + 26], [x - 10, y + 44], [x - 36, y + 66], [x - 30, y + 40]], .4, sd); fillP(g, tuft, C.red);
+      for (const u of [.25, .5, .75]) { const px = x + 44 + (-46) * u, py = y - 58 + 62 * u; tap(g, [[px - 7, py - 5], [px, py + 1], [px + 7, py + 6]].map(([a, b]) => [a + 0, b]), 3); }
+      tap(g, [[x - 14, y + 28], [x - 22, y + 44], [x - 32, y + 58]], 2.6); tap(g, [[x - 6, y + 30], [x - 12, y + 44]], 2.4);
+      coin(g, x - 7, y + 11, 5);
+      // swash
+      const sw = ribbon(cr([[x - 64, y + 64], [x - 20, y + 58], [x + 30, y + 62], [x + 66, y + 48]], false, 3), u => 2 + Math.sin(Math.PI * u) * 7);
+      fillP(g, wob(sw, .3, sd + 1), C.red);
+    } else if (i === 1) {   // snake
+      const sp = cr([[x - 66, y + 46], [x - 40, y + 22], [x - 8, y + 40], [x + 18, y + 14], [x + 22, y - 18], [x + 44, y - 36]], false, 3);
+      fillP(g, wob(ribbon(sp, u => 3 + Math.sin(Math.PI * Math.min(1, u * 1.15)) * 11), .3, sd), C.red);
+      fillP(g, P(ell(x + 50, y - 40, 20, 14, -.6, 20), .3, sd + 1), C.red);
+      cut(g, q => q.arc(x + 54, y - 46, 3.6, 0, TAU));
+      fillP(g, Pl([[x + 66, y - 50], [x + 82, y - 60], [x + 76, y - 56], [x + 86, y - 54], [x + 70, y - 46]], .2, sd), C.red);
+      const S2 = along(sp, 13); S2.slice(2, -2).forEach((p, k) => crescent(g, p.x, p.y, 7, Math.atan2(p.ty, p.tx) + Math.PI * .6, Math.atan2(p.ty, p.tx) + Math.PI * 1.4, 2.6));
+    } else if (i === 2) {   // plus
+      const a = 16, L = 52;
+      const pl = Pl([[x - a, y - L], [x + a, y - L], [x + a, y - a], [x + L, y - a], [x + L, y + a], [x + a, y + a], [x + a, y + L], [x - a, y + L], [x - a, y + a], [x - L, y + a], [x - L, y - a], [x - a, y - a]], .5, sd);
+      fillP(g, pl, C.red); inset(g, pl, 4, 2, C.red);
+      petals(g, x, y, 13, 6, 0, .22);
+      for (const [dx, dy] of [[0, -36], [0, 36], [-36, 0], [36, 0]]) cut(g, q => { q.moveTo(x + dx, y + dy - 6); q.lineTo(x + dx + 5, y + dy); q.lineTo(x + dx, y + dy + 6); q.lineTo(x + dx - 5, y + dy); q.closePath(); });
+    } else {   // footprint
+      const rot = .18, R = (p) => [x + p[0] * Math.cos(rot) - p[1] * Math.sin(rot), y + 10 + p[0] * Math.sin(rot) + p[1] * Math.cos(rot)];
+      const sole = P([[-14, 52], [-24, 26], [-22, -2], [-24, -22], [-12, -36], [8, -36], [24, -24], [22, 0], [14, 24], [12, 50], [0, 58]].map(R), .4, sd);
+      fillP(g, sole, C.red);
+      [[-16, -52, 10], [0, -58, 8], [13, -55, 7], [23, -48, 6], [30, -38, 5]].forEach(([a, b, r], k) => fillP(g, P(ell(...R([a, b]), r, r * 1.15, rot, 16), .3, sd + k), C.red));
+      within(g, sole, () => { crescentRows(g, x - 40, y + 30, x + 40, y + 70, 8, 3); }); tap(g, [R([-8, 0]), R([-12, 14]), R([-8, 30])], 4);
+      tap(g, [R([-12, -26]), R([0, -30]), R([14, -24])], 3);
+    }
+  }, { seed: sd });
+}
+function frameA(t) {
+  if (!A) A = buildA();
+  const S = A;
+  put(S.bg, 0); put(S.rose, .8);
+  put(S.cornerL, 1); put(S.cornerR, 1);
+  stars(40, [20, 40, 1060, 1500], 5);
+  put(S.hill1, 1); put(S.hill2, 1.4);
+  scraps(t, 18, [0, 0, 1080, 1700], 31, [C.red, '#e9dcb8', C.redDeep]);
+  // hook text pops on 12 fps steps
+  const step = Math.floor(t * 12) / 12, pop = (t0) => step < t0 ? 0 : step < t0 + 1 / 12 ? 1.15 : 1;
+  let p = pop(0); if (p) put(S.l1, 1.2, X, p, 486, 360);
+  p = pop(.17); if (p) { put(S.ban, 1.2, X, p, 486, 474); put(S.l2, 1, X, p, 486, 474); }
+  p = pop(.75); if (p) { put(S.l3, 1, X, p, 486, 594); put(S.arrow, 1, X, p, S.ax, 600); }
+  S.cells.forEach((c, i) => {
+    const pp = pop(.3 + i * .1); if (!pp) return;
+    const tilt = [-.03, .025, .02, -.025][i];
+    put(c.frame, 1.4, X, pp, c.ccx, c.ccy, tilt); put(c.tile, 1, X, pp, c.ccx, c.ccy, tilt); put(c.glyph, 1.1, X, pp, c.ccx, c.ccy, tilt);
+    put(c.icon, 1.1, X, pp, c.ccx + 202, c.ccy); put(c.pin, .6); put(c.gls, .8);
+  });
+  S.chips.forEach((c, i) => { const pp = pop(.6 + i * .08); if (!pp) return; put(c.strip, 1.2, X, pp, 458, 1264 + i * 76); put(c.badge, .8, X, pp, 458, 1264 + i * 76); put(c.tx, .6, X, pp, 458, 1264 + i * 76); });
+}
+
+// ============================ FRAME B ============================
+let B = null;
+const SNAKE = [[440, 1100], [505, 1068], [585, 1092], [665, 1118], [745, 1092], [815, 1070], [862, 1078]];
+function snakeGeom() {
+  const sp = cr(SNAKE, false, 3), A2 = along(sp, 6), n = A2.length;
+  const body = ribbon(sp, u => 4 + Math.min(1, u * 3) * 18 - Math.max(0, u - .85) * 24);
+  const at = u => A2[Math.round(u * (n - 1))];
+  const feet = [];
+  for (const [u, side] of [[.36, 1], [.36, -1], [.68, 1], [.68, -1]]) {
+    const p = at(u), nx = p.nx * side, ny = p.ny * side, L = 30, bx = p.x + nx * 16, by = p.y + ny * 16, ex = p.x + nx * (16 + L) + p.tx * 10, ey = p.y + ny * (16 + L) + p.ty * 10;
+    feet.push({ p, nx, ny, bx, by, ex, ey, tx: p.tx, ty: p.ty });
+  }
+  return { sp, body, feet, head: A2[n - 1], hdir: [A2[n - 1].tx, A2[n - 1].ty] };
+}
+function footPolys(f) {
+  const leg = capsule([f.bx - f.nx * 10, f.by - f.ny * 10], [f.ex, f.ey], 6, 5), toes = [];
+  const da = Math.atan2(f.ey - f.by, f.ex - f.bx);
+  for (const d of [-.7, 0, .7]) { const a = da + d; toes.push(capsule([f.ex, f.ey], [f.ex + Math.cos(a) * 14, f.ey + Math.sin(a) * 14], 3.8, 2.6)); }
+  return [leg, ...toes];
+}
+function buildB() {
+  const S = {}, sn = snakeGeom();
+  S.sn = sn;
+  S.bg = bgPaper(C.sky, 3);
+  // moon: pale paper disc with a yin-cut ring of crescents
+  S.moon = piece([170, 210, 630, 670], g => {
+    const o = []; for (let i = 0; i < 120; i++) { const a = i / 120 * TAU, r = 215 * (i % 2 ? .985 : 1); o.push([400 + Math.cos(a) * r, 440 + Math.sin(a) * r]); }
+    fillP(g, o, '#efe1b6');
+    for (let k = 0; k < 16; k++) { const a = k / 16 * TAU; crescent(g, 400 + Math.cos(a) * 186, 440 + Math.sin(a) * 186, 18, a + Math.PI * .6, a + Math.PI * 1.4, 6); }
+    cut(g, q => { const o2 = []; for (let i = 0; i <= 60; i++) { const a = .1 + i / 60 * (TAU / 16 - .2); } });
+    for (let k = 0; k < 16; k++) { const a0 = k / 16 * TAU + .05, a1 = (k + 1) / 16 * TAU - .05; cut(g, q => { const o3 = []; for (let i = 0; i <= 8; i++) o3.push([400 + Math.cos(a0 + (a1 - a0) * i / 8) * 160, 440 + Math.sin(a0 + (a1 - a0) * i / 8) * 160]); for (let i = 8; i >= 0; i--) o3.push([400 + Math.cos(a0 + (a1 - a0) * i / 8) * 154, 440 + Math.sin(a0 + (a1 - a0) * i / 8) * 154]); tr(q, o3); }); }
+  }, { seed: 41, lite: 'rgba(255,255,255,.8)', dark: 'rgba(90,60,20,.4)' });
+  // far rooftops (Chu town), one dyed family
+  S.roofs = piece([-10, 600, 1090, 1010], g => {
+    const roof = (x, y, w, h, s) => {
+      const o = Pl([[x - w * .62, y + h * .25], [x - w * .5, y + h * .15], [x - w * .38, y], [x + w * .38, y], [x + w * .5, y + h * .15], [x + w * .62, y + h * .25], [x + w * .45, y + h * .35], [x + w * .45, 1010], [x - w * .45, 1010], [x - w * .45, y + h * .35]], .5, s);
+      fillP(g, o, C.far);
+      sawRow(g, [[x - w * .4, y + h * .2], [x + w * .4, y + h * .2]], 12, 9, -1);
+      for (let k = 0; k < 3; k++) { const wx = x - w * .3 + k * w * .3, wy = y + h * .7; cut(g, q => q.rect(wx - 16, wy - 20, 32, 40)); }
+    };
+    roof(110, 760, 260, 120, 1); roof(560, 690, 300, 130, 2); roof(960, 780, 280, 110, 3); roof(330, 820, 220, 90, 4); roof(780, 840, 220, 90, 5);
+  }, { seed: 42, lite: 'rgba(170,190,255,.35)', dark: 'rgba(0,0,10,.5)' });
+  S.wall = hillLayer([[-20, 930], [300, 920], [600, 935], [900, 918], [1100, 930]], 1010, C.mid, 43, { saw: 14, sp: 18, deco: (g) => { for (let x = 30; x < 1080; x += 120) { coin(g, x, 968, 13); } } });
+  // sand under the ground: shows through the snake cut
+  S.sand = piece([0, 1020, W, 1220], g => { g.fillStyle = C.sand; g.fillRect(0, 1020, W, 200); }, { seed: 44, edge: 0 });
+  S.ground = piece([-10, 975, 1090, H], g => {
+    const top = sawEdge(cr([[-10, 1002], [300, 996], [600, 1004], [900, 996], [1090, 1002]], false, 4), 12, 16, -1);
+    fillP(g, wob(top, .5, 9).concat([[1090, H], [-10, H]]), C.ground);
+    // the snake drawn in the dirt = cut-through to the sand
+    cut(g, q => tr(q, wob(sn.body, .6, 3)));
+    const hd = sn.head, ha = Math.atan2(sn.hdir[1], sn.hdir[0]);
+    cut(g, q => tr(q, P(ell(hd.x + Math.cos(ha) * 16, hd.y + Math.sin(ha) * 16, 34, 23, ha, 24), .5, 4)));
+    sn.feet.forEach(f => footPolys(f).forEach(pp => cut(g, q => tr(q, pp))));
+    // tongue
+    const tx = hd.x + Math.cos(ha) * 44, ty = hd.y + Math.sin(ha) * 44;
+    cut(g, q => { q.moveTo(tx, ty - 2); q.lineTo(tx + 18, ty - 9); q.lineTo(tx + 10, ty - 1); q.lineTo(tx + 19, ty + 6); q.lineTo(tx, ty + 3); q.closePath(); });
+    // bridges left in (eye, back pattern) = paper refilled
+    g.fillStyle = C.ground; g.beginPath(); g.arc(hd.x + Math.cos(ha) * 22 - 2, hd.y - 6, 4.5, 0, TAU); g.fill();
+    along(sn.sp, 22).slice(2, -2).forEach(p => { g.beginPath(); tr(g, crescentPts(p.x, p.y, 8, Math.atan2(p.ty, p.tx) + Math.PI * .6, Math.atan2(p.ty, p.tx) + Math.PI * 1.4, 3, 10)); g.fill(); });
+    // fresh scratches next to the newest foot
+    const f = sn.feet[2];
+    for (let k = 0; k < 3; k++) cutTaper(g, [[f.ex + 18 + k * 7, f.ey - 20 - k * 5], [f.ex + 24 + k * 7, f.ey - 10 - k * 5], [f.ex + 30 + k * 7, f.ey - 2 - k * 5]], 3);
+    // low-detail lower ground: crescent rows
+    within(g, [[-10, 1480], [1090, 1480], [1090, H], [-10, H]], () => crescentRows(g, -10, 1500, 1090, 1900, 16, 4));
+  }, { seed: 45, lite: 'rgba(170,190,255,.4)', dark: 'rgba(0,0,10,.55)' });
+  // ---- Li (stocky, slate-blue robe, white headband, short beard) ----
+  const L = {};
+  L.armFar = piece([90, 700, 230, 880], g => {
+    const a = capsule([182, 726], [128, 800], 26, 22); fillP(g, a, C.slateD); inset(g, a, 4, 2, C.slateD);
+    const b = capsule([128, 800], [172, 846], 22, 18); fillP(g, b, C.slateD); inset(g, b, 4, 2, C.slateD); coin(g, 128, 800, 7);
+  }, { seed: 51, lite: 'rgba(220,235,255,.4)' });
+  L.fistFar = piece([150, 820, 210, 880], g => { fillP(g, P(ell(178, 850, 19, 17, 0, 18), .4, 3), C.skin); tap(g, [[168, 842], [178, 846], [188, 842]], 2.4); }, { seed: 52 });
+  L.boots = piece([140, 930, 360, 1010], g => {
+    fillP(g, Pl([[170, 940], [212, 940], [214, 990], [228, 1004], [160, 1004], [164, 990]], .4, 2), C.ink);
+    fillP(g, Pl([[262, 940], [304, 940], [306, 988], [340, 1004], [268, 1004], [262, 990]], .4, 3), C.ink);
+  }, { seed: 53, lite: 'rgba(150,170,230,.5)' });
+  L.robe = piece([120, 680, 380, 980], g => {
+    const o = P([[178, 700], [250, 690], [322, 700], [336, 760], [330, 822], [352, 900], [362, 962], [250, 972], [134, 962], [146, 900], [168, 822], [162, 760]], .6, 5);
+    fillP(g, o, C.slate); inset(g, o, 5, 2.2, C.slate);
+    tap(g, [[206, 700], [236, 750], [262, 812]], 4); tap(g, [[294, 700], [272, 750], [262, 812]], 4);   // cross collar
+    within(g, o, () => { crescentRows(g, 140, 880, 360, 960, 12, 4); });
+    sawRow(g, [[150, 872], [352, 872]], 12, 10, 1);
+    tap(g, [[190, 840], [196, 900], [194, 950]], 3); tap(g, [[312, 840], [318, 900], [322, 950]], 3);
+  }, { seed: 54, lite: 'rgba(220,235,255,.45)' });
+  L.sash = piece([160, 800, 345, 880], g => {
+    const o = Pl([[166, 812], [336, 812], [338, 842], [164, 842]], .5, 6); fillP(g, o, C.ink);
+    fillP(g, Pl([[296, 838], [314, 838], [322, 876], [300, 870]], .4, 7), C.ink);
+    for (let x = 180; x < 330; x += 20) coin(g, x, 827, 6);
+  }, { seed: 55, lite: 'rgba(150,170,230,.5)' });
+  L.ears = piece([150, 570, 350, 640], g => { fillP(g, P(ell(166, 610, 13, 19, 0, 16), .3, 1), C.skin); fillP(g, P(ell(336, 606, 12, 18, 0, 16), .3, 2), C.skin); }, { seed: 56 });
+  L.back = piece([170, 520, 340, 700], g => {   // dark paper behind the face: what the cut features reveal
+    fillP(g, ell(256, 612, 80, 78), '#3a0d12'); g.fillStyle = C.white; g.fillRect(222, 636, 72, 9);
+  }, { tex: false, edge: 0 });
+  L.face = piece([160, 510, 350, 705], g => {
+    const o = P(ell(254, 608, 88, 86, 0, 40).map(([x, y]) => [x, y > 640 ? y + (y - 640) * .05 : y]), .5, 7); fillP(g, o, C.skin);
+    // triumphant: happy closed eyes, raised brows, big open grin
+    crescent(g, 222, 606, 17, Math.PI * 1.08, Math.PI * 1.92, 8); crescent(g, 288, 604, 17, Math.PI * 1.08, Math.PI * 1.92, 8);
+    tap(g, [[200, 572], [220, 562], [242, 568]], 6); tap(g, [[268, 566], [290, 558], [312, 566]], 6);
+    cut(g, q => { q.moveTo(218, 636); q.quadraticCurveTo(256, 642, 300, 634); q.quadraticCurveTo(296, 690, 258, 690); q.quadraticCurveTo(222, 688, 218, 636); q.closePath(); });
+    tap(g, [[252, 612], [260, 622], [266, 616]], 3.4);
+  }, { seed: 57, lite: 'rgba(255,255,240,.7)', dark: 'rgba(90,40,10,.45)' });
+  L.tongue = piece([235, 660, 285, 692], g => { fillP(g, P(ell(258, 678, 16, 8, 0, 16), .3, 2), '#d2201f'); }, { seed: 58 });
+  L.cheeks = piece([180, 620, 330, 670], g => { [[200, 644], [314, 640]].forEach(([x, y], k) => { fillP(g, P(ell(x, y, 13, 11, 0, 18), .3, k), C.red); petals(g, x, y, 9, 5, -.3, .25); }); }, { seed: 59 });
+  L.hair = piece([150, 500, 360, 640], g => {
+    const o = []; for (let i = 0; i <= 30; i++) { const a = Math.PI * (1.03 + .94 * i / 30); o.push([254 + Math.cos(a) * 95, 606 + Math.sin(a) * 94]); }
+    const hl = cr([[338, 600], [324, 566], [290, 552], [254, 556], [214, 552], [184, 566], [170, 600]], false, 3);
+    const poly = wob(o.concat(hl), .6, 3); fillP(g, poly, C.ink);
+    for (const r of [60, 74]) { const s = []; for (let i = 0; i <= 16; i++) { const a = Math.PI * (1.2 + .6 * i / 16); s.push([254 + Math.cos(a) * r, 610 + Math.sin(a) * r]); } cutTaper(g, s, 3); }
+    // moustache + short beard
+    fillP(g, P([[212, 640], [234, 628], [256, 634], [278, 628], [302, 638], [282, 642], [256, 640], [232, 643]], .3, 5), C.ink);
+    const bd = sawEdge(cr([[222, 692], [240, 704], [258, 708], [276, 704], [294, 690]], false, 3), 10, 10, -1);
+    fillP(g, wob([[214, 682], [258, 694], [302, 680]].concat(bd.reverse()), .4, 6), C.ink);
+    fillP(g, P([[166, 612], [176, 610], [190, 650], [212, 680], [196, 676], [172, 648]], .3, 7), C.ink);
+    fillP(g, P([[342, 608], [332, 606], [320, 648], [300, 678], [316, 674], [336, 646]], .3, 8), C.ink);
+  }, { seed: 60, lite: 'rgba(150,170,230,.5)' });
+  L.band = piece([90, 530, 350, 650], g => {
+    const o = P([[164, 576], [200, 556], [254, 548], [308, 556], [344, 574], [342, 594], [306, 578], [254, 572], [202, 578], [166, 598]], .4, 3);
+    fillP(g, o, C.white);
+    for (let x = 200; x <= 310; x += 22) { g.save(); petals(g, x, 573 + Math.abs(x - 254) * .06 - 1, 6, 4, .4, .3); g.restore(); }
+    const k1 = P([[166, 582], [140, 572], [104, 590], [118, 600], [140, 592]], .3, 4), k2 = P([[166, 590], [146, 600], [120, 636], [134, 640], [150, 612]], .3, 5);
+    fillP(g, k1, C.white); fillP(g, k2, C.white); fillP(g, P(ell(166, 586, 12, 11, 0, 14), .3, 6), C.white);
+    sawRow(g, cr([[108, 590], [140, 586]], false, 3), 7, 6, 1);
+  }, { seed: 61, lite: 'rgba(255,255,255,.9)', dark: 'rgba(40,40,60,.5)' });
+  L.armNear = piece([280, 500, 470, 760], g => {
+    const a = capsule([312, 728], [384, 640], 28, 24); fillP(g, a, C.slate); inset(g, a, 4, 2, C.slate);
+    const b = P([[384, 668], [362, 636], [400, 546], [436, 530], [452, 548], [412, 650]], .4, 2); fillP(g, b, C.slate); inset(g, b, 4, 2, C.slate);
+    crescentRows(g, 400, 556, 440, 580, 8, 3);
+    coin(g, 384, 642, 7);
+  }, { seed: 62, lite: 'rgba(220,235,255,.45)' });
+  L.hand = piece([400, 480, 480, 560], g => {
+    const o = P([[414, 528], [420, 500], [446, 494], [464, 502], [462, 530], [440, 540]], .4, 4); fillP(g, o, C.skin);
+    tap(g, [[426, 506], [444, 504], [458, 508]], 2.4); tap(g, [[424, 518], [444, 516], [458, 520]], 2.4);
+  }, { seed: 63 });
+  L.jug = piece([340, 300, 540, 520], g => {
+    const cx = 440, prof = [[312, 36], [328, 28], [346, 22], [372, 26], [396, 52], [426, 64], [458, 60], [484, 44], [496, 32], [506, 40]];
+    const left = prof.map(([y, w]) => [cx - w, y]), right = prof.map(([y, w]) => [cx + w, y]).reverse();
+    const o = P(left.concat(right), .5, 7); fillP(g, o, C.bronze);
+    for (const s of [-1, 1]) { fillP(g, P(ell(cx + s * 60, 380, 17, 19, 0, 18), .3, 8 + s), C.bronze); cut(g, q => q.arc(cx + s * 62, 380, 8, 0, TAU)); }
+    inset(g, o, 4, 1.8, C.bronze);
+    sawRow(g, [[cx - 50, 404], [cx + 50, 404]], 12, 9, 1);
+    within(g, o, () => { crescentRows(g, cx - 70, 430, cx + 70, 470, 11, 4); });
+    tap(g, [[cx - 40, 476], [cx, 480], [cx + 40, 476]], 3);
+    tap(g, [[cx - 20, 330], [cx, 333], [cx + 20, 330]], 3);
+    swirl(g, cx, 352, 9, 1.6, 3, 0, 1);
+  }, { seed: 64, lite: 'rgba(240,240,180,.6)', dark: 'rgba(10,10,0,.5)' });
+  S.L = L;
+  // ---- Zhang (lanky, crouched, rust robe, topknot with red cloth) ----
+  const Z = {}, f2 = sn.feet[2], tip = [f2.ex - 2, f2.ey - 2], hand = [tip[0] + 26, tip[1] - 92];
+  Z.tip = tip;
+  Z.armFar = piece([480, 580, 640, 840], g => {
+    const a = capsule([606, 812], [566, 742], 22, 19); fillP(g, a, C.rustFar); inset(g, a, 4, 2, C.rustFar);
+    const b = capsule([566, 742], [522, 636], 19, 16); fillP(g, b, C.rustFar); inset(g, b, 4, 2, C.rustFar); coin(g, 566, 742, 6);
+  }, { seed: 71 });
+  Z.handFar = piece([470, 560, 560, 660], g => { g.translate(-12, -18);   // open hand, fingers spread: the jug just left it
+    const o = P([[518, 652], [512, 628], [504, 610], [512, 606], [522, 622], [520, 602], [530, 600], [532, 620], [538, 604], [546, 608], [542, 628], [552, 618], [556, 626], [546, 650]], .3, 2);
+    fillP(g, o, C.skin);
+  }, { seed: 72 });
+  Z.legs = piece([550, 880, 820, 1010], g => {
+    fillP(g, capsule([604, 950], [600, 984], 16, 14), C.legging); fillP(g, capsule([782, 912], [770, 980], 17, 14), C.legging);
+    for (const [x, y] of [[602, 966], [778, 936], [775, 956]]) tap(g, [[x - 12, y - 3], [x, y], [x + 12, y - 3]], 2.4);
+    fillP(g, Pl([[574, 978], [616, 978], [624, 1002], [566, 1002]], .4, 3), C.shoe);
+    fillP(g, Pl([[752, 972], [788, 972], [808, 1000], [748, 1002]], .4, 4), C.shoe);
+  }, { seed: 73, lite: 'rgba(255,255,255,.7)', dark: 'rgba(60,40,20,.45)' });
+  Z.robe = piece([540, 800, 830, 990], g => {
+    const o = P([[618, 828], [672, 822], [716, 838], [752, 866], [796, 878], [814, 900], [804, 922], [770, 930], [720, 940], [660, 962], [590, 972], [560, 954], [566, 904], [590, 856]], .6, 6);
+    fillP(g, o, C.rust); inset(g, o, 5, 2.2, C.rust);
+    tap(g, [[640, 832], [664, 860], [686, 892]], 4); tap(g, [[704, 834], [690, 866], [686, 892]], 4);
+    tap(g, [[730, 876], [770, 884], [800, 898]], 3.4);   // thigh fold
+    within(g, o, () => { crescentRows(g, 560, 930, 780, 980, 11, 4); });
+    sawRow(g, cr([[566, 922], [640, 930], [720, 918]], false, 3), 11, 10, 1);
+    tap(g, [[586, 880], [584, 920]], 3);
+  }, { seed: 74 });
+  Z.sash = piece([560, 880, 740, 950], g => {
+    const o = Pl([[570, 906], [660, 896], [726, 900], [728, 922], [660, 918], [572, 930]], .4, 6); fillP(g, o, C.ink);
+    for (let x = 590; x < 720; x += 22) coin(g, x, 913 - (x - 590) * .03, 5);
+  }, { seed: 75, lite: 'rgba(150,170,230,.5)' });
+  Z.neck = piece([600, 750, 650, 810], g => fillP(g, Pl([[608, 760], [640, 760], [644, 800], [606, 802]], .3, 1), C.skin), { seed: 76 });
+  Z.back = piece([560, 620, 690, 790], g => { fillP(g, ell(620, 706, 56, 68), '#3a0d12'); }, { tex: false, edge: 0 });
+  Z.ear = piece([660, 680, 700, 740], g => { fillP(g, P(ell(678, 710, 11, 17, 0, 14), .3, 1), C.skin); tap(g, [[680, 700], [674, 710], [680, 720]], 2.4); }, { seed: 77 });
+  Z.face = piece([550, 610, 700, 800], g => {
+    const o = P([[620, 630], [662, 646], [676, 690], [670, 740], [648, 776], [618, 786], [588, 774], [568, 740], [564, 690], [578, 646]], .5, 8); fillP(g, o, C.skin);
+    // shocked: wide eyes (two lids leave bridges) with pupil holes, raised brows, O mouth
+    for (const ex of [592, 642]) {
+      crescent(g, ex, 704, 17, Math.PI * 1.04, Math.PI * 1.96, 5.5); crescent(g, ex, 704, 17, Math.PI * .08, Math.PI * .92, 3.6);
+      cut(g, q => q.arc(ex - 5, 703, 6.5, 0, TAU));
+    }
+    tap(g, [[572, 676], [588, 664], [606, 670]], 5); tap(g, [[628, 668], [646, 660], [664, 668]], 5);
+    cut(g, q => q.ellipse(612, 754, 12, 17, 0, 0, TAU));
+    tap(g, [[622, 718], [614, 732], [622, 736]], 3);
+  }, { seed: 78, lite: 'rgba(255,255,240,.7)', dark: 'rgba(90,40,10,.45)' });
+  Z.hair = piece([550, 560, 700, 720], g => {
+    const o = P([[562, 700], [560, 660], [578, 632], [620, 616], [664, 628], [684, 664], [684, 706], [672, 690], [664, 660], [640, 650], [612, 652], [584, 664], [572, 688]], .5, 2);
+    fillP(g, o, C.ink);
+    fillP(g, P(ell(628, 598, 26, 24, 0, 20), .4, 3), C.ink);
+    for (const r of [44, 54]) { const s = []; for (let i = 0; i <= 14; i++) { const a = Math.PI * (1.15 + .7 * i / 14); s.push([622 + Math.cos(a) * r, 680 + Math.sin(a) * r]); } cutTaper(g, s, 2.6); }
+    swirl(g, 628, 596, 15, 1.6, 2.6, 0, 1);
+  }, { seed: 79, lite: 'rgba(150,170,230,.55)' });
+  Z.cloth = piece([590, 560, 740, 640], g => {
+    const o = Pl([[602, 606], [654, 600], [656, 618], [604, 622]], .3, 4); fillP(g, o, C.red);
+    const t1 = P([[652, 604], [686, 584], [722, 584], [702, 598], [664, 616]], .3, 5), t2 = P([[652, 612], [690, 616], [728, 630], [700, 632], [660, 622]], .3, 6);
+    fillP(g, t1, C.red); fillP(g, t2, C.red);
+    sawRow(g, [[690, 590], [716, 588]], 6, 5, 1); sawRow(g, [[690, 620], [716, 628]], 6, 5, -1);
+    for (let x = 612; x < 650; x += 12) coin(g, x, 612, 4);
+  }, { seed: 80 });
+  Z.armNear = piece([660, 820, 860, 1040], g => {
+    const a = capsule([706, 856], [742, 936], 24, 20); fillP(g, a, C.rust); inset(g, a, 4, 2, C.rust);
+    const b = capsule([742, 936], [hand[0] + 4, hand[1] - 14], 20, 17); fillP(g, b, C.rust); inset(g, b, 4, 2, C.rust); coin(g, 742, 936, 6);
+    crescentRows(g, hand[0] - 20, hand[1] - 34, hand[0] + 30, hand[1] - 14, 7, 3);
+  }, { seed: 81 });
+  Z.stick = piece([tip[0] - 20, hand[1] - 40, hand[0] + 30, tip[1] + 14], g => {
+    fillP(g, capsule([hand[0] + 10, hand[1] - 26], tip, 5, 3), '#c99a5c');
+    tap(g, [[hand[0] - 2, hand[1] + 20], [hand[0] - 6, hand[1] + 30]], 2);
+  }, { seed: 82, lite: 'rgba(255,240,200,.7)', dark: 'rgba(60,30,0,.5)' });
+  Z.hand = piece([hand[0] - 30, hand[1] - 30, hand[0] + 30, hand[1] + 30], g => {
+    fillP(g, P(ell(hand[0], hand[1], 18, 16, .3, 18), .4, 3), C.skin); tap(g, [[hand[0] - 9, hand[1] - 4], [hand[0] + 2, hand[1] - 8], [hand[0] + 12, hand[1] - 4]], 2.4);
+  }, { seed: 83 });
+  Z.shock = piece([520, 560, 700, 700], g => {   // shock marks: red paper spikes radiating from the head
+    for (const [a, r0, r1] of [[-2.35, 96, 128], [-2.0, 98, 136], [-2.7, 96, 124]]) {
+      const cx = 622, cy = 708, w = .05;
+      fillP(g, Pl([[cx + Math.cos(a - w) * r0, cy + Math.sin(a - w) * r0], [cx + Math.cos(a) * r1, cy + Math.sin(a) * r1], [cx + Math.cos(a + w) * r0, cy + Math.sin(a + w) * r0]], .2, 3), C.gold);
+    }
+  }, { seed: 84, lite: 'rgba(255,255,230,.7)', dark: 'rgba(90,50,0,.5)' });
+  Z.sweat = piece([660, 620, 720, 690], g => { fillP(g, P([[690, 628], [700, 650], [696, 664], [684, 664], [680, 650]], .2, 2), '#bfe0f0'); }, { seed: 85, lite: 'rgba(255,255,255,.9)' });
+  S.Z = Z;
+  // caption
+  X.font = '400 80px "Lilita One"'; const wc = X.measureText("Snakes don't have").width + 150;
+  S.capBan = banner(486 - wc / 2, 1180, wc, 110, C.redDeep, 9);
+  S.cap1 = textPiece("Snakes don't have", '400 80px "Lilita One"', 80, C.cream, 486, 1262, { seed: 91, fat: 2, lite: 'rgba(255,255,255,.7)', dark: 'rgba(60,20,10,.6)' });
+  S.cap2s = textPiece('FEET!', '400 170px "Lilita One"', 170, '#5e0a14', 492, 1446, { seed: 92, fat: 16, edge: 0 });
+  S.cap2 = textPiece('FEET!', '400 170px "Lilita One"', 170, C.gold, 486, 1438, { seed: 93, fat: 4, lite: 'rgba(255,255,230,.8)', dark: 'rgba(110,60,0,.6)' });
+  // seal tag
+  S.seal = piece([40, 196, 160, 316], g => {
+    const o = Pl([[44, 200], [156, 200], [156, 312], [44, 312]], .7, 3); fillP(g, o, C.red);
+    g.save(); g.globalCompositeOperation = 'destination-out'; g.font = '500 46px "LXGW WenKai"'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#000';
+    g.fillText('画蛇', 100, 230); g.fillText('添足', 100, 282); g.lineWidth = 3; g.strokeStyle = '#000'; g.strokeRect(52, 208, 96, 96); g.restore();
+  }, { seed: 94 });
+  return S;
+}
+function frameB(t) {
+  if (!B) B = buildB();
+  const S = B, L = S.L, Z = S.Z, step = Math.floor(t * 12) / 12;
+  put(S.bg, 0);
+  stars(46, [20, 60, 1060, 760], 9);
+  put(S.moon, 1); put(S.roofs, 1); put(S.wall, 1.2);
+  put(S.sand, 0); put(S.ground, 1.6);
+  // dust kicked up by the stick
+  scraps(step, 5, [S.Z.tip[0] + 22, S.Z.tip[1] - 46, S.Z.tip[0] + 70, S.Z.tip[1] - 4], 77, [C.sand, '#bfa575']);
+  // Li
+  put(L.armFar, 1.2); put(L.fistFar, 1); put(L.boots, 1.2); put(L.robe, 1.4); put(L.sash, 1);
+  put(L.ears, .8); put(L.back, 0); put(L.tongue, 0); put(L.face, 1.2); put(L.cheeks, .6); put(L.hair, 1); put(L.band, 1.1);
+  // Zhang
+  X.save(); X.translate(16, 32); put(Z.armFar, 1.2); put(Z.handFar, 1); X.restore();
+  put(Z.legs, 1.2); put(Z.robe, 1.4); put(Z.sash, 1);
+  X.save(); X.translate(16, 32); put(Z.neck, 1);
+  put(Z.back, 0); put(Z.ear, .8); put(Z.face, 1.2); put(Z.hair, 1); put(Z.cloth, 1.1); put(Z.shock, 1); put(Z.sweat, .8); X.restore();
+  put(Z.stick, 1); put(Z.armNear, 1.3); put(Z.hand, 1.1);
+  // the snatch: jug held high, near arm over it
+  const lift = step < 9.92 ? 0 : 0;
+  put(L.jug, 1.8); put(L.armNear, 1.4); put(L.hand, 1.2);
+  scraps(t, 14, [470, 330, 640, 640], 55, [C.red, C.gold, '#efe1b6']);
+  put(S.seal, 1);
+  const pop = step < 9.75 ? 0 : step < 9.83 ? 1.15 : 1;
+  if (pop) { put(S.capBan, 1.4, X, pop, 486, 1234); put(S.cap1, 1, X, pop, 486, 1234); put(S.cap2s, 0, X, pop, 486, 1380, -.04); put(S.cap2, 1.4, X, pop, 486, 1380, -.04); }
+}
+
+window.DUR = 12;
+window.render = (t) => {
+  X.setTransform(1, 0, 0, 1, 0, 0); X.clearRect(0, 0, W, H);
+  if (t < 5.5) frameA(t); else frameB(t);
+};
+Promise.all([
+  document.fonts.load('400 100px "Lilita One"', '4 characters FEET'),
+  document.fonts.load('500 212px "LXGW WenKai"', '画蛇添足'),
+  document.fonts.load('700 40px "DejaVu Sans"', 'huà shé tiān zú'),
+  document.fonts.load('bold 40px Selawik')
+]).then(() => { grain(); window.READY = true; });
+</script></body></html>

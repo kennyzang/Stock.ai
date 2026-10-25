@@ -1,0 +1,543 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Idiom Ink Wash</title>
+<style>
+@font-face{font-family:'Fell';font-style:italic;font-weight:400;src:url('file:///tmp/claude-0/-home-user-Stock-ai/bcb7fc1b-9dba-5aaf-9469-b8b3664e0f24/scratchpad/refs/lemo-opuscar/core/fonts/f6.woff2') format('woff2');}
+@font-face{font-family:'FellR';font-style:normal;font-weight:400;src:url('file:///tmp/claude-0/-home-user-Stock-ai/bcb7fc1b-9dba-5aaf-9469-b8b3664e0f24/scratchpad/refs/lemo-opuscar/core/fonts/f7.woff2') format('woff2');}
+html,body{margin:0;background:#F2ECDE;overflow:hidden}
+canvas{display:block}
+</style></head>
+<body><canvas id="c" width="1080" height="1920"></canvas>
+<script>
+// ===== Idiom Ink: 画蛇添足 in animated ink wash. Everything drawn in Canvas 2D; deterministic in t. =====
+const W = 1080, H = 1920;
+const out = document.getElementById('c'), O = out.getContext('2d');
+const mkC = (w = W, h = H) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
+const INK = mkC(), I = INK.getContext('2d');           // ink layer (multiplied onto the paper)
+const VERM = '176,46,34', INKC = '22,18,16';
+const TONE = { jiao: .96, nong: .82, zhong: .6, dan: .34, qing: .16 };
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const lerp = (a, b, t) => a + (b - a) * t;
+const ease = t => { t = clamp(t); return t * t * (3 - 2 * t); };
+function hash(n) { const s = Math.sin(n * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s); }
+function vnoise(x) { const i = Math.floor(x), f = x - i, u = f * f * (3 - 2 * f); return lerp(hash(i), hash(i + 1), u); }
+function h2(x, y) { const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return s - Math.floor(s); }
+function vn2(x, y) { const i = Math.floor(x), j = Math.floor(y), fx = x - i, fy = y - j, u = fx * fx * (3 - 2 * fx), v = fy * fy * (3 - 2 * fy);
+  return lerp(lerp(h2(i, j), h2(i + 1, j), u), lerp(h2(i, j + 1), h2(i + 1, j + 1), u), v); }
+function mulberry(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+// ---------- rice paper (cached, procedural) ----------
+const PAPER = mkC(), GRAIN = mkC();
+(function paper() {
+  const c = PAPER.getContext('2d'), im = c.createImageData(W, H), d = im.data;
+  const g = GRAIN.getContext('2d'), gi = g.createImageData(W, H), gd = gi.data;
+  const R = mulberry(7);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const k = (y * W + x) * 4;
+    const m = vn2(x / 260, y / 260) * .55 + vn2(x / 90 + 9, y / 90) * .3 + vn2(x / 22, y / 22 + 5) * .15;
+    const fib = vn2(x / 3 + 40, y / 46) ;                  // long vertical-ish fibres
+    const gr = R();
+    const dx = (x - W / 2) / W, dy = (y - H / 2) / H, vig = (dx * dx * 1.2 + dy * dy * .8);
+    let v = 0 + (m - .5) * 14 + (fib - .5) * 5 + (gr - .5) * 6 - vig * 34;
+    d[k] = 243 + v; d[k + 1] = 236 + v * .97; d[k + 2] = 220 + v * .9; d[k + 3] = 255;
+    gd[k] = gd[k + 1] = gd[k + 2] = 0; gd[k + 3] = gr < .5 ? (gr * 70 + (fib > .7 ? 30 : 0)) : (fib > .78 ? 26 : 0);
+  }
+  c.putImageData(im, 0, 0); g.putImageData(gi, 0, 0);
+  // fibres and flecks
+  for (let i = 0; i < 1400; i++) {
+    const x = R() * W, y = R() * H, L = 10 + R() * 50, a = R() * 6.28;
+    c.strokeStyle = `rgba(150,130,100,${.05 + R() * .08})`; c.lineWidth = .6 + R() * .6;
+    c.beginPath(); c.moveTo(x, y); c.quadraticCurveTo(x + Math.cos(a) * L * .5 + (R() - .5) * 10, y + Math.sin(a) * L * .5 + (R() - .5) * 10, x + Math.cos(a) * L, y + Math.sin(a) * L); c.stroke();
+  }
+  for (let i = 0; i < 500; i++) { c.fillStyle = `rgba(110,90,70,${.08 + R() * .18})`; c.beginPath(); c.arc(R() * W, R() * H, .5 + R() * 1.4, 0, 7); c.fill(); }
+  for (let i = 0; i < 260; i++) { c.fillStyle = `rgba(255,252,240,${.3 + R() * .4})`; c.beginPath(); c.ellipse(R() * W, R() * H, 1 + R() * 3, .6 + R(), R() * 3, 0, 7); c.fill(); }
+})();
+
+// ---------- brush engine ----------
+function densify(P, per = 10) {
+  if (P.length < 3) { const o = [], a = P[0], b = P[P.length - 1]; for (let i = 0; i <= per; i++) { const t = i / per; o.push([lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2] ?? 1, b[2] ?? 1, t)]); } return o; }
+  const o = [];
+  for (let i = 0; i < P.length - 1; i++) {
+    const p0 = P[Math.max(0, i - 1)], p1 = P[i], p2 = P[i + 1], p3 = P[Math.min(P.length - 1, i + 2)];
+    for (let k = 0; k < per; k++) { const t = k / per, t2 = t * t, t3 = t2 * t;
+      const f = (a, b, c, d) => .5 * (2 * b + (-a + c) * t + (2 * a - 5 * b + 4 * c - d) * t2 + (-a + 3 * b - 3 * c + d) * t3);
+      o.push([f(p0[0], p1[0], p2[0], p3[0]), f(p0[1], p1[1], p2[1], p3[1]), lerp(p1[2] ?? 1, p2[2] ?? 1, t)]); }
+  }
+  const l = P[P.length - 1]; o.push([l[0], l[1], l[2] ?? 1]); return o;
+}
+function resample(D, ds) {
+  const acc = [0]; for (let i = 1; i < D.length; i++) acc.push(acc[i - 1] + Math.hypot(D[i][0] - D[i - 1][0], D[i][1] - D[i - 1][1]));
+  const L = acc[acc.length - 1] || 1e-6, n = Math.max(2, Math.min(500, Math.ceil(L / ds) + 1)), o = []; let j = 0;
+  for (let i = 0; i < n; i++) { const s = L * i / (n - 1); while (j < D.length - 2 && acc[j + 1] < s) j++;
+    const u = clamp((s - acc[j]) / ((acc[j + 1] - acc[j]) || 1e-6)); o.push([lerp(D[j][0], D[j + 1][0], u), lerp(D[j][1], D[j + 1][1], u), lerp(D[j][2], D[j + 1][2], u)]); }
+  return { P: o, len: L };
+}
+const PROF = {
+  brush: s => Math.min(1, .45 + s / .1 * .55) * Math.pow(1 - s * .9, .45),
+  even: s => Math.min(1, .55 + s / .05 * .45) * Math.min(1, .5 + (1 - s) / .06 * .5),
+  tip: s => Math.pow(Math.sin(Math.PI * clamp(s * .96 + .02)), .6),
+  lens: s => Math.pow(Math.sin(Math.PI * clamp(s)), .75),
+  nail: s => Math.pow(1 - s, .7) * Math.min(1, .7 + s * 6),
+  cone: s => Math.pow(1 - s, .55) * Math.min(1, s / .04 * .6 + .4),
+  rise: s => Math.min(1, .12 + s / .14 * .88) * Math.min(1, (1 - s) / .08 * .7 + .3),
+};
+let SEEDC = 1;
+// one stroke: pts [[x,y,p]], o {w,tone,dry,prof,rough,nb,seed,side,col,body}
+function S(pts, o = {}, prog = 1, c = I) {
+  if (prog <= 0) return;
+  const w = o.w ?? 6, seed = o.seed ?? (SEEDC = (SEEDC * 16807) % 2147483647);
+  const { P, len } = resample(densify(pts, 10), Math.max(.5, w * .16));
+  const n = P.length, prof = PROF[o.prof || 'brush'], rough = o.rough ?? .12;
+  const ws = [], nx = [], ny = [];
+  for (let i = 0; i < n; i++) { const s = i / (n - 1);
+    ws.push(Math.max(w * .05, w * prof(s) * P[i][2] * (1 + rough * (vnoise(seed * .013 + s * len / (w * 1.3 + 1)) * 2 - 1))));
+    const a = P[Math.max(0, i - 1)], b = P[Math.min(n - 1, i + 1)], dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy) || 1; nx.push(-dy / L); ny.push(dx / L); }
+  const m = Math.max(1, Math.floor((n - 1) * clamp(prog)));
+  const tone = o.tone ?? TONE.nong, dry = o.dry ?? .25, col = o.col || INKC, side = o.side || 0;
+  const bodyA = tone * Math.pow(1 - dry, 1.6) * (o.body ?? 1);
+  if (bodyA > .004) {
+    c.beginPath();
+    for (let i = 0; i <= m; i++) { const hw = ws[i] / 2; const x = P[i][0] + nx[i] * hw, y = P[i][1] + ny[i] * hw; i ? c.lineTo(x, y) : c.moveTo(x, y); }
+    for (let i = m; i >= 0; i--) { const hw = ws[i] / 2; c.lineTo(P[i][0] - nx[i] * hw, P[i][1] - ny[i] * hw); }
+    c.closePath();
+    const gr = c.createLinearGradient(P[0][0], P[0][1], P[n - 1][0], P[n - 1][1]);
+    gr.addColorStop(0, `rgba(${col},${clamp(bodyA * .9)})`); gr.addColorStop(1, `rgba(${col},${clamp(bodyA * .9 * (1 - dry * .55))})`);
+    c.fillStyle = gr; c.fill();
+  }
+  const nb = o.nb ?? Math.round(clamp(w * 1.1, 4, 50)), R = mulberry(seed);
+  c.lineCap = 'round'; c.lineJoin = 'round'; c.strokeStyle = `rgb(${col})`;
+  const dsl = len / (n - 1);
+  for (let j = 0; j < nb; j++) {
+    const off = (j + .5) / nb - .5 + (R() - .5) * .6 / nb, edge = Math.abs(off) * 2;
+    const bw = w / nb * (1 + R() * 1.1), ba = .55 + R() * .45, ph = R() * 1000;
+    const load = 1 - dry * (.15 + .85 * edge) * (.5 + R() * .7), gs = .5 + R() * 1.6, end = 1 - R() * dry * .35;
+    const lat = side ? lerp(1 - Math.abs(side), 1, clamp(off * Math.sign(side) * 1.6 + .5)) : 1;
+    c.globalAlpha = clamp(tone * ba * lat * (o.bristle ?? 1)); c.lineWidth = bw;
+    const kk = Math.min(m, Math.floor((n - 1) * end)); c.beginPath(); let on = false;
+    const gsc = Math.max(6, w * 1.4) * gs;
+    for (let i = 0; i <= kk; i++) {
+      const u = i / (n - 1), sl = i * dsl;
+      const ink = load - dry * (.08 + 1.15 * Math.pow(u, 1.25));
+      const v = ink + (vnoise(ph + sl / gsc) - .5) * .9 * dry + (vnoise(ph * 1.7 + sl / (gsc * .18)) - .5) * .25 * dry;
+      if (v > .42 * dry + .02) { const hw = ws[i] * (off + (vnoise(ph * 3 + sl / (gsc * 2)) - .5) * .07); const x = P[i][0] + nx[i] * hw, y = P[i][1] + ny[i] * hw; on ? c.lineTo(x, y) : c.moveTo(x, y); on = true; }
+      else on = false;
+    }
+    c.stroke();
+  }
+  c.globalAlpha = 1;
+}
+// soft ink mass: noisy polygon with gradient [x0,y0,x1,y1,a0,a1]
+function M(poly, a, jit = 4, seed = 0, g = null, col = INKC, c = I) {
+  if (a <= .003) return;
+  const pts = [], N = poly.length;
+  for (let i = 0; i < N; i++) { const p = poly[i], q = poly[(i + 1) % N], L = Math.hypot(q[0] - p[0], q[1] - p[1]);
+    const k = Math.max(1, Math.min(30, Math.round(L / Math.max(2, jit * 2.5)))), nx = -(q[1] - p[1]) / (L || 1), ny = (q[0] - p[0]) / (L || 1);
+    for (let j = 0; j < k; j++) { const u = j / k, d = (vnoise(seed * 3.1 + i * 5.3 + u * k * .8) - .5) * jit * 2; pts.push([lerp(p[0], q[0], u) + nx * d, lerp(p[1], q[1], u) + ny * d]); } }
+  if (g) { const gr = c.createLinearGradient(g[0], g[1], g[2], g[3]); gr.addColorStop(0, `rgba(${col},${clamp(a * g[4])})`); gr.addColorStop(1, `rgba(${col},${clamp(a * g[5])})`); c.fillStyle = gr; }
+  else c.fillStyle = `rgba(${col},${clamp(a)})`;
+  c.beginPath(); pts.forEach((p, i) => i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1])); c.closePath(); c.fill();
+}
+// smooth closed blob through control points (for robes etc.)
+function blobPath(c, pts) { c.beginPath(); const n = pts.length;
+  for (let i = 0; i < n; i++) { const p = pts[i], q = pts[(i + 1) % n], mx = (p[0] + q[0]) / 2, my = (p[1] + q[1]) / 2; i ? c.quadraticCurveTo(p[0], p[1], mx, my) : c.moveTo(mx, my); }
+  const p = pts[0], q = pts[1]; c.quadraticCurveTo(p[0], p[1], (p[0] + q[0]) / 2, (p[1] + q[1]) / 2); c.closePath(); }
+function wash(pts, a, col = INKC, g = null, c = I) {
+  blobPath(c, pts);
+  if (g) { const gr = c.createLinearGradient(g[0], g[1], g[2], g[3]); gr.addColorStop(0, `rgba(${col},${a * g[4]})`); gr.addColorStop(1, `rgba(${col},${a * g[5]})`); c.fillStyle = gr; }
+  else c.fillStyle = `rgba(${col},${a})`;
+  c.fill();
+}
+function blot(x, y, r, a, seed = 0, sq = 1, rot = 0, col = INKC, c = I) {
+  c.save(); c.translate(x, y); c.rotate(rot); c.scale(1, sq); c.fillStyle = `rgba(${col},${clamp(a)})`; c.beginPath();
+  for (let i = 0; i <= 18; i++) { const t = i / 18 * 6.283, rr = r * (.8 + .4 * vnoise(seed * 7.1 + i * .9)); i ? c.lineTo(Math.cos(t) * rr, Math.sin(t) * rr) : c.moveTo(Math.cos(t) * rr, Math.sin(t) * rr); }
+  c.fill(); c.restore();
+}
+function splatter(x, y, r, n, seed, a = .8, c = I) { const R = mulberry(seed);
+  for (let i = 0; i < n; i++) { const ang = R() * 6.283, d = r * Math.pow(R(), .6), s = (1 - d / r) * 6 * R() + 1.2; blot(x + Math.cos(ang) * d, y + Math.sin(ang) * d, s, a * (.5 + R() * .5), seed + i, .7 + R() * .5, ang, INKC, c); } }
+// ink bloom: wet pale disc with a darker tide-line, grows with p
+function bloom(x, y, r, a, seed, p = 1, c = I) {
+  if (p <= 0) return; const rr = r * ease(p) ;
+  const pts = []; for (let i = 0; i < 40; i++) { const t = i / 40 * 6.283, k = .78 + .3 * vnoise(seed + i * .55) + .08 * Math.sin(t * 3 + seed); pts.push([x + Math.cos(t) * rr * k, y + Math.sin(t) * rr * k * .92]); }
+  const g = c.createRadialGradient(x, y, 0, x, y, rr * 1.05);
+  g.addColorStop(0, `rgba(${INKC},${a * .55})`); g.addColorStop(.75, `rgba(${INKC},${a * .8})`); g.addColorStop(1, `rgba(${INKC},${a})`);
+  blobPath(c, pts); c.fillStyle = g; c.fill();
+  c.lineWidth = 2.2; c.strokeStyle = `rgba(${INKC},${a * 1.1})`; c.stroke();   // tide line (edge pigment)
+}
+
+// ---------- calligraphy: font glyph as skeleton, written with brush texture ----------
+const GCACHE = {};
+function glyphTex(ch, size, seed, tone) {
+  const key = ch + size + '_' + seed + '_' + tone; if (GCACHE[key]) return GCACHE[key];
+  const D = Math.ceil(size * 1.9), cv = mkC(D, D), g = cv.getContext('2d'), R = mulberry(seed * 991);
+  g.font = `${size}px "LXGW WenKai"`; g.textAlign = 'center'; g.textBaseline = 'middle';
+  const mm = g.measureText(ch), gx = D / 2, gy = D / 2 + (mm.actualBoundingBoxAscent - mm.actualBoundingBoxDescent) / 2;
+  g.fillStyle = '#000'; g.strokeStyle = '#000'; g.lineJoin = 'round';
+  g.lineWidth = size * .034; g.fillText(ch, gx, gy); g.strokeText(ch, gx, gy);
+  g.lineWidth = size * .03; g.strokeText(ch, gx + size * .008, gy + size * .006);   // brush drag
+  const bl = mkC(D, D), bg = bl.getContext('2d'); bg.filter = 'blur(4px)'; bg.drawImage(cv, 0, 0);
+  const bd = bg.getImageData(0, 0, D, D).data;
+  const im = g.getImageData(0, 0, D, D), d = im.data;
+  for (let y = 0; y < D; y++) for (let x = 0; x < D; x++) {
+    const k = (y * D + x) * 4, m = d[k + 3] / 255; if (m <= 0) continue;
+    const inner = bd[k + 3] / 255;                                     // ~1 deep inside a stroke, lower near its edge
+    const pool = vn2(x / 30 + seed * 3, y / 30);                       // wet pooling, tonal drift
+    const dir = vn2(x / 70 + 50 + seed, y / 70);                       // which way the bristles ran here
+    const bh = vn2(x / 30 + seed, y / 1.4), bv = vn2(x / 1.4, y / 30 + seed);
+    const br = dir > .5 ? bh : bv, gate = vn2(x / 44 + 9, y / 44 + seed * 2);
+    let a = .9 + .1 * pool;
+    if (br > .68 && gate > .58) a *= 1 - Math.min(.8, (br - .68) * 4 * (gate - .4) * 2.2);  // flying-white tracks
+    a *= .93 + .07 * (1 - inner);                                       // edge pigment: rim darker than the core
+    const rough = vn2(x / 2.6 + seed * 7, y / 2.6), edgeZ = clamp((.8 - inner) / .5);
+    let mm2 = m * (1 - edgeZ * clamp((rough - .55) * 2.2));             // ragged, bristly contour
+    d[k] = 22; d[k + 1] = 18; d[k + 2] = 16; d[k + 3] = 255 * tone * a * clamp(mm2) / .86 * .86;
+  }
+  g.putImageData(im, 0, 0);
+  // edge pigment: a slightly darker rim
+  g.globalCompositeOperation = 'source-atop'; g.strokeStyle = `rgba(${INKC},.12)`; g.lineWidth = 2; g.filter = 'blur(1px)';
+  g.font = `${size}px "LXGW WenKai"`; g.strokeText(ch, gx, gy); g.filter = 'none'; g.globalCompositeOperation = 'source-over';
+  return (GCACHE[key] = { cv, D });
+}
+const RV = mkC(460, 460), RVG = RV.getContext('2d');
+function glyph(ch, cx, cy, size, prog = 1, seed = 1, c = I, tone = .95) {
+  if (prog <= 0) return;
+  const { cv, D } = glyphTex(ch, size, seed, tone);
+  let src = cv;
+  if (prog < 1) {   // painted in: soft diagonal wipe, top-left first (rough stroke order)
+    RV.width = D; RV.height = D; RVG.drawImage(cv, 0, 0); RVG.globalCompositeOperation = 'destination-in';
+    const gr = RVG.createLinearGradient(D * .2, D * .15, D * .8, D * .85), e = prog * 1.25;
+    gr.addColorStop(clamp(e - .2), 'rgba(0,0,0,1)'); gr.addColorStop(clamp(e), 'rgba(0,0,0,0)'); RVG.fillStyle = gr; RVG.fillRect(0, 0, D, D);
+    RVG.globalCompositeOperation = 'source-over'; src = RV;
+  }
+  c.save(); c.globalAlpha = .16; c.filter = 'blur(7px)'; c.drawImage(src, cx - D / 2, cy - D / 2); c.restore();   // wet halo
+  c.drawImage(src, cx - D / 2, cy - D / 2);
+}
+
+// ---------- vermilion seal (白文: characters knocked out) ----------
+function seal(x, y, s, chars, seed = 3, rot = 0) {
+  const c = I; c.save(); c.translate(x, y); c.rotate(rot);
+  const SC = mkC(Math.ceil(s) + 8, Math.ceil(s) + 8), q = SC.getContext('2d'); q.translate(4, 4);
+  q.beginPath(); for (let i = 0; i < 28; i++) { const t = i / 28 * 4, sd = Math.floor(t), u = t - sd; let px, py;
+    if (sd === 0) { px = u * s; py = 0; } else if (sd === 1) { px = s; py = u * s; } else if (sd === 2) { px = s - u * s; py = s; } else { px = 0; py = s - u * s; }
+    px += (vnoise(seed + i * 1.3) - .5) * s * .035; py += (vnoise(seed + 40 + i * 1.3) - .5) * s * .035; i ? q.lineTo(px, py) : q.moveTo(px, py); }
+  q.closePath(); q.fillStyle = `rgb(${VERM})`; q.fill();
+  q.globalCompositeOperation = 'destination-out'; q.fillStyle = '#000'; q.textAlign = 'center'; q.textBaseline = 'middle';
+  if (chars.length === 1) { q.font = `${s * .74}px "LXGW WenKai"`; q.fillText(chars, s / 2, s * .53); q.lineWidth = s * .03; q.strokeStyle = '#000'; q.strokeText(chars, s / 2, s * .53); }
+  else { q.font = `${s * .44}px "LXGW WenKai"`; // 2x2 read right column top-down then left
+    const p = [[.73, .29], [.73, .74], [.27, .29], [.27, .74]]; [...chars].forEach((ch, i) => { q.fillText(ch, p[i][0] * s, p[i][1] * s); q.lineWidth = s * .02; q.strokeStyle = '#000'; q.strokeText(ch, p[i][0] * s, p[i][1] * s); }); }
+  const R = mulberry(seed); for (let i = 0; i < 90; i++) { q.globalAlpha = .3 + .6 * R(); q.beginPath(); q.arc(R() * s, R() * s, s * (.004 + .014 * R()), 0, 7); q.fill(); }
+  q.globalAlpha = 1; q.globalCompositeOperation = 'source-over';
+  c.globalAlpha = .93; c.drawImage(SC, -4, -4); c.globalAlpha = 1; c.restore();
+}
+
+// ---------- text helpers ----------
+function txt(s, x, y, font, a = .92, align = 'center', c = I) { c.font = font; c.textAlign = align; c.textBaseline = 'alphabetic'; c.fillStyle = `rgba(${INKC},${a})`; c.fillText(s, x, y); }
+function vsq(x, y, s) { M([[x, y], [x + s, y], [x + s, y + s], [x, y + s]], .9, 1, x, null, VERM); }  // small vermilion square line-marker
+// latin word with brush texture (for keyword)
+const WC = mkC(1000, 300), WG = WC.getContext('2d'), WT = mkC(1000, 300), WTX = WT.getContext('2d');
+function brushWord(s, x, y, font, seed = 5, prog = 1) {
+  WG.setTransform(1, 0, 0, 1, 0, 0); WG.globalCompositeOperation = 'source-over'; WG.clearRect(0, 0, 1000, 300);
+  WG.font = font; WG.textAlign = 'center'; WG.textBaseline = 'alphabetic'; WG.fillStyle = '#000'; WG.strokeStyle = '#000'; WG.lineJoin = 'round';
+  WG.fillText(s, 500, 230); WG.lineWidth = 5; WG.strokeText(s, 500, 230);
+  const R = mulberry(seed);
+  WTX.globalCompositeOperation = 'source-over'; WTX.clearRect(0, 0, 1000, 300); WTX.fillStyle = `rgba(${INKC},.97)`; WTX.fillRect(0, 0, 1000, 300);
+  WTX.globalCompositeOperation = 'destination-out'; WTX.lineCap = 'round';
+  for (let i = 0; i < 260; i++) { const xx = R() * 1000, yy = R() * 300, L = 30 + R() * 140, ang = (R() < .4 ? 1.45 : -.08) + (R() - .5) * .15; WTX.globalAlpha = .15 + R() * .4; WTX.lineWidth = .8 + R() * 1.8; WTX.beginPath(); WTX.moveTo(xx, yy); WTX.lineTo(xx + Math.cos(ang) * L, yy + Math.sin(ang) * L); WTX.stroke(); }
+  WTX.globalAlpha = 1; WTX.globalCompositeOperation = 'destination-in'; WTX.drawImage(WC, 0, 0);
+  if (prog < 1) { const g = WTX.createLinearGradient(0, 0, 1000, 0); g.addColorStop(clamp(prog), 'rgba(0,0,0,1)'); g.addColorStop(clamp(prog + .05), 'rgba(0,0,0,0)'); WTX.fillStyle = g; WTX.fillRect(0, 0, 1000, 300); }
+  WTX.globalCompositeOperation = 'source-over';
+  I.save(); I.globalAlpha = .25; I.filter = 'blur(5px)'; I.drawImage(WT, x - 500 + 2, y - 230 + 3); I.restore();
+  I.drawImage(WT, x - 500, y - 230);
+}
+// a paper-coloured soft glow under text so it reads over ink
+function paperGlow(x, y, w, h, a = .85) { O.save(); O.filter = 'blur(18px)'; O.fillStyle = `rgba(244,238,224,${a})`; O.beginPath(); O.ellipse(x, y, w / 2, h / 2, 0, 0, 7); O.fill(); O.restore(); }
+
+// =============================== FRAME A: guess the idiom ===============================
+function icon(k, cx, cy, p) {
+  if (p <= 0) return;
+  if (k === 0) { // brush: handle + ferrule + loaded tip + a fresh stroke it leaves
+    S([[cx + 62, cy - 48, 1], [cx + 8, cy + 4, 1]], { w: 9, tone: TONE.nong, dry: .15, prof: 'even', seed: 101, side: .6 }, p * 1.6);
+    S([[cx + 12, cy, 1], [cx + 2, cy + 10, 1]], { w: 13, tone: TONE.jiao, dry: .05, prof: 'even', seed: 102 }, p * 1.4 - .3);
+    S([[cx + 2, cy + 10, 1], [cx - 12, cy + 26, .7], [cx - 22, cy + 38, .1]], { w: 17, tone: TONE.jiao, dry: .1, prof: 'nail', seed: 103 }, p * 1.4 - .4);
+    S([[cx - 22, cy + 40, 1], [cx - 50, cy + 46, .8], [cx - 84, cy + 40, .3]], { w: 10, tone: TONE.zhong, dry: .55, prof: 'brush', seed: 104 }, p * 1.5 - .5);
+  } else if (k === 1) { // snake: one S-shaped stroke, heavy head tapering to tail
+    S([[cx + 62, cy - 20, 1], [cx + 30, cy - 30, 1], [cx + 2, cy - 4, .95], [cx - 20, cy + 26, .8], [cx - 52, cy + 30, .55], [cx - 72, cy + 8, .2]], { w: 20, tone: TONE.nong, dry: .3, prof: 'cone', seed: 111, side: .7 }, p);
+    blot(cx + 66, cy - 21, 12, .9 * clamp((p - .1) * 4), 3, .78, -.2);
+    I.save(); I.globalCompositeOperation = 'destination-out'; I.beginPath(); I.arc(cx + 70, cy - 25, 3.2, 0, 7); I.fill(); I.restore();
+    S([[cx + 77, cy - 19, 1], [cx + 92, cy - 18, .8]], { w: 2.5, tone: TONE.jiao, dry: .2, prof: 'even', seed: 112 }, p * 2 - 1);
+    S([[cx + 90, cy - 18, 1], [cx + 98, cy - 24, .4]], { w: 2, tone: TONE.jiao, dry: .2, prof: 'tip', seed: 113 }, p * 2 - 1);
+    S([[cx + 90, cy - 18, 1], [cx + 98, cy - 12, .4]], { w: 2, tone: TONE.jiao, dry: .2, prof: 'tip', seed: 114 }, p * 2 - 1);
+  } else if (k === 2) { // add: two loaded strokes, a "+" with spatter
+    S([[cx - 46, cy + 2, .8], [cx - 10, cy - 2, 1], [cx + 46, cy, .9]], { w: 20, tone: TONE.jiao, dry: .35, prof: 'brush', seed: 121 }, p * 1.6);
+    S([[cx + 2, cy - 48, .8], [cx - 1, cy, 1], [cx + 1, cy + 48, .5]], { w: 20, tone: TONE.jiao, dry: .3, prof: 'nail', seed: 122 }, p * 1.6 - .6);
+    if (p > .8) splatter(cx + 38, cy - 34, 22, 6, 77, .7);
+  } else { // foot: a bare footprint, sole mass + toes
+    const R = mulberry(9);
+    M([[cx - 14, cy - 34], [cx + 12, cy - 38], [cx + 24, cy - 18], [cx + 18, cy + 8], [cx + 20, cy + 32], [cx + 6, cy + 50], [cx - 12, cy + 46], [cx - 16, cy + 22], [cx - 24, cy - 6]], .72 * clamp(p * 2), 3, 41, [cx, cy - 40, cx, cy + 50, 1, .6]);
+    S([[cx - 18, cy - 30, 1], [cx - 22, cy + 0, 1], [cx - 14, cy + 40, .8]], { w: 9, tone: TONE.jiao, dry: .4, prof: 'tip', seed: 131 }, p * 2 - .4);
+    const toes = [[cx - 14, cy - 50, 9], [cx + 1, cy - 56, 7.5], [cx + 13, cy - 53, 6.5], [cx + 23, cy - 46, 5.5], [cx + 30, cy - 37, 4.8]];
+    toes.forEach((tt, i) => blot(tt[0], tt[1], tt[2], .88 * clamp(p * 2 - .8 - i * .08), 50 + i, 1.15, .3));
+  }
+}
+// draw a run of [text, font, alpha] pieces centred on cx
+function runs(parts, cx, y) {
+  let wsum = 0; parts.forEach(q => { I.font = q[1]; q.w = I.measureText(q[0]).width; wsum += q.w; });
+  let x = cx - wsum / 2; parts.forEach(q => { if (q[3]) q[3](x, q.w); else txt(q[0], x, y, q[1], q[2] ?? .93, 'left'); x += q.w; });
+  return [cx - wsum / 2, cx + wsum / 2];
+}
+function frameA(t) {
+  const CH = ['画', '蛇', '添', '足'], PY = ['huà', 'shé', 'tiān', 'zú'], EN = ['draw', 'snake', 'add', 'feet'];
+  const X = [282, 636], Y = [618, 972], CS = 206;
+  // far, faint landscape anchoring the bottom of the scroll (background texture only)
+  M([[-20, 1700], [120, 1600], [230, 1640], [360, 1560], [480, 1650], [600, 1610], [760, 1680], [900, 1590], [1100, 1660], [1100, 1820], [-20, 1820]], .07, 10, 5, [0, 1560, 0, 1800, 1, 0]);
+  // ink blooms behind each character (light wash with tide-line)
+  CH.forEach((ch, i) => { const cx = X[i % 2], cy = Y[i >> 1], t0 = .06 + i * .16; bloom(cx + 6, cy + 4, 140, .075, 10 + i * 7, (t - t0 + .1) / .45); });
+  CH.forEach((ch, i) => {
+    const cx = X[i % 2], cy = Y[i >> 1], t0 = .06 + i * .16;
+    glyph(ch, cx, cy, CS, (t - t0) / .3, 3 + i, I, .97);
+    if (t > t0 + .22) splatter(cx + (i % 2 ? 112 : -108), cy - 84 + (i >> 1) * 150, 24, 6, 300 + i, .8);
+    const p = (t - t0 - .15) / .38;
+    icon(i, cx, cy + 162, p);
+    if (p > 0) {
+      I.globalAlpha = ease(p * 2);
+      txt(PY[i], cx - 10, cy + 250, '600 38px "DejaVu Sans"', .55, 'right');
+      txt(EN[i], cx + 4, cy + 250, 'italic 50px Fell', .95, 'left');
+      I.globalAlpha = 1;
+    }
+  });
+  // hook (inscription): written in fast
+  const hp = clamp(t / .3);
+  if (hp > 0) { I.globalAlpha = ease(hp);
+    const r = runs([['4 ', '96px "LXGW WenKai"', .96], ['characters.', 'italic 92px Fell', .93]], 470, 336);
+    vsq(r[0] - 46, 290, 24); I.globalAlpha = 1; }
+  const hp2 = clamp((t - .2) / .35);
+  if (hp2 > 0) {
+    I.globalAlpha = ease(hp2);
+    runs([['1 ', '104px "LXGW WenKai"', .96], ['crazy', 'italic 128px Fell', 1, (x, w) => { I.globalAlpha = 1; brushWord('crazy', x + w / 2, 440, 'italic 128px Fell', 8, hp2); I.globalAlpha = ease(hp2); }], [' story.', 'italic 100px Fell', .93]], 470, 440);
+    I.globalAlpha = 1;
+    // a dry under-stroke beneath "crazy"
+  }
+  const gp = (t - .45) / .3;
+  if (gp > 0) {
+    I.globalAlpha = ease(gp); const r = runs([['Guess the meaning', 'italic 54px Fell', .82]], 440, 500); I.globalAlpha = 1;
+    const ax = r[1] + 30;
+    S([[ax - 6, 462, .5], [ax + 4, 482, 1], [ax + 6, 508, .8]], { w: 11, tone: TONE.jiao, dry: .3, prof: 'brush', seed: 201 }, gp * 1.5);
+    S([[ax - 12, 494, .4], [ax + 6, 514, 1], [ax + 22, 488, .3]], { w: 9, tone: TONE.jiao, dry: .35, prof: 'brush', seed: 202 }, gp * 1.5 - .5);
+  }
+  // quiz chips: one pale side-brush band each
+  const ans = ['A', 'Overdoing it', 'B', 'Being lucky', 'C', 'Drawing well'];
+  for (let i = 0; i < 3; i++) {
+    const cy = 1290 + i * 70, cp = (t - .62 - i * .08) / .25; if (cp <= 0) continue;
+    S([[150, cy, .8], [300, cy - 3, 1], [500, cy + 1, 1], [610, cy - 2, .7]], { w: 56, tone: .17, dry: .3, prof: 'even', seed: 400 + i, side: .5, rough: .2 }, cp);
+    I.globalAlpha = ease(cp * 1.5);
+    const ring = []; for (let k = 0; k <= 14; k++) { const an = -1.9 + k / 14 * 6.0; ring.push([188 + Math.cos(an) * 24, cy + Math.sin(an) * 24, k < 2 ? .6 : 1]); }
+    S(ring, { w: 7, tone: TONE.jiao, dry: .35, prof: 'brush', seed: 470 + i });
+    txt(ans[i * 2], 188, cy + 12, 'bold 32px "DejaVu Sans"', .95);
+    txt(ans[i * 2 + 1], 230, cy + 15, '48px FellR', .96, 'left');
+    I.globalAlpha = 1;
+  }
+  // channel seal: the one red
+  if (t > .85) seal(726, 1268, 104, '墨', 11, .05);
+  if (t > .85) txt('Idiom Ink', 778, 1410, 'italic 34px Fell', .7);
+}
+
+// =============================== FRAME B: the snatch ===============================
+// robe: several polygons merged into ONE wash (no overlap seams), textured with dry side-brush strokes, darker toward the hem
+const RB = mkC(), RBc = RB.getContext('2d');
+function robe(polys, col, a, seed) {
+  RBc.setTransform(1, 0, 0, 1, 0, 0); RBc.globalCompositeOperation = 'source-over'; RBc.globalAlpha = 1; RBc.clearRect(0, 0, W, H);
+  RBc.setTransform(I.getTransform());
+  let y0 = 1e9, y1 = -1e9, x0 = 1e9, x1 = -1e9;
+  polys.forEach(pl => { pl.forEach(q => { y0 = Math.min(y0, q[1]); y1 = Math.max(y1, q[1]); x0 = Math.min(x0, q[0]); x1 = Math.max(x1, q[0]); }); blobPath(RBc, pl); RBc.fillStyle = `rgb(${col})`; RBc.fill(); });
+  RBc.globalCompositeOperation = 'source-atop';
+  const g = RBc.createLinearGradient(0, y0, 0, y1); g.addColorStop(0, 'rgba(255,255,255,.18)'); g.addColorStop(1, 'rgba(0,0,0,.12)'); RBc.fillStyle = g; RBc.fillRect(x0 - 20, y0 - 20, x1 - x0 + 40, y1 - y0 + 40);
+  const R = mulberry(seed);
+  for (let k = 0; k < 7; k++) { const yy = lerp(y0, y1, (k + .5) / 7) + (R() - .5) * 20;
+    S([[x0 - 10, yy + (R() - .5) * 30, .6], [lerp(x0, x1, .5), yy, 1], [x1 + 10, yy + (R() - .5) * 30, .6]], { w: 40 + R() * 30, tone: .5, dry: .8, prof: 'even', seed: seed + k, col: '40,30,25', nb: 40 }, 1, RBc); }
+  RBc.globalCompositeOperation = 'source-over';
+  I.save(); I.setTransform(1, 0, 0, 1, 0, 0); I.globalAlpha = a; I.drawImage(RB, 0, 0); I.restore();
+}
+
+// face helpers
+function eyeOpenWide(x, y, r, seed) { // shocked eye: ring + pupil
+  S([[x - r, y + 1], [x - r * .2, y - r * 1.1], [x + r, y - r * .1], [x + r * .2, y + r * .95], [x - r, y + 1]], { w: 3.4, tone: TONE.jiao, dry: .2, prof: 'even', seed }, 1);
+  blot(x + r * .15, y + r * .05, r * .42, .95, seed);
+}
+function frameB(t) {
+  const R = mulberry(5);
+  I.save(); I.translate(0, -34);
+  // --- far mountains in clear ink, dissolving into mist
+  M([[-20, 460], [90, 360], [170, 400], [260, 330], [360, 420], [430, 470], [-20, 520]], .08, 8, 3, [0, 330, 0, 520, 1, 0]);
+  M([[560, 430], [660, 340], [760, 380], [860, 300], [980, 380], [1100, 360], [1100, 520], [560, 520]], .065, 8, 9, [0, 300, 0, 520, 1, 0]);
+  S([[640, 352], [700, 372], [760, 382]], { w: 6, tone: .2, dry: .6, prof: 'tip', seed: 61 });
+  S([[80, 368], [140, 388]], { w: 5, tone: .2, dry: .6, prof: 'tip', seed: 62 });
+  // --- ground: dry flat strokes, packed dirt
+  S([[40, 1012, .6], [300, 1004, 1], [620, 1010, .9], [960, 1004, .5]], { w: 16, tone: .32, dry: .75, prof: 'even', seed: 70 });
+  S([[90, 1128, .4], [380, 1136, 1], [700, 1128, .7], [900, 1134, .3]], { w: 12, tone: .3, dry: .8, prof: 'even', seed: 71 });
+  M([[0, 1000], [1080, 994], [1080, 1150], [0, 1160]], .05, 10, 4, [0, 1000, 0, 1160, .2, 1]);
+  for (let i = 0; i < 18; i++) blot(60 + R() * 820, 1015 + R() * 120, 1.5 + R() * 3, .5, 80 + i, .6);
+  // --- the snake drawn in the dirt (scratched with a stick): pale grey, 4 tiny feet
+  const sk = [[150, 1072, .5], [200, 1050, .8], [270, 1060, 1], [340, 1094, 1], [420, 1100, .95], [500, 1074, .9], [560, 1056, .9]];
+  S(sk, { w: 22, tone: .5, dry: .55, prof: 'rise', seed: 90 });
+  blot(578, 1054, 17, .55, 4, .7, -.2);
+  I.save(); I.globalCompositeOperation = 'destination-out'; I.beginPath(); I.arc(584, 1049, 3.5, 0, 7); I.fill(); I.restore();
+  S([[595, 1056, 1], [614, 1052, .8], [622, 1046, .3]], { w: 3, tone: .6, dry: .3, prof: 'even', seed: 91 });
+  S([[614, 1052, 1], [624, 1058, .3]], { w: 2.5, tone: .6, dry: .3, prof: 'tip', seed: 92 });
+  const feet = [[245, 1064], [315, 1092], [420, 1110], [492, 1086]];
+  feet.forEach((f, i) => {
+    const last = i === 3, a = last ? .9 : .78;
+    S([[f[0], f[1] + 4, 1], [f[0] - 4, f[1] + 24, 1], [f[0] - 8, f[1] + 34, .6]], { w: 7.5, tone: a, dry: .25, prof: 'even', seed: 93 + i });
+    for (let k = 0; k < 3; k++) S([[f[0] - 8, f[1] + 34, 1], [f[0] - 20 + k * 9, f[1] + 44, .4]], { w: 4.4, tone: a, dry: .2, prof: 'tip', seed: 120 + i * 3 + k });
+  });
+  // dust kicked up at the new foot
+  splatter(484, 1130, 26, 9, 900, .45);
+
+  // ===== ZHANG: crouched, still adding the foot, shocked, looking up at the jug =====
+  const ZC = '168,74,38';   // rust (pale wash only)
+  // back leg + front knee (robe masses), tinted wash
+//  wash([[175, 820], [250, 790], [330, 812], [412, 870], [422, 935], [380, 990], [300, 1000], [205, 1000], [150, 960], [150, 880]], .42, ZC, [0, 780, 0, 1000, 1.1, .7]);
+  robe([[[175, 820], [250, 790], [330, 812], [412, 870], [422, 935], [380, 990], [300, 1000], [205, 1000], [150, 960], [150, 880]], [[205, 770], [270, 742], [330, 760], [350, 830], [320, 900], [240, 910], [190, 870]]], ZC, .6, 1100);
+//  wash([[205, 770], [270, 742], [330, 760], [350, 830], [320, 900], [240, 910], [190, 870]], .36, ZC);
+  // loaded contour strokes for back and knee
+  S([[214, 772, .6], [176, 840, 1], [156, 920, 1], [178, 990, .5]], { w: 22, tone: TONE.nong, dry: .35, prof: 'brush', seed: 301, side: -.8 });
+  S([[318, 818, .5], [396, 862, 1], [420, 930, .9], [392, 986, .3]], { w: 18, tone: TONE.nong, dry: .4, prof: 'brush', seed: 302, side: .8 });
+  S([[188, 994, .6], [290, 1002, 1], [370, 994, .4]], { w: 9, tone: TONE.zhong, dry: .5, prof: 'tip', seed: 303 });
+  // feet / sandals
+  S([[372, 992, 1], [410, 998, .7]], { w: 11, tone: TONE.jiao, dry: .2, prof: 'nail', seed: 304 });
+  S([[176, 996, 1], [140, 1000, .7]], { w: 11, tone: TONE.jiao, dry: .2, prof: 'nail', seed: 305 });
+  // sash
+  S([[208, 882, .6], [270, 900, 1], [318, 896, .6]], { w: 12, tone: TONE.jiao, dry: .3, prof: 'lens', seed: 306 });
+  // drawing arm: sleeve down-right, hand holding the stick to the 4th foot
+  robe([[[300, 790], [360, 830], [418, 900], [440, 950], [415, 968], [370, 920], [310, 860]]], ZC, .55, 1130);
+//  wash([[300, 790], [360, 830], [418, 900], [440, 950], [415, 968], [370, 920], [310, 860]], .38, ZC);
+  S([[310, 792, .7], [380, 850, 1], [432, 935, .6]], { w: 14, tone: TONE.nong, dry: .45, prof: 'brush', seed: 307, side: .7 });
+  blot(438, 962, 15, .78, 8, .8, .6);                                      // fist
+  S([[430, 948, 1], [470, 1040, 1], [488, 1092, .7]], { w: 6, tone: TONE.jiao, dry: .15, prof: 'even', seed: 308 });   // stick
+  // reaching arm: flung up toward the jug, fingers splayed
+  robe([[[292, 768], [330, 735], [400, 680], [450, 640], [470, 660], [420, 718], [350, 780]]], ZC, .55, 1140);
+//  wash([[292, 768], [330, 735], [400, 680], [450, 640], [470, 660], [420, 718], [350, 780]], .36, ZC);
+  S([[300, 772, .6], [380, 708, 1], [452, 646, .6]], { w: 14, tone: TONE.nong, dry: .4, prof: 'brush', seed: 309, side: -.7 });
+  S([[452, 648, 1], [478, 628, .6]], { w: 9, tone: TONE.nong, dry: .2, prof: 'tip', seed: 310 });   // hand
+  [[0, -26], [14, -22], [24, -12], [28, 0]].forEach((d, k) => S([[478, 628, 1], [478 + d[0], 628 + d[1], .3]], { w: 4.6, tone: TONE.nong, dry: .2, prof: 'tip', seed: 311 + k }));
+  // head (three-quarter, tipped back, looking up-right)
+  const hx = 268, hy = 690;
+  wash([[hx - 18, hy + 40], [hx + 22, hy + 44], [hx + 30, hy + 84], [hx - 20, hy + 86]], .12);
+  S([[hx - 30, hy + 74, .6], [hx + 6, hy + 98, 1], [hx + 44, hy + 74, .5]], { w: 8, tone: TONE.nong, dry: .3, prof: 'tip', seed: 319 });
+  wash([[hx - 52, hy - 8], [hx - 40, hy - 52], [hx + 4, hy - 64], [hx + 46, hy - 44], [hx + 56, hy + 2], [hx + 40, hy + 46], [hx - 4, hy + 60], [hx - 42, hy + 40]], .13);
+  S([[hx + 30, hy - 56, .5], [hx + 56, hy - 14, 1], [hx + 50, hy + 28, 1], [hx + 22, hy + 56, .7], [hx - 8, hy + 60, .3]], { w: 6, tone: TONE.nong, dry: .3, prof: 'brush', seed: 320 });
+  S([[hx - 44, hy - 30, .5], [hx - 52, hy + 4, 1], [hx - 36, hy + 42, .4]], { w: 5, tone: TONE.zhong, dry: .5, prof: 'tip', seed: 321 });
+  // hair mass + topknot with red cloth
+  M([[hx - 50, hy - 6], [hx - 50, hy - 48], [hx - 10, hy - 70], [hx + 32, hy - 62], [hx + 44, hy - 46], [hx + 10, hy - 50], [hx - 22, hy - 38], [hx - 34, hy - 10]], .86, 3, 31);
+  blot(hx - 18, hy - 86, 24, .9, 21, .85);
+  M([[hx - 40, hy - 82], [hx + 2, hy - 92], [hx + 6, hy - 76], [hx - 38, hy - 66]], .95, 2, 5, null, VERM);   // red cloth band
+  S([[hx - 38, hy - 76, 1], [hx - 72, hy - 92, .8], [hx - 100, hy - 84, .2]], { w: 11, tone: .95, dry: .2, prof: 'brush', seed: 322, col: VERM });
+  S([[hx - 38, hy - 72, 1], [hx - 66, hy - 66, .7], [hx - 90, hy - 52, .2]], { w: 9, tone: .9, dry: .25, prof: 'brush', seed: 323, col: VERM });
+  // ear
+  S([[hx - 30, hy + 2], [hx - 42, hy + 6], [hx - 40, hy + 22], [hx - 28, hy + 22]], { w: 4, tone: TONE.zhong, dry: .4, prof: 'tip', seed: 324 });
+  // shocked face: brows shot up, eyes wide, mouth an O, sweat flick
+  S([[hx - 4, hy - 30, 1], [hx + 12, hy - 42, 1], [hx + 26, hy - 40, .5]], { w: 6, tone: TONE.jiao, dry: .3, prof: 'nail', seed: 325 });
+  S([[hx + 34, hy - 40, 1], [hx + 46, hy - 42, .5]], { w: 5, tone: TONE.jiao, dry: .3, prof: 'nail', seed: 326 });
+  eyeOpenWide(hx + 14, hy - 12, 11, 327);
+  eyeOpenWide(hx + 42, hy - 14, 8, 328);
+  S([[hx + 46, hy - 4, .5], [hx + 56, hy + 12, 1], [hx + 46, hy + 16, .5]], { w: 4, tone: TONE.nong, dry: .3, prof: 'tip', seed: 329 });  // nose
+  blot(hx + 30, hy + 34, 9, .95, 33, 1.3);   // O mouth
+  S([[hx - 20, hy - 48, 1], [hx - 30, hy - 30, .5]], { w: 4, tone: TONE.zhong, dry: .2, prof: 'tip', seed: 330 });
+  // shock marks
+  [[hx + 60, hy - 86, hx + 70, hy - 110], [hx + 82, hy - 70, hx + 102, hy - 88], [hx + 32, hy - 96, hx + 34, hy - 122]].forEach((l, k) =>
+    S([[l[0], l[1], 1], [l[2], l[3], .3]], { w: 7, tone: TONE.jiao, dry: .3, prof: 'nail', seed: 340 + k }));
+  S([[hx - 58, hy - 22, .2], [hx - 64, hy - 6, 1], [hx - 60, hy + 2, .6]], { w: 7, tone: .4, dry: .1, prof: 'lens', seed: 344 });  // sweat drop
+
+  // ===== LI: stocky, standing, jug raised high, triumphant =====
+  const LC = '58,88,122';   // slate blue (pale wash only)
+  const lx = 760;
+  // legs + feet
+  S([[lx - 40, 930, 1], [lx - 56, 1000, 1]], { w: 22, tone: TONE.nong, dry: .3, prof: 'even', seed: 401 });
+  S([[lx + 40, 930, 1], [lx + 58, 1000, 1]], { w: 22, tone: TONE.nong, dry: .3, prof: 'even', seed: 402 });
+  S([[lx - 54, 1000, 1], [lx - 96, 1006, .7]], { w: 13, tone: TONE.jiao, dry: .2, prof: 'nail', seed: 403 });
+  S([[lx + 56, 1000, 1], [lx + 98, 1004, .7]], { w: 13, tone: TONE.jiao, dry: .2, prof: 'nail', seed: 404 });
+  // robe: broad bell shape
+//  wash([[lx - 70, 640], [lx + 70, 640], [lx + 110, 760], [lx + 132, 900], [lx + 120, 950], [lx - 120, 950], [lx - 132, 900], [lx - 110, 760]], .4, LC, [0, 640, 0, 950, 1.1, .75]);
+  robe([[[lx - 70, 640], [lx + 70, 640], [lx + 110, 760], [lx + 132, 900], [lx + 120, 950], [lx - 120, 950], [lx - 132, 900], [lx - 110, 760]], [[lx + 64, 650], [lx + 120, 690], [lx + 150, 760], [lx + 120, 800], [lx + 92, 760], [lx + 80, 700]], [[lx - 30, 668], [lx - 72, 646], [lx - 104, 596], [lx - 122, 520], [lx - 98, 506], [lx - 82, 574], [lx - 46, 620]]], LC, .44, 1200);
+  S([[lx - 70, 650, .6], [lx - 112, 780, 1], [lx - 130, 930, .9]], { w: 24, tone: TONE.nong, dry: .35, prof: 'brush', seed: 405, side: -.8 });
+  S([[lx + 72, 650, .6], [lx + 114, 780, 1], [lx + 128, 930, .9]], { w: 22, tone: TONE.nong, dry: .4, prof: 'brush', seed: 406, side: .8 });
+  S([[lx - 124, 948, .5], [lx, 956, 1], [lx + 122, 946, .5]], { w: 10, tone: TONE.zhong, dry: .5, prof: 'tip', seed: 407 });
+  S([[lx - 36, 648, .6], [lx + 6, 720, 1], [lx + 20, 800, .5]], { w: 8, tone: TONE.nong, dry: .3, prof: 'tip', seed: 408 });   // collar cross
+  S([[lx - 98, 800, .6], [lx, 812, 1], [lx + 104, 798, .6]], { w: 16, tone: TONE.jiao, dry: .3, prof: 'lens', seed: 409 });     // belt
+  // right arm: fist on hip (akimbo)
+//  wash([[lx + 64, 650], [lx + 120, 690], [lx + 150, 760], [lx + 120, 800], [lx + 92, 760], [lx + 80, 700]], .4, LC);
+  S([[lx + 70, 652, .6], [lx + 130, 690, 1], [lx + 150, 756, .8], [lx + 112, 800, .4]], { w: 16, tone: TONE.nong, dry: .4, prof: 'brush', seed: 410, side: .8 });
+  blot(lx + 104, 800, 15, .85, 12, .9);
+  // left arm: thrown up and left, holding the jug aloft
+//  wash([[lx - 62, 664], [lx - 96, 610], [lx - 120, 540], [lx - 112, 500], [lx - 86, 506], [lx - 70, 580], [lx - 30, 650]], .4, LC);
+  S([[lx - 60, 650, .6], [lx - 104, 594, 1], [lx - 120, 516, .6]], { w: 16, tone: TONE.nong, dry: .4, prof: 'brush', seed: 411, side: -.8 });
+  // ===== the bronze jug (green-brown), two small loop handles
+  const jx = 584, jy = 506, JC = '92,96,52';
+  wash([[jx - 30, jy - 52], [jx + 30, jy - 52], [jx + 22, jy - 30], [jx + 54, jy + 8], [jx + 50, jy + 62], [jx + 22, jy + 84], [jx - 22, jy + 84], [jx - 50, jy + 62], [jx - 54, jy + 8], [jx - 22, jy - 30]], .62, JC, [jx - 50, 0, jx + 50, 0, 1.25, .7]);
+  S([[jx - 30, jy - 50, 1], [jx + 30, jy - 50, 1]], { w: 8, tone: TONE.jiao, dry: .25, prof: 'even', seed: 501 });
+  S([[jx - 22, jy - 30, .6], [jx - 54, jy + 10, 1], [jx - 46, jy + 66, 1], [jx - 18, jy + 84, .5]], { w: 9, tone: TONE.jiao, dry: .3, prof: 'brush', seed: 502 });
+  S([[jx + 22, jy - 30, .6], [jx + 54, jy + 10, 1], [jx + 46, jy + 66, 1], [jx + 18, jy + 84, .5]], { w: 8, tone: TONE.nong, dry: .35, prof: 'brush', seed: 503 });
+  S([[jx - 44, jy + 18, .5], [jx, jy + 24, 1], [jx + 44, jy + 18, .5]], { w: 5, tone: TONE.nong, dry: .5, prof: 'tip', seed: 504 });
+  S([[jx - 40, jy + 44, .5], [jx, jy + 50, 1], [jx + 40, jy + 44, .5]], { w: 4, tone: TONE.zhong, dry: .6, prof: 'tip', seed: 505 });
+  I.save(); I.lineWidth = 6; I.strokeStyle = `rgba(${INKC},.85)`;   // loop handles
+  I.beginPath(); I.ellipse(jx - 58, jy - 2, 13, 15, 0, 0, 7); I.stroke(); I.beginPath(); I.ellipse(jx + 58, jy - 2, 13, 15, 0, 0, 7); I.stroke(); I.restore();
+  // Li's hand gripping the jug's right loop + neck
+  blot(jx + 60, jy - 6, 18, .88, 14, .9, .4);
+  S([[lx - 118, 520, 1], [jx + 64, jy - 4, .8]], { w: 15, tone: TONE.nong, dry: .3, prof: 'even', seed: 412 });
+  // wine sloshing out (ink drops) + flying-white snatch swoosh
+  S([[jx - 20, jy - 56, .3], [jx - 36, jy - 92, .8], [jx - 66, jy - 112, .2]], { w: 10, tone: .5, dry: .2, prof: 'lens', seed: 506 });
+  splatter(jx - 70, jy - 116, 30, 8, 601, .6);
+  S([[470, 560, .3], [500, 470, .8], [560, 420, 1], [660, 400, .3]], { w: 40, tone: .45, dry: .88, prof: 'brush', seed: 507, nb: 40 });
+  // head: round face, short beard, white headband (paper left blank between band strokes)
+  const fx = lx + 4, fy = 556;
+  wash([[fx - 60, fy - 8], [fx - 52, fy - 56], [fx, fy - 70], [fx + 52, fy - 56], [fx + 62, fy - 4], [fx + 50, fy + 44], [fx, fy + 62], [fx - 50, fy + 44]], .12);
+  S([[fx - 56, fy - 30, .5], [fx - 62, fy + 10, 1], [fx - 42, fy + 50, .9], [fx, fy + 64, .6]], { w: 6, tone: TONE.nong, dry: .3, prof: 'brush', seed: 420 });
+  S([[fx + 56, fy - 30, .5], [fx + 62, fy + 10, 1], [fx + 44, fy + 50, .9], [fx + 4, fy + 64, .4]], { w: 6, tone: TONE.nong, dry: .35, prof: 'brush', seed: 421 });
+  M([[fx - 58, fy - 46], [fx - 30, fy - 76], [fx + 30, fy - 78], [fx + 60, fy - 46], [fx + 56, fy - 60], [fx - 54, fy - 62]], .88, 3, 44);  // hair above band
+  S([[fx - 60, fy - 42, 1], [fx, fy - 46, 1], [fx + 60, fy - 42, 1]], { w: 3, tone: TONE.nong, dry: .3, prof: 'even', seed: 422 });   // band edge
+  S([[fx - 60, fy - 26, 1], [fx, fy - 30, 1], [fx + 62, fy - 26, 1]], { w: 3, tone: TONE.nong, dry: .35, prof: 'even', seed: 423 });
+  S([[fx + 62, fy - 34, 1], [fx + 92, fy - 54, .8], [fx + 116, fy - 46, .3]], { w: 10, tone: .45, dry: .55, prof: 'brush', seed: 424 });  // band tails
+  S([[fx + 62, fy - 30, 1], [fx + 96, fy - 22, .7], [fx + 118, fy - 8, .2]], { w: 8, tone: .45, dry: .6, prof: 'brush', seed: 425 });
+  // triumphant face: closed happy eyes (^ ^), cocky brows, huge open grin, beard
+  S([[fx - 38, fy - 12, .5], [fx - 26, fy - 22, 1], [fx - 12, fy - 12, .5]], { w: 5.5, tone: TONE.jiao, dry: .2, prof: 'tip', seed: 430 });
+  S([[fx + 12, fy - 12, .5], [fx + 26, fy - 22, 1], [fx + 40, fy - 12, .5]], { w: 5.5, tone: TONE.jiao, dry: .2, prof: 'tip', seed: 431 });
+  S([[fx - 4, fy - 8, .5], [fx - 6, fy + 8, 1], [fx + 4, fy + 10, .5]], { w: 4, tone: TONE.nong, dry: .3, prof: 'tip', seed: 432 });
+  // grin
+  I.save(); I.beginPath(); I.moveTo(fx - 30, fy + 18); I.quadraticCurveTo(fx, fy + 30, fx + 30, fy + 18); I.quadraticCurveTo(fx + 2, fy + 62, fx - 30, fy + 18); I.closePath();
+  I.fillStyle = `rgba(${INKC},.9)`; I.fill(); I.globalCompositeOperation = 'destination-out'; I.beginPath(); I.moveTo(fx - 24, fy + 22); I.quadraticCurveTo(fx, fy + 30, fx + 24, fy + 22); I.lineTo(fx + 20, fy + 28); I.quadraticCurveTo(fx, fy + 34, fx - 20, fy + 28); I.closePath(); I.fill(); I.restore();
+  // short beard: a dark chin tuft plus dry jaw flicks
+  M([[fx - 26, fy + 52], [fx + 26, fy + 52], [fx + 14, fy + 80], [fx, fy + 92], [fx - 14, fy + 80]], .8, 3, 47);
+  for (let k = 0; k < 5; k++) { const bx = fx - 22 + k * 11; S([[bx, fy + 70, 1], [bx + (k - 2) * 3, fy + 96 - Math.abs(k - 2) * 5, .2]], { w: 5, tone: TONE.jiao, dry: .45, prof: 'nail', seed: 440 + k }); }
+  S([[fx - 46, fy + 30, .3], [fx - 32, fy + 50, 1], [fx - 22, fy + 56, .4]], { w: 6, tone: TONE.nong, dry: .6, prof: 'tip', seed: 446 });
+  S([[fx + 46, fy + 30, .3], [fx + 32, fy + 50, 1], [fx + 22, fy + 56, .4]], { w: 6, tone: TONE.nong, dry: .6, prof: 'tip', seed: 447 });
+  // cheek blush lines (joy)
+  S([[fx - 46, fy + 10], [fx - 38, fy + 6]], { w: 3, tone: .35, dry: .3, prof: 'tip', seed: 450 });
+  S([[fx + 38, fy + 6], [fx + 46, fy + 10]], { w: 3, tone: .35, dry: .3, prof: 'tip', seed: 451 });
+
+  I.restore();
+  // ===== caption (inscription, ink on paper) =====
+  vsq(176, 1162, 26);
+  txt("Snakes don't have", 485, 1190, 'italic 86px Fell', .95);
+  brushWord('FEET!', 470, 1352, '170px FellR', 21, 1);
+  seal(730, 1240, 100, '足', 17, -.06);
+  // corner tag
+  glyph('画', 70, 190, 66, 1, 41, I, .9); glyph('蛇', 136, 190, 66, 1, 42, I, .9); glyph('添', 202, 190, 66, 1, 43, I, .9); glyph('足', 268, 190, 66, 1, 44, I, .9);
+}
+
+// =============================== compositor ===============================
+window.DUR = 12;
+window.render = (t) => {
+  I.setTransform(1, 0, 0, 1, 0, 0); I.globalCompositeOperation = 'source-over'; I.globalAlpha = 1; I.filter = 'none'; I.clearRect(0, 0, W, H);
+  SEEDC = 1;
+  if (t < 5) frameA(t); else frameB(t);
+  // paper tooth bites the ink
+  I.globalCompositeOperation = 'destination-out'; I.globalAlpha = .3; I.drawImage(GRAIN, 0, 0); I.globalAlpha = 1; I.globalCompositeOperation = 'source-over';
+  O.globalCompositeOperation = 'source-over'; O.globalAlpha = 1; O.filter = 'none';
+  O.drawImage(PAPER, 0, 0);
+  O.globalCompositeOperation = 'multiply';
+  O.save(); O.globalAlpha = .28; O.filter = 'blur(3px)'; O.drawImage(INK, 0, 0); O.restore();    // wet bleed
+  O.drawImage(INK, 0, 0);
+  O.globalCompositeOperation = 'source-over';
+};
+Promise.all([
+  document.fonts.load('224px "LXGW WenKai"', '画蛇添足成语墨'), document.fonts.load('italic 90px Fell', 'abc'), document.fonts.load('90px FellR', 'abc'),
+  document.fonts.load('600 40px "DejaVu Sans"', 'huà shé tiān zú'),
+]).then(() => { window.render(1); window.READY = true; });
+</script></body></html>

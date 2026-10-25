@@ -1,0 +1,441 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:'Lilita One';src:url(file:///tmp/claude-0/-home-user-Stock-ai/bcb7fc1b-9dba-5aaf-9469-b8b3664e0f24/scratchpad/refs/lemo-opuscar/core/fonts/f5.woff2) format('woff2');font-display:block}
+@font-face{font-family:'Fredoka';src:url(file:///tmp/claude-0/-home-user-Stock-ai/bcb7fc1b-9dba-5aaf-9469-b8b3664e0f24/scratchpad/refs/lemo-opuscar/core/fonts/f3.woff2) format('woff2');font-weight:300 700;font-display:block}
+html,body{margin:0;background:#F4EAD5}
+canvas{display:block}
+</style></head>
+<body><canvas id="c" width="1080" height="1920"></canvas>
+<script>
+// Idiom Ink - Mid-century Cartoon (UPA-style flat colour, off-register cels, sunbursts, paper grain).
+const W = 1080, H = 1920;
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const P = {
+  paper:'#F4EAD5', paperD:'#E6D8BC', paperDD:'#D4C29F', ink:'#2B2420', inkSoft:'#4A3F38', white:'#FBF6EA',
+  mustard:'#E8B43A', mustardL:'#F3CD6A', mustardD:'#C8921F',
+  coral:'#E4613F', coralD:'#B8452B',
+  rust:'#B9472C', rustD:'#8E3420', rustL:'#D66B4C',
+  slate:'#56708F', slateD:'#3F5672', slateL:'#7F98B5',
+  teal:'#3FA7A0', tealD:'#257A74', tealL:'#8ACFC6',
+  blue:'#7F9CC0', avocado:'#A7AE5B', avocadoD:'#7E8538',
+  bronze:'#7E7A3E', bronzeD:'#5A572A', bronzeL:'#A7A35E',
+  dirt:'#D9B57E', dirtD:'#B98F56', dirtL:'#E8CB98',
+  skin:'#F2C7A0', skinD:'#DDA37C', hair:'#2E211C', red:'#D9402B'
+};
+// ---------- deterministic helpers ----------
+const hash = (x, y = 0, z = 0) => { const n = Math.sin(x * 127.1 + y * 311.7 + z * 74.7) * 43758.5453; return n - Math.floor(n); };
+function rng(seed) { let s = seed | 0 || 1; return () => { s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function noise1(seed) { return x => { const i = Math.floor(x), f = x - i, u = f * f * (3 - 2 * f); return hash(i, seed) * (1 - u) + hash(i + 1, seed) * u; }; }
+const TAU = Math.PI * 2, clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x)), lerp = (a, b, t) => a + (b - a) * t;
+let CLOCK = 0;
+const REG = { dx: 6, dy: 4, jit: 1.6 };
+function reg(seed = 0, k = 1) { const f = Math.floor(CLOCK * 12 + 1e-6); return [(REG.dx + (hash(f, seed, 1) - .5) * 2 * REG.jit) * k, (REG.dy + (hash(f, seed, 2) - .5) * 2 * REG.jit) * k]; }
+// ---------- geometry ----------
+function spline(pts, closed = true, n = 8) {
+  const out = [], N = pts.length, get = i => closed ? pts[(i + N) % N] : pts[Math.max(0, Math.min(N - 1, i))];
+  const segs = closed ? N : N - 1;
+  for (let i = 0; i < segs; i++) { const p0 = get(i - 1), p1 = get(i), p2 = get(i + 1), p3 = get(i + 2);
+    for (let k = 0; k < n; k++) { const t = k / n, t2 = t * t, t3 = t2 * t;
+      out.push([.5 * (2 * p1[0] + (-p0[0] + p2[0]) * t + (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * t2 + (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * t3),
+                .5 * (2 * p1[1] + (-p0[1] + p2[1]) * t + (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * t2 + (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t3)]); } }
+  if (!closed) out.push(pts[N - 1]); return out;
+}
+const ell = (cx, cy, rx, ry, rot = 0, n = 40, a0 = 0, a1 = TAU) => { const o = []; for (let i = 0; i <= n; i++) { const a = a0 + (a1 - a0) * i / n, x = Math.cos(a) * rx, y = Math.sin(a) * ry; o.push([cx + x * Math.cos(rot) - y * Math.sin(rot), cy + x * Math.sin(rot) + y * Math.cos(rot)]); } return o; };
+function rrect(x, y, w, h, r, n = 6) { r = Math.min(r, w / 2, h / 2); const o = []; const c = [[x + w - r, y + r, -Math.PI / 2], [x + w - r, y + h - r, 0], [x + r, y + h - r, Math.PI / 2], [x + r, y + r, Math.PI]];
+  for (const [cx, cy, a0] of c) for (let i = 0; i <= n; i++) { const a = a0 + Math.PI / 2 * i / n; o.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]); } return o; }
+const move = (pts, dx, dy) => pts.map(([x, y]) => [x + dx, y + dy]);
+const xf = (pts, ox, oy, a = 0, s = 1, sy = s) => { const c = Math.cos(a), si = Math.sin(a); return pts.map(([x, y]) => [ox + c * x * s - si * y * sy, oy + si * x * s + c * y * sy]); };
+function path(pts, closed = true) { ctx.beginPath(); pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); if (closed) ctx.closePath(); }
+function bbox(pts) { let a = 1e9, b = 1e9, c = -1e9, d = -1e9; for (const [x, y] of pts) { a = Math.min(a, x); b = Math.min(b, y); c = Math.max(c, x); d = Math.max(d, y); } return [a, b, c, d]; }
+// ---------- textures ----------
+let TEX = null;
+function textures() {
+  if (TEX) return TEX; const R = rng(4848), S = 512;
+  const mk = () => { const c = document.createElement('canvas'); c.width = c.height = S; return [c, c.getContext('2d')]; };
+  const [dk, g1] = mk();
+  for (let i = 0; i < 3600; i++) { const x = R() * S, y = R() * S, l = 2 + R() * 9, a = (R() - .5) * .35; g1.strokeStyle = `rgba(40,25,15,${.05 + R() * .16})`; g1.lineWidth = .6 + R() * 1.6; g1.beginPath(); g1.moveTo(x, y); g1.lineTo(x + Math.cos(a) * l, y + Math.sin(a) * l); g1.stroke(); }
+  const [lt, g2] = mk();
+  for (let i = 0; i < 2400; i++) { const x = R() * S, y = R() * S, r = .4 + R() * 1.4; g2.fillStyle = `rgba(255,250,236,${.1 + R() * .3})`; g2.beginPath(); g2.ellipse(x, y, r * 1.6, r, .1, 0, TAU); g2.fill(); }
+  const [pf, g3] = mk(); const img = g3.createImageData(S, S);
+  for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) { const v = (hash(Math.floor(x / 6), Math.floor(y / 6), 3) - .5) * 26 + (hash(x, y, 7) - .5) * 30, i = (y * S + x) * 4; img.data[i] = img.data[i + 1] = img.data[i + 2] = 128 + v; img.data[i + 3] = 255; }
+  g3.putImageData(img, 0, 0);
+  for (let i = 0; i < 260; i++) { const x = R() * S, y = R() * S, a = R() * TAU, l = 6 + R() * 16; g3.strokeStyle = R() < .5 ? 'rgba(90,80,60,.35)' : 'rgba(255,255,245,.45)'; g3.lineWidth = .7; g3.beginPath(); g3.moveTo(x, y); g3.lineTo(x + Math.cos(a) * l, y + Math.sin(a) * l); g3.stroke(); }
+  TEX = { dk: ctx.createPattern(dk, 'repeat'), lt: ctx.createPattern(lt, 'repeat'), pf: ctx.createPattern(pf, 'repeat') };
+  return TEX;
+}
+function grainIn(pts, k = .35) {
+  if (k <= 0) return; const [x0, y0, x1, y1] = bbox(pts), T = textures();
+  ctx.save(); path(pts); ctx.clip();
+  ctx.globalAlpha *= .6 * k; ctx.fillStyle = T.dk; ctx.fillRect(x0 - 2, y0 - 2, x1 - x0 + 4, y1 - y0 + 4);
+  ctx.globalAlpha = .9 * k; ctx.fillStyle = T.lt; ctx.fillRect(x0 - 2, y0 - 2, x1 - x0 + 4, y1 - y0 + 4);
+  ctx.restore();
+}
+// ---------- ink ribbon with pressure + breaks ----------
+function ink(pts, w, o = {}) {
+  const { color = P.ink, closed = false, wob = .4, seed = 1, breaks = 0, taper = true, alpha = 1 } = o;
+  const Q = closed ? [...pts, pts[0], pts[1] || pts[0]] : pts; if (Q.length < 2 || w <= 0) return;
+  const L = [0]; for (let i = 1; i < Q.length; i++) L.push(L[i - 1] + Math.hypot(Q[i][0] - Q[i - 1][0], Q[i][1] - Q[i - 1][1]));
+  const total = L[L.length - 1]; if (total < .5) return;
+  const step = Math.max(1.5, Math.min(w * .7, total / 600)), n = Math.max(2, Math.ceil(total / step)); const S = []; let j = 0;
+  for (let i = 0; i <= n; i++) { const d = total * i / n; while (j < L.length - 2 && L[j + 1] < d) j++; const u = (d - L[j]) / Math.max(1e-6, L[j + 1] - L[j]); S.push([Q[j][0] + (Q[j + 1][0] - Q[j][0]) * u, Q[j][1] + (Q[j + 1][1] - Q[j][1]) * u, d]); }
+  const N = noise1(seed * 13 + 5), N2 = noise1(seed * 7 + 91);
+  const wid = d => { let k = 1 + wob * (N(d / (w * 16)) - .5) * 2; if (taper && !closed) { const e = Math.min(d, total - d) / (w * 4); k *= Math.min(1, .3 + e * .7); } return Math.max(.08, k) * w * .5; };
+  const runs = []; let cur = [];
+  for (const s of S) { const gap = breaks > 0 && N2(s[2] / (w * 11)) < breaks * .5; if (gap) { if (cur.length > 1) runs.push(cur); cur = []; } else cur.push(s); }
+  if (cur.length > 1) runs.push(cur);
+  ctx.save(); ctx.globalAlpha *= alpha; ctx.fillStyle = color;
+  for (const run of runs) { const l = [], r = [];
+    for (let i = 0; i < run.length; i++) { const a = run[Math.max(0, i - 1)], b = run[Math.min(run.length - 1, i + 1)]; let nx = -(b[1] - a[1]), ny = b[0] - a[0]; const ln = Math.hypot(nx, ny) || 1; nx /= ln; ny /= ln; const rr = wid(run[i][2]); l.push([run[i][0] + nx * rr, run[i][1] + ny * rr]); r.push([run[i][0] - nx * rr, run[i][1] - ny * rr]); }
+    ctx.beginPath(); l.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); for (let i = r.length - 1; i >= 0; i--) ctx.lineTo(r[i][0], r[i][1]); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.arc(run[0][0], run[0][1], wid(run[0][2]), 0, TAU); ctx.arc(run[run.length - 1][0], run[run.length - 1][1], wid(run[run.length - 1][2]), 0, TAU); ctx.fill(); }
+  ctx.restore();
+}
+// shape: off-register fill + flat shade planes + breathing ink line
+function shape(pts, o = {}) {
+  const { fill = null, line = 0, lineColor = P.ink, grain = .35, breaks = .16, seed = 1, wob = .4, regK = 1, alpha = 1 } = o;
+  const off = o.off || reg(o.reg ?? seed, regK);
+  ctx.save(); ctx.globalAlpha *= alpha;
+  if (fill) { const Q = move(pts, off[0], off[1]); ctx.save(); path(Q); ctx.fillStyle = fill; ctx.fill();
+    if (o.shade) { ctx.clip(); for (const s of [].concat(o.shade)) { path(move(s.pts, off[0], off[1])); ctx.fillStyle = s.color; ctx.globalAlpha = alpha * (s.alpha ?? 1); ctx.fill(); ctx.globalAlpha = alpha; } }
+    ctx.restore(); grainIn(Q, grain); }
+  if (line > 0) ink(pts, line, { closed: true, color: lineColor, breaks, seed, wob });
+  ctx.restore();
+}
+const plane = (pts, fill, g = .25) => shape(pts, { fill, line: 0, grain: g, off: [0, 0] });
+// union of parts: ink stroked first, fill on top (off-register) -> one outline (hands, feet)
+function union(parts, fill, w = 5, seed = 70, k = .6) {
+  ctx.save(); ctx.strokeStyle = P.ink; ctx.lineWidth = w * 2; ctx.lineJoin = 'round';
+  for (const p of parts) { path(p); ctx.stroke(); }
+  const o = reg(seed, k); ctx.fillStyle = fill; for (const p of parts) { path(move(p, o[0], o[1])); ctx.fill(); }
+  ctx.restore();
+}
+function starPts(cx, cy, r, n = 8, inner = .42, rot = 0) { const o = []; for (let i = 0; i < n * 2; i++) { const a = rot + i * Math.PI / n - Math.PI / 2, rr = i % 2 ? r * inner : r; o.push([cx + Math.cos(a) * rr, cy + Math.sin(a) * rr]); } return o; }
+function sparkle(cx, cy, r, fill = P.white, rot = 0) { const o = []; for (let i = 0; i < 4; i++) { const a = rot + i * Math.PI / 2 - Math.PI / 2, b = a + Math.PI / 4; o.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r], [cx + Math.cos(b) * r * .14, cy + Math.sin(b) * r * .14]); } path(o); ctx.fillStyle = fill; ctx.fill(); }
+function rays(cx, cy, n, r, fill, rot = 0, alpha = 1) { ctx.save(); ctx.globalAlpha = alpha; ctx.fillStyle = fill; ctx.beginPath();
+  for (let i = 0; i < n; i++) { const a0 = rot + i * TAU / n, a1 = a0 + TAU / n * .5; ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a0) * r, cy + Math.sin(a0) * r); ctx.lineTo(cx + Math.cos(a1) * r, cy + Math.sin(a1) * r); ctx.closePath(); }
+  ctx.fill(); ctx.restore(); }
+// two-plate type, optional ink outline
+function text(str, x, y, o = {}) {
+  const { font = '64px Fredoka', fill = P.ink, plate = null, align = 'center', base = 'alphabetic', outline = 0, oc = P.ink, rot = 0, seed = 3, track = 0, alpha = 1 } = o;
+  ctx.save(); ctx.globalAlpha = alpha; ctx.font = font; ctx.textAlign = align; ctx.textBaseline = base; if (track) ctx.letterSpacing = track + 'px';
+  ctx.translate(x, y); ctx.rotate(rot); ctx.lineJoin = 'round';
+  if (plate) { const [ox, oy] = o.off || reg(seed, 1.1); ctx.fillStyle = plate; if (outline) { ctx.strokeStyle = plate; ctx.lineWidth = outline * 2; ctx.strokeText(str, ox, oy); } ctx.fillText(str, ox, oy); }
+  if (outline) { ctx.strokeStyle = oc; ctx.lineWidth = outline * 2; ctx.strokeText(str, 0, 0); }
+  ctx.fillStyle = fill; ctx.fillText(str, 0, 0); ctx.restore();
+}
+function mw(str, font) { ctx.save(); ctx.font = font; const w = ctx.measureText(str).width; ctx.restore(); return w; }
+// brush-printed hanzi: ink plate (thickened glyph with dry tooth) over an off-register colour plate
+let GC = null;
+function hanzi(ch, cx, cy, px, plate, seed) {
+  const S = Math.ceil(px * 1.5); if (!GC) { GC = document.createElement('canvas'); }
+  GC.width = GC.height = S; const g = GC.getContext('2d');
+  const draw = (col, sw) => { g.clearRect(0, 0, S, S); g.font = `${px}px "LXGW WenKai"`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = col; g.strokeStyle = col; g.lineJoin = 'round'; g.lineWidth = sw; g.strokeText(ch, S / 2, S / 2 + px * .04); g.fillText(ch, S / 2, S / 2 + px * .04); };
+  const o = reg(seed, 1.5);
+  draw(plate, px * .05); ctx.drawImage(GC, cx - S / 2 + o[0], cy - S / 2 + o[1]);
+  draw(P.ink, px * .035);
+  g.globalCompositeOperation = 'source-atop'; g.globalAlpha = .55; g.fillStyle = textures().lt; g.fillRect(0, 0, S, S); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
+  ctx.drawImage(GC, cx - S / 2, cy - S / 2);
+}
+function paperFinish(k = 1) {
+  ctx.save(); ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = .28 * k; ctx.fillStyle = textures().pf; ctx.fillRect(0, 0, W, H);
+  ctx.globalCompositeOperation = 'multiply'; ctx.globalAlpha = .16 * k;
+  const g = ctx.createRadialGradient(W / 2, H * .48, H * .4, W / 2, H * .5, H * .9); g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(1, 'rgba(110,80,50,1)');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); ctx.restore();
+}
+// sleeve: thick ink ribbon with a colour ribbon printed off it
+function sleeve(pts, wd, col, seed) { const Q = spline(pts, false, 6); ink(Q, wd + 9, { seed, taper: false, wob: .08 }); const o = reg(seed, .7); ink(move(Q, o[0], o[1]), wd, { seed: seed + 1, taper: false, wob: .05, color: col }); }
+// four-finger cartoon hands. a = direction of the fingers
+function hand(x, y, a, kind = 'open', side = 1, k = 1, seed = 77) {
+  const parts = [], seps = []; const E = (cx, cy, rx, ry, r = 0) => parts.push(ell(cx, cy, rx, ry, r, 18));
+  E(12, 0, 16, 14);
+  if (kind === 'open') { [-.7, -.05, .6].forEach((r, i) => E(12 + Math.cos(r) * 27, Math.sin(r) * 27, 13 - i, 5.2, r)); E(4, -17 * side, 11, 5.2, -1.3 * side); }
+  else if (kind === 'grip') { E(26, -8, 7, 7); E(28, 2, 7, 7); E(25, 11, 6.5, 6.5); E(10, -15 * side, 9, 5.5, -.4 * side); seps.push([[21, -3], [31, -3]], [[21, 6.5], [30, 6.5]]); }
+  else if (kind === 'fist') { E(22, 0, 14, 15); seps.push([[22, -6], [34, -6]], [[22, 4], [34, 4]]); }
+  else if (kind === 'pinch') { E(36, -3 * side, 17, 4.8); E(25, 6 * side, 7, 6); E(19, 12 * side, 6, 5.5); E(26, -9 * side, 13, 4.6, -.25 * side); }
+  const Q = parts.map(p => xf(p, x, y, a, k));
+  union(Q, P.skin, 3 * k, seed, .5);
+  for (const s of seps) { const q = xf(s, x, y, a, k); ink(q, 2.6 * k, { seed: seed + 3, taper: false, wob: .1 }); }
+}
+
+// ================================================================ FRAME A: guess the idiom
+function icon(kind, cx, cy, s, seed) {
+  if (kind === 'brush') {
+    const a = -0.75;
+    const handle = xf([[-8, -70], [8, -70], [8, 14], [-8, 14]], cx + 10, cy - 4, a, s);
+    shape(handle, { fill: P.rust, line: 4, seed, grain: .2 });
+    const ferrule = xf([[-10, 12], [10, 12], [10, 28], [-10, 28]], cx + 10, cy - 4, a, s);
+    shape(ferrule, { fill: P.mustardD, line: 4, seed: seed + 1, grain: .1 });
+    const tip = xf(spline([[-11, 28], [11, 28], [7, 52], [0, 70], [-7, 52]], true, 6), cx + 10, cy - 4, a, s);
+    shape(tip, { fill: P.ink, line: 3, seed: seed + 2, grain: 0 });
+    // fresh stroke on the card
+    ink(spline([[cx - 60 * s, cy + 52 * s], [cx - 20 * s, cy + 40 * s], [cx + 20 * s, cy + 50 * s], [cx + 50 * s, cy + 42 * s]], false, 8), 9 * s, { seed: seed + 3 });
+  } else if (kind === 'snake') {
+    const body = spline([[cx - 62 * s, cy + 30 * s], [cx - 35 * s, cy - 2 * s], [cx - 5 * s, cy + 30 * s], [cx + 25 * s, cy + 2 * s], [cx + 48 * s, cy - 18 * s]], false, 10);
+    ink(body, 26 * s, { seed, wob: .1 }); const o = reg(seed, .6); ink(move(body, o[0], o[1]), 15 * s, { seed: seed + 1, color: P.avocado, wob: .1 });
+    const hd = ell(cx + 58 * s, cy - 24 * s, 21 * s, 15 * s, -.4, 24); shape(hd, { fill: P.avocado, line: 4, seed: seed + 2 });
+    ctx.fillStyle = P.ink; ctx.beginPath(); ctx.arc(cx + 62 * s, cy - 31 * s, 3.6 * s, 0, TAU); ctx.fill();
+    ink([[cx + 76 * s, cy - 30 * s], [cx + 92 * s, cy - 36 * s], [cx + 100 * s, cy - 44 * s]], 3.4 * s, { color: P.red, taper: false });
+    ink([[cx + 92 * s, cy - 36 * s], [cx + 102 * s, cy - 32 * s]], 3.4 * s, { color: P.red, taper: false });
+  } else if (kind === 'add') {
+    const t = 15 * s, l = 44 * s;
+    const plus = [[-t, -l], [t, -l], [t, -t], [l, -t], [l, t], [t, t], [t, l], [-t, l], [-t, t], [-l, t], [-l, -t], [-t, -t]].map(([x, y]) => [cx + x, cy + y]);
+    shape(move(plus, 5, 5), { fill: P.paperDD, line: 0, off: [0, 0], grain: 0 });
+    shape(plus, { fill: P.coral, line: 4.5, seed, grain: .2 });
+    sparkle(cx + 54 * s, cy - 40 * s, 20 * s, P.ink); sparkle(cx - 54 * s, cy + 40 * s, 13 * s, P.ink, .3);
+  } else if (kind === 'foot') {
+    const parts = [spline([[cx - 6 * s, cy - 22 * s], [cx + 22 * s, cy - 18 * s], [cx + 24 * s, cy + 20 * s], [cx + 10 * s, cy + 52 * s], [cx - 14 * s, cy + 50 * s], [cx - 20 * s, cy + 18 * s], [cx - 26 * s, cy - 8 * s]], true, 8)];
+    [[-24, -40, 11], [-2, -48, 9], [16, -46, 8], [30, -38, 7], [38, -26, 6]].forEach(([x, y, r]) => parts.push(ell(cx + x * s, cy + y * s, r * s, r * s * 1.1, 0, 16)));
+    union(parts.map(p => xf(p.map(([x, y]) => [x - cx, y - cy]), cx, cy, .35, 1)), P.skin, 4 * s, seed, .9);
+  }
+}
+function card(i, x, y, w, h, ch, kind, gloss, plate, rot, py) {
+  ctx.save(); ctx.translate(x + w / 2, y + h / 2); ctx.rotate(rot); ctx.translate(-(x + w / 2), -(y + h / 2));
+  const body = rrect(x, y, w, h, 28);
+  shape(move(body, 12, 14), { fill: P.mustardD, line: 0, off: [0, 0], grain: .2, alpha: .75 });
+  shape(body, { fill: P.white, line: 5, seed: 20 + i, grain: .3, breaks: .14 });
+  // colour stripe across the bottom of the card (clue strip)
+  ctx.save(); path(move(body, ...reg(20 + i))); ctx.clip();
+  plane([[x - 10, y + h - 88], [x + w + 20, y + h - 88], [x + w + 20, y + h + 20], [x - 10, y + h + 20]], plate === P.coral ? '#F6D2C2' : plate === P.teal ? '#CDE8E2' : plate === P.slate ? '#D7E0EA' : '#E3E6C2', .2);
+  ctx.restore();
+  ink([[x + 18, y + h - 88], [x + w - 18, y + h - 88]], 3, { seed: 40 + i, breaks: .25, taper: false });
+  hanzi(ch, x + w / 2 - 10, y + 128, 206, plate, 30 + i);
+  text(py, x + w - 22, y + 58, { font: 'bold 38px "DejaVu Sans"', align: 'right', fill: P.inkSoft });
+  icon(kind, x + 96, y + h - 46, .7, 50 + i * 7);
+  text(gloss, x + 184, y + h - 26, { font: '600 50px Fredoka', align: 'left', fill: P.ink, seed: 60 + i });
+  // numbered medallion (stamped on the corner)
+  const mx = x + 8, my = y + 8;
+  shape(ell(mx, my, 32, 32, 0, 28), { fill: P.ink, line: 0, off: [0, 0], grain: 0 });
+  ink(ell(mx, my, 32, 32, 0, 28), 3, { closed: true, color: P.white, alpha: .0 });
+  text(String(i + 1), mx + 1, my + 14, { font: '40px "Lilita One"', fill: P.white, plate: plate, seed: 70 + i });
+  ctx.restore();
+}
+function downArrow(cx, y0, y1, col) {
+  ink([[cx, y0], [cx + 6, (y0 + y1) / 2], [cx, y1 - 20]], 8, { seed: 91 });
+  shape([[cx - 24, y1 - 26], [cx + 24, y1 - 26], [cx, y1 + 8]], { fill: col, line: 4, seed: 92, breaks: 0 });
+}
+function frameA(t) {
+  plane([[0, 0], [W, 0], [W, H], [0, H]], P.mustard, .3);
+  rays(480, 980, 30, 1500, P.mustardL, t * .05, .55);
+  // soft cream disc behind the grid (the stage)
+  plane(ell(480, 980, 520, 520, 0, 80), '#F0C557', .15);
+  // polka dots in the quiet zones
+  const R = rng(9); for (let i = 0; i < 26; i++) { const x = R() * W, y = R() < .5 ? R() * 260 : 1480 + R() * 420; ctx.fillStyle = 'rgba(200,146,31,.45)'; ctx.beginPath(); ctx.arc(x, y, 6 + R() * 8, 0, TAU); ctx.fill(); }
+  // hook
+  text('4 characters.', 480, 368, { font: '104px "Lilita One"', fill: P.white, outline: 7, plate: P.coralD, seed: 1, rot: -.03 });
+  text('1 crazy story.', 480, 490, { font: '118px "Lilita One"', fill: P.ink, plate: P.white, seed: 2, rot: -.03 });
+  // guess pill
+  const gw = mw('GUESS THE MEANING', '600 40px Fredoka') + 190, gx = 480 - gw / 2;
+  shape(rrect(gx, 528, gw, 66, 33), { fill: P.ink, line: 0, seed: 5, grain: .1 });
+  text('GUESS THE MEANING', 480 - 30, 575, { font: '600 40px Fredoka', fill: P.white, track: 4 });
+  downArrow(gx + gw - 50, 536, 586, P.coral);
+  // the four cards (2 x 2)
+  const cw = 404, chh = 330, gx0 = 70, gy0 = 636, gap = 22;
+  const C = [['画', 'brush', 'draw', P.coral, 'huà'], ['蛇', 'snake', 'snake', P.teal, 'shé'], ['添', 'add', 'add', P.slate, 'tiān'], ['足', 'foot', 'feet', P.avocado, 'zú']];
+  C.forEach((c, i) => { const col = i % 2, row = (i / 2) | 0; card(i, gx0 + col * (cw + gap), gy0 + row * (chh + gap), cw, chh, c[0], c[1], c[2], c[3], [-.025, .02, .018, -.02][i], c[4]); });
+  // atomic sparkles
+  sparkle(948 - 40, 640, 26, P.white, .1); sparkle(46, 1010, 22, P.white); sparkle(60, 1300, 18, P.white, .3);
+  // pinyin
+  // the quiz: three answer chips
+  const ch = [['A', 'Overdoing it', P.coral], ['B', 'Being lucky', P.teal], ['C', 'Drawing well', P.slate]];
+  let cx0 = 56; const cy = 1352;
+  ch.forEach(([k, l, col], i) => { const f = '600 33px Fredoka', w = mw(l, f) + 88;
+    shape(move(rrect(cx0, cy, w, 74, 37), 6, 7), { fill: P.mustardD, line: 0, off: [0, 0], grain: .1, alpha: .8 });
+    shape(rrect(cx0, cy, w, 74, 37), { fill: P.white, line: 4, seed: 80 + i, grain: .2 });
+    shape(ell(cx0 + 37, cy + 37, 25, 25, 0, 24), { fill: col, line: 3.5, seed: 85 + i, grain: .1 });
+    text(k, cx0 + 37, cy + 50, { font: '36px "Lilita One"', fill: P.white });
+    text(l, cx0 + 70, cy + 49, { font: f, align: 'left', fill: P.ink });
+    cx0 += w + 10; });
+  paperFinish(1);
+}
+
+// ================================================================ FRAME B: "Snakes don't have FEET!"
+function jug(cx, cy, s, seed) {
+  const L = (x, y) => [cx + x * s, cy + y * s];
+  // loop handles
+  for (const sd of [-1, 1]) { const hp = ell(cx + sd * 78 * s, cy - 32 * s, 26 * s, 22 * s, 0, 30); ink(hp, 13 * s, { closed: true, seed: seed + sd, wob: .1 }); ink(move(hp, 2, 2), 6 * s, { closed: true, color: P.bronzeL, seed: seed + sd + 5, wob: .1 }); }
+  const body = spline([L(-34, -98), L(34, -98), L(30, -70), L(70, -40), L(84, 8), L(60, 62), L(36, 78), L(-36, 78), L(-60, 62), L(-84, 8), L(-70, -40), L(-30, -70)], true, 8);
+  shape(body, { fill: P.bronze, line: 5, seed, grain: .45, shade: [{ pts: spline([L(20, -70), L(70, -40), L(84, 8), L(60, 62), L(30, 78), L(40, 20)], true, 6), color: P.bronzeD, alpha: .8 }] });
+  // decoration bands + rim + foot
+  ink(spline([L(-74, -18), L(0, -8), L(74, -18)], false, 8), 4, { seed: seed + 3, breaks: .2 });
+  ink(spline([L(-80, 20), L(0, 30), L(80, 20)], false, 8), 4, { seed: seed + 4, breaks: .2 });
+  for (let i = -3; i <= 3; i++) ink([L(i * 20 - 6, -6), L(i * 20, 14), L(i * 20 + 6, -4)], 3, { seed: seed + 10 + i, taper: false });
+  shape(ell(cx, cy - 98 * s, 40 * s, 11 * s, 0, 30), { fill: P.bronzeL, line: 4.5, seed: seed + 6, grain: .2 });
+  shape(rrect(cx - 46 * s, cy + 74 * s, 92 * s, 20 * s, 6), { fill: P.bronzeD, line: 4.5, seed: seed + 7 });
+  // highlight
+  ink(spline([L(-54, -26), L(-62, 6), L(-50, 36)], false, 6), 7 * s, { color: P.bronzeL, seed: seed + 8 });
+}
+// Zhang: young, lanky, topknot + red cloth, rust-red robe. Crouched, facing right, shocked.
+function zhangHead(hx, hy, rot) {
+  const T = pts => xf(pts, hx, hy, rot, 1);
+  // red cloth tails (behind)
+  shape(T(spline([[-30, -104], [-78, -118], [-118, -96], [-86, -92], [-60, -88]], true, 6)), { fill: P.red, line: 4, seed: 101 });
+  shape(T(spline([[-30, -96], [-72, -78], [-104, -50], [-74, -62], [-46, -78]], true, 6)), { fill: P.red, line: 4, seed: 102 });
+  // neck
+  shape(T([[-22, 40], [16, 50], [10, 120], [-26, 116]]), { fill: P.skin, line: 4, seed: 103, shade: [{ pts: T([[-26, 40], [-6, 40], [-10, 120], [-30, 120]]), color: P.skinD, alpha: .7 }] });
+  // face: long egg with the nose part of the outline
+  const face = T(spline([[-58, -6], [-48, -62], [0, -84], [46, -64], [60, -30], [66, -12], [104, 2], [70, 16], [64, 30], [60, 54], [36, 80], [-4, 78], [-42, 52]], true, 8));
+  shape(face, { fill: P.skin, line: 4.5, seed: 104 });
+  // hair cap + topknot
+  shape(T(spline([[-62, 8], [-58, -50], [-20, -86], [30, -86], [52, -64], [16, -60], [-12, -44], [-26, -14], [-40, 14]], true, 8)), { fill: P.hair, line: 4, seed: 105, grain: .2 });
+  shape(T(ell(-22, -104, 24, 22, 0, 26)), { fill: P.hair, line: 4, seed: 106, grain: .2 });
+  shape(T([[-42, -90], [-6, -96], [-4, -82], [-40, -76]]), { fill: P.red, line: 4, seed: 107 });
+  // ear
+  shape(T(ell(-28, 6, 13, 17, 0, 20)), { fill: P.skin, line: 4, seed: 108 });
+  ink(T([[-30, 0], [-24, 8], [-30, 14]]), 2.6, { seed: 109 });
+  // shocked eye: big white, pinpoint pupil, eyebrow flying up
+  shape(T(ell(30, -30, 22, 26, 0, 28)), { fill: P.white, line: 4, seed: 110, grain: 0 });
+  ctx.fillStyle = P.ink; const pp = T([[38, -34]])[0]; ctx.beginPath(); ctx.arc(pp[0], pp[1], 5.5, 0, TAU); ctx.fill();
+  ink(T(spline([[6, -74], [28, -90], [54, -80]], false, 6)), 6, { seed: 111 });
+  // open "O" mouth
+  shape(T(ell(46, 46, 14, 20, .2, 24)), { fill: '#5A2A22', line: 4.5, seed: 112, grain: 0, shade: [{ pts: T(ell(48, 60, 10, 7, 0, 16)), color: P.coral }] });
+  // cheek line
+  ink(T([[14, 20], [22, 28]]), 3, { seed: 113 });
+}
+function zhang() {
+  // reaching (far) arm, behind everything: grasping at the jug as it flies away
+  // squatting robe
+  const robe = spline([[268, 818], [340, 832], [392, 900], [424, 960], [420, 1052], [312, 1062], [190, 1056], [156, 1000], [176, 900], [216, 830]], true, 8);
+  shape(robe, { fill: P.rust, line: 5, seed: 130, shade: [{ pts: [[150, 960], [300, 980], [330, 1080], [140, 1080]], color: P.rustD, alpha: .75 }] });
+  // knee fold + sash
+  ink(spline([[300, 930], [360, 920], [412, 950]], false, 6), 4, { seed: 131 });
+  shape([[178, 930], [318, 912], [324, 940], [182, 960]], { fill: P.mustard, line: 4, seed: 132 });
+  shape([[176, 952], [150, 1000], [172, 1006], [196, 958]], { fill: P.mustard, line: 3.5, seed: 133 });
+  // shoes
+  shape(ell(208, 1062, 34, 13, 0, 20), { fill: P.ink, line: 0, seed: 134 }); shape(ell(392, 1064, 38, 13, 0, 20), { fill: P.ink, line: 0, seed: 135 });
+  sleeve([[340, 850], [426, 770], [484, 676], [522, 614]], 32, P.rustL, 120);
+  hand(530, 598, -0.95, 'open', -1, 1.25, 121);
+  // head (tilted back, looking up at the jug)
+  zhangHead(292, 708, -0.32);
+  // drawing (near) arm: still adding the 4th foot with a stick
+  sleeve([[330, 858], [392, 912], [446, 960]], 30, P.rust, 140);
+  ink([[462, 950], [566, 1166]], 8, { seed: 141, color: '#6B4A2B', taper: false });
+  hand(452, 948, 1.1, 'grip', 1, 1.15, 142);
+  // shock marks + sweat drops
+  text('!?', 168, 590, { font: '120px "Lilita One"', fill: P.coral, outline: 6, plate: P.white, rot: -.18, seed: 150 });
+  for (const [x, y, r] of [[200, 700, 1], [222, 652, .8]]) shape(spline([[x, y - 22 * r], [x + 10 * r, y], [x, y + 9 * r], [x - 10 * r, y]], true, 6), { fill: '#BFE1E6', line: 3, seed: 151 + x });
+  [[360, 560, -1.1], [402, 590, -.7], [316, 552, -1.5]].forEach(([x, y, a], i) => ink([[x, y], [x + Math.cos(a) * 34, y + Math.sin(a) * 34]], 6, { seed: 160 + i }));
+}
+// Li: stocky, round face, short beard, slate-blue robe, white headband. Standing, facing left, triumphant.
+function liHead(hx, hy, rot) {
+  const T = pts => xf(pts, hx, hy, rot, 1);
+  // headband tails flying behind (right)
+  shape(T(spline([[62, -60], [112, -86], [134, -60], [104, -64], [70, -46]], true, 6)), { fill: P.white, line: 4, seed: 201 });
+  shape(T(spline([[62, -52], [118, -36], [126, -10], [98, -28], [66, -38]], true, 6)), { fill: P.white, line: 4, seed: 202 });
+  // round face facing left, bulb nose part of the outline
+  const face = T(spline([[78, 0], [70, -54], [20, -82], [-40, -76], [-74, -46], [-80, -18], [-100, -16], [-118, 2], [-104, 20], [-84, 24], [-80, 46], [-50, 78], [10, 86], [60, 54]], true, 8));
+  shape(face, { fill: P.skin, line: 4.5, seed: 203, shade: [{ pts: T(ell(70, 20, 30, 70, 0, 20)), color: P.skinD, alpha: .6 }] });
+  // hair top
+  shape(T(spline([[-62, -58], [-30, -84], [24, -86], [70, -56], [74, -40], [-66, -44]], true, 8)), { fill: P.hair, line: 4, seed: 204, grain: .2 });
+  // headband
+  shape(T([[-74, -66], [72, -68], [76, -44], [-78, -42]]), { fill: P.white, line: 4, seed: 205, grain: .15 });
+  // ear
+  shape(T(ell(42, 8, 11, 16, 0, 20)), { fill: P.skinD, line: 4, seed: 206 });
+  ink(T([[44, -2], [38, 6], [44, 16]]), 3, { seed: 212 });
+  // beard (short, pointed) + moustache
+  shape(T(spline([[-78, 50], [-40, 60], [0, 62], [40, 52], [30, 84], [-6, 112], [-30, 126], [-50, 96]], true, 8)), { fill: P.hair, line: 4, seed: 207, grain: .2 });
+  // big open grin
+  const mouth = T(spline([[-86, 30], [-30, 26], [-26, 40], [-44, 66], [-72, 62]], true, 8));
+  shape(mouth, { fill: '#5A2A22', line: 4.5, seed: 208, grain: 0, shade: [{ pts: T([[-90, 22], [-24, 20], [-26, 38], [-88, 40]]), color: P.white }, { pts: T(ell(-50, 62, 18, 10, 0, 16)), color: P.coral }] });
+  shape(T(spline([[-96, 20], [-70, 12], [-40, 16], [-30, 24], [-60, 26]], true, 6)), { fill: P.hair, line: 3.5, seed: 209 });
+  // happy squint eye + cocky brow
+  ink(T(spline([[-64, -8], [-46, -26], [-26, -10]], false, 6)), 7, { seed: 210 });
+  ink(T(spline([[-70, -32], [-46, -40], [-20, -34]], false, 6)), 5, { seed: 211 });
+  // rosy cheek
+  ctx.save(); ctx.globalAlpha = .45; const ck = T([[-22, 10]])[0]; ctx.fillStyle = P.coral; ctx.beginPath(); ctx.ellipse(ck[0], ck[1], 16, 10, 0, 0, TAU); ctx.fill(); ctx.restore();
+}
+function li() {
+  // raised arm (far side, behind head): yanks the jug up and away
+  sleeve([[716, 700], [706, 600], [690, 500], [672, 452]], 34, P.slateD, 220);
+  // robe: stocky bell
+  const robe = spline([[730, 650], [812, 650], [866, 690], [884, 820], [902, 1060], [780, 1074], [652, 1062], [668, 820], [690, 690]], true, 8);
+  shape(robe, { fill: P.slate, line: 5, seed: 230, shade: [{ pts: [[820, 640], [920, 640], [920, 1090], [850, 1090], [840, 800]], color: P.slateD, alpha: .8 }] });
+  ink(spline([[770, 660], [744, 740], [748, 840]], false, 6), 4, { seed: 231 }); // collar cross
+  shape([[668, 838], [884, 830], [888, 870], [664, 880]], { fill: P.ink, line: 0, seed: 232, grain: .1 });
+  ink(spline([[730, 900], [720, 980], [712, 1050]], false, 6), 3.5, { seed: 233, breaks: .3 });
+  // shoes
+  shape(ell(706, 1076, 40, 14, 0, 20), { fill: P.ink, line: 0, seed: 234 }); shape(ell(846, 1078, 40, 14, 0, 20), { fill: P.ink, line: 0, seed: 235 });
+  // fist on hip
+  sleeve([[858, 700], [898, 770], [880, 842]], 34, P.slate, 240);
+  hand(866, 856, 2.6, 'fist', 1, 1.2, 241);
+  liHead(792, 556, -0.14);
+}
+function snake(seed) {
+  // drawn in the dirt with a stick: a scratched groove (dark) with a light lip
+  const body = spline([[200, 1074], [256, 1040], [326, 1072], [400, 1094], [470, 1066], [530, 1040], [590, 1060], [624, 1052]], false, 12);
+  const yAt = x => { let b = body[0]; for (const q of body) if (Math.abs(q[0] - x) < Math.abs(b[0] - x)) b = q; return b[1]; };
+  const G = '#7A5732';
+  ink(move(body, 0, 6), 34, { color: P.dirtL, seed: seed + 1, wob: .15 });
+  ink(body, 30, { color: P.dirtD, seed, wob: .2 });
+  ink(body, 9, { color: G, seed: seed + 2, wob: .3, breaks: .08 });
+  const hd = ell(652, 1040, 38, 26, -.25, 26);
+  shape(move(hd, 0, 5), { fill: P.dirtL, line: 0, off: [0, 0], grain: 0 });
+  shape(hd, { fill: P.dirtD, line: 0, off: [0, 0], seed: seed + 3, grain: .2 });
+  ink(hd, 5, { closed: true, color: G, seed: seed + 4 });
+  ctx.fillStyle = P.ink; ctx.beginPath(); ctx.arc(664, 1030, 6, 0, TAU); ctx.fill();
+  ink([[688, 1032], [714, 1026], [726, 1016]], 4.5, { color: P.red, taper: false }); ink([[714, 1026], [728, 1034]], 4.5, { color: P.red, taper: false });
+  // four tiny feet: three done, the fourth being scratched in right now (under the stick)
+  const foot = (x, a, toes = 3) => {
+    const y = yAt(x) + 12, fx = x + Math.sin(a) * 10, fy = y + 30, F = '#5A3E22';
+    ink([[x, y], [fx, fy]], 9, { color: F, taper: false, seed: seed + x });
+    [-1.15, -.2, .75].slice(0, toes).forEach(d => ink([[fx, fy], [fx + Math.sin(d + .3) * 20, fy + Math.cos(d + .3) * 8 + 3]], 7, { color: F, taper: false, seed: seed + x + d * 10 }));
+  };
+  foot(262, -.25); foot(360, .2); foot(452, -.15); foot(550, .1, 2);
+  sparkle(572, 1098, 22, P.white, .4);
+  [[236, 1100, 14], [392, 1128, 12], [484, 1110, 13]].forEach(([x, y, r], i) => sparkle(x, y, r, P.coralD, i * .4));
+}
+function captionB() {
+  const x = 64, y = 1150, w = 832, h = 236;
+  shape(move(rrect(x, y, w, h, 36), 12, 14), { fill: P.dirtD, line: 0, off: [0, 0], grain: .2, alpha: .8 });
+  shape(rrect(x, y, w, h, 36), { fill: P.white, line: 5, seed: 300, grain: .25, breaks: .12 });
+  text("Snakes don't", x + w / 2, y + 104, { font: '112px "Lilita One"', fill: P.ink, plate: P.mustard, seed: 301 });
+  const f = '128px "Lilita One"', a = 'have ', b = 'FEET!', wa = mw(a, f), wb = mw(b, f), sx = x + w / 2 - (wa + wb) / 2;
+  text(a, sx, y + 214, { font: f, align: 'left', fill: P.ink, plate: P.mustard, seed: 302 });
+  text(b, sx + wa, y + 214, { font: f, align: 'left', fill: P.red, outline: 5, plate: P.ink, seed: 303 });
+  // turning stars at the ends
+  shape(starPts(x + 2, y + h / 2, 30, 8, .42, CLOCK * .8), { fill: P.coral, line: 3.5, seed: 304, grain: 0 });
+  shape(starPts(x + w - 2, y + h / 2, 30, 8, .42, -CLOCK * .8), { fill: P.coral, line: 3.5, seed: 305, grain: 0 });
+}
+function frameB(t) {
+  // wall plane + horizon (with gaps) + dirt floor
+  plane([[0, 0], [W, 0], [W, 830], [0, 830]], P.mustard, .3);
+  rays(612, 360, 30, 1400, P.mustardL, t * .04, .6);
+  plane(ell(612, 360, 190, 190, 0, 60), '#F6DC93', .15);
+  plane([[0, 830], [W, 830], [W, H], [0, H]], P.dirt, .35);
+  plane([[0, 830], [W, 830], [W, 860], [0, 860]], P.dirtL, .2);
+  ink([[0, 830], [W, 830]], 4, { seed: 5, breaks: .35, taper: false });
+  // a few pebbles / boomerang ground marks
+  const R = rng(77); for (let i = 0; i < 9; i++) { const x = 60 + R() * 820, y = 880 + R() * 120; ink([[x, y], [x + 30 + R() * 40, y + (R() - .5) * 6]], 3, { color: P.dirtD, seed: 500 + i }); }
+  for (let i = 0; i < 14; i++) { const x = 40 + R() * 860, y = 1400 + R() * 480; ctx.fillStyle = 'rgba(185,143,86,.7)'; ctx.beginPath(); ctx.ellipse(x, y, 10 + R() * 18, 5 + R() * 6, 0, 0, TAU); ctx.fill(); }
+  // cast shadows
+  ctx.save(); ctx.globalAlpha = .22; ctx.fillStyle = P.ink; ctx.beginPath(); ctx.ellipse(296, 998, 160, 16, 0, 0, TAU); ctx.fill(); ctx.beginPath(); ctx.ellipse(784, 1010, 150, 16, 0, 0, TAU); ctx.fill(); ctx.restore();
+  snake(400);
+  ctx.save(); ctx.translate(0, -70);
+  li();
+  zhang();
+  jug(612, 430, 1, 260);
+  // Li's gripping hand on the right loop handle (over the jug)
+  hand(686, 402, -2.0, 'grip', 1, 1.2, 270);
+  // whoosh arcs: the jug is yanked up and to the right
+  for (let i = 0; i < 3; i++) ink(spline([[470 - i * 16, 560 - i * 40], [500 - i * 8, 470 - i * 40], [540, 360 - i * 30]], false, 8), 6, { seed: 280 + i, color: P.white });
+  // win sparkles
+  sparkle(520, 290, 30, P.white, .2); sparkle(724, 282, 22, P.white); sparkle(470, 400, 16, P.white, .5);
+  ctx.restore();
+  // corner tag
+  shape(rrect(44, 196, 276, 84, 42), { fill: P.ink, line: 0, seed: 290, grain: .1 });
+  text('画蛇添足', 182, 256, { font: '56px "LXGW WenKai"', fill: P.white, plate: P.coral, seed: 291 });
+  captionB();
+  paperFinish(1);
+}
+
+window.DUR = 12;
+window.render = (t) => {
+  CLOCK = Math.floor(t * 12 + 1e-6) / 12; // on twos
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, W, H);
+  if (t < 5) frameA(CLOCK); else frameB(CLOCK);
+};
+Promise.all([
+  document.fonts.load('104px "Lilita One"'), document.fonts.load('600 40px Fredoka'),
+  document.fonts.load('200px "LXGW WenKai"', '画蛇添足'), document.fonts.load('bold 54px "DejaVu Sans"', 'huà shé tiān zú')
+]).then(() => { textures(); window.READY = true; });
+</script></body></html>

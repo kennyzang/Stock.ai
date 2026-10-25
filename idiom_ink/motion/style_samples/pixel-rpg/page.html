@@ -1,0 +1,397 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Idiom Quest</title>
+<style>html,body{margin:0;background:#181425;overflow:hidden}canvas{display:block;image-rendering:pixelated}</style>
+</head><body><canvas id="c" width="1080" height="1920"></canvas>
+<script>
+// ---------- Idiom Quest: 16-bit pixel RPG frames, 270x480 indexed framebuffer, x4 nearest ----------
+const W = 270, H = 480, S = 4;
+const HEX = [
+ '181425','262b44','3a4466','5a6988','8b9bb4','c0cbdc','ffffff', // 0 ink,1 navy,2 slate,3 slate2,4 grey,5 silver,6 white
+ '3e2731','68386c','b55088','f6757a',                             // 7 plumdk,8 plum,9 rose,10 pink
+ 'a22633','e43b44','f77622','feae34','fee761',                    // 11 deepred,12 red,13 orange,14 gold,15 yellow
+ 'c28569','e8b796','f8dcc0',                                      // 16 skin sh,17 skin,18 skin hi
+ '733e39','b86f50','e4a672','ead4aa',                             // 19 brown dk,20 brown,21 tan,22 cream
+ '3a4528','66733a','a3a35a',                                      // 23 bronze dk,24 bronze,25 bronze hi
+ '265c42','3e8948','124e89','0099db','2ce8f5',                    // 26 green dk,27 green,28 blue dk,29 blue,30 cyan
+ 'be4a2f','d77643','4a2a2a','63c74d','1b2a5c'                     // 31 rust,32 rust hi,33 dirt dk,34 green hi,35 box blue dk
+];
+const PAL = HEX.map(h => [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)]);
+const BAYER = [0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5].map(v => (v + 0.5) / 16);
+const bay = (x, y) => BAYER[(y & 3) * 4 + (x & 3)];
+
+function buf() { const d = new Int16Array(W * H); d.fill(-1); return d; }
+let FB = buf();
+function pset(T, x, y, c) { x |= 0; y |= 0; if (x < 0 || y < 0 || x >= W || y >= H || c < 0) return; T[y * W + x] = c; }
+function pget(T, x, y) { if (x < 0 || y < 0 || x >= W || y >= H) return -1; return T[y * W + x]; }
+function rect(T, x, y, w, h, c) { for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) pset(T, i, j, c); }
+function line(T, x0, y0, x1, y1, c) {
+  x0 = Math.round(x0); y0 = Math.round(y0); x1 = Math.round(x1); y1 = Math.round(y1);
+  let dx = Math.abs(x1 - x0), sx = x0 < x1 ? 1 : -1, dy = -Math.abs(y1 - y0), sy = y0 < y1 ? 1 : -1, e = dx + dy;
+  for (;;) { pset(T, x0, y0, c); if (x0 === x1 && y0 === y1) break; const e2 = 2 * e; if (e2 >= dy) { e += dy; x0 += sx; } if (e2 <= dx) { e += dx; y0 += sy; } }
+}
+// shaded primitives: ramp = [dark, base, light]
+function shadeIdx(ramp, d) { return d > 0.42 ? ramp[2] : d < -0.3 ? ramp[0] : ramp[1]; }
+function ellipse(T, cx, cy, rx, ry, ramp) {
+  const flat = typeof ramp === 'number';
+  for (let y = Math.floor(cy - ry); y <= Math.ceil(cy + ry); y++) for (let x = Math.floor(cx - rx); x <= Math.ceil(cx + rx); x++) {
+    const nx = (x + 0.5 - cx) / rx, ny = (y + 0.5 - cy) / ry; if (nx * nx + ny * ny > 1) continue;
+    pset(T, x, y, flat ? ramp : shadeIdx(ramp, (-nx - ny) * 0.75));
+  }
+}
+function capsule(T, x1, y1, x2, y2, r, ramp) {
+  const flat = typeof ramp === 'number';
+  const vx = x2 - x1, vy = y2 - y1, L2 = vx * vx + vy * vy || 1;
+  for (let y = Math.floor(Math.min(y1, y2) - r); y <= Math.ceil(Math.max(y1, y2) + r); y++)
+    for (let x = Math.floor(Math.min(x1, x2) - r); x <= Math.ceil(Math.max(x1, x2) + r); x++) {
+      const px = x + 0.5, py = y + 0.5; let t = ((px - x1) * vx + (py - y1) * vy) / L2; t = Math.max(0, Math.min(1, t));
+      const ox = px - (x1 + vx * t), oy = py - (y1 + vy * t); if (ox * ox + oy * oy > r * r) continue;
+      pset(T, x, y, flat ? ramp : shadeIdx(ramp, (-ox - oy) * 0.72 / r));
+    }
+}
+function poly(T, pts, ramp) {
+  const flat = typeof ramp === 'number';
+  let minY = 1e9, maxY = -1e9, minX = 1e9, maxX = -1e9; for (const [x, y] of pts) { minY = Math.min(minY, y); maxY = Math.max(maxY, y); minX = Math.min(minX, x); maxX = Math.max(maxX, x); }
+  for (let y = Math.floor(minY); y <= Math.ceil(maxY); y++) {
+    const py = y + 0.5, xs = [];
+    for (let i = 0; i < pts.length; i++) { const [ax, ay] = pts[i], [bx, by] = pts[(i + 1) % pts.length]; if ((ay <= py && by > py) || (by <= py && ay > py)) xs.push(ax + (py - ay) / (by - ay) * (bx - ax)); }
+    xs.sort((a, b) => a - b);
+    for (let k = 0; k + 1 < xs.length; k += 2) for (let x = Math.round(xs[k]); x < Math.round(xs[k + 1]); x++) {
+      if (flat) { pset(T, x, y, ramp); continue; }
+      const t = (x - Math.round(xs[k])) / Math.max(1, Math.round(xs[k + 1]) - Math.round(xs[k]));
+      pset(T, x, y, t < 0.2 ? ramp[2] : t > 0.66 ? ramp[0] : ramp[1]);
+    }
+  }
+}
+function outline(T, ink, eight) {
+  const add = [];
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    if (T[y * W + x] >= 0) continue;
+    let hit = pget(T, x - 1, y) >= 0 || pget(T, x + 1, y) >= 0 || pget(T, x, y - 1) >= 0 || pget(T, x, y + 1) >= 0;
+    if (!hit && eight) hit = pget(T, x - 1, y - 1) >= 0 || pget(T, x + 1, y - 1) >= 0 || pget(T, x - 1, y + 1) >= 0 || pget(T, x + 1, y + 1) >= 0;
+    if (hit) add.push(y * W + x);
+  }
+  for (const i of add) T[i] = ink;
+}
+function comp(src, dst = FB) { for (let i = 0; i < src.length; i++) if (src[i] >= 0) dst[i] = src[i]; }
+function gradV(T, x0, y0, w, h, list) {
+  for (let y = y0; y < y0 + h; y++) { const t = (y - y0) / (h - 1) * (list.length - 1), i = Math.min(list.length - 2, Math.floor(t)), f = t - i;
+    for (let x = x0; x < x0 + w; x++) pset(T, x, y, f > bay(x, y) ? list[i + 1] : list[i]); }
+}
+let seed = 1; const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+
+// ---------- original 5x7 variable-width pixel font (9 rows incl. descender) ----------
+const G = {};
+function defg(ch, rows) { while (rows.length < 9) rows.push('.'.repeat(rows[0].length)); G[ch] = rows; }
+const U = {
+A:'.###.|#...#|#...#|#####|#...#|#...#|#...#', B:'####.|#...#|#...#|####.|#...#|#...#|####.', C:'.###.|#...#|#....|#....|#....|#...#|.###.',
+D:'####.|#...#|#...#|#...#|#...#|#...#|####.', E:'#####|#....|#....|####.|#....|#....|#####', F:'#####|#....|#....|####.|#....|#....|#....',
+G:'.###.|#...#|#....|#.###|#...#|#...#|.####', H:'#...#|#...#|#...#|#####|#...#|#...#|#...#', I:'###|.#.|.#.|.#.|.#.|.#.|###',
+J:'..###|...#.|...#.|...#.|#..#.|#..#.|.##..', K:'#...#|#..#.|#.#..|##...|#.#..|#..#.|#...#', L:'#....|#....|#....|#....|#....|#....|#####',
+M:'#...#|##.##|#.#.#|#.#.#|#...#|#...#|#...#', N:'#...#|##..#|#.#.#|#..##|#...#|#...#|#...#', O:'.###.|#...#|#...#|#...#|#...#|#...#|.###.',
+P:'####.|#...#|#...#|####.|#....|#....|#....', Q:'.###.|#...#|#...#|#...#|#.#.#|#..#.|.##.#', R:'####.|#...#|#...#|####.|#.#..|#..#.|#...#',
+S:'.####|#....|#....|.###.|....#|....#|####.', T:'#####|..#..|..#..|..#..|..#..|..#..|..#..', U:'#...#|#...#|#...#|#...#|#...#|#...#|.###.',
+V:'#...#|#...#|#...#|#...#|#...#|.#.#.|..#..', W:'#...#|#...#|#...#|#.#.#|#.#.#|##.##|#...#', X:'#...#|#...#|.#.#.|..#..|.#.#.|#...#|#...#',
+Y:'#...#|#...#|.#.#.|..#..|..#..|..#..|..#..', Z:'#####|....#|...#.|..#..|.#...|#....|#####',
+a:'.....|.....|.###.|....#|.####|#...#|.####', b:'#....|#....|####.|#...#|#...#|#...#|####.', c:'.....|.....|.###.|#....|#....|#....|.###.',
+d:'....#|....#|.####|#...#|#...#|#...#|.####', e:'.....|.....|.###.|#...#|#####|#....|.###.', f:'..##|.#..|####|.#..|.#..|.#..|.#..',
+g:'.....|.....|.####|#...#|#...#|#...#|.####|....#|.###.', h:'#....|#....|####.|#...#|#...#|#...#|#...#', i:'#|.|#|#|#|#|#',
+j:'..#|...|..#|..#|..#|..#|..#|#.#|.#.', k:'#...|#...|#..#|#.#.|##..|#.#.|#..#', l:'#.|#.|#.|#.|#.|#.|.#',
+m:'.....|.....|##.#.|#.#.#|#.#.#|#.#.#|#.#.#', n:'.....|.....|####.|#...#|#...#|#...#|#...#', o:'.....|.....|.###.|#...#|#...#|#...#|.###.',
+p:'.....|.....|####.|#...#|#...#|#...#|####.|#....|#....', q:'.....|.....|.####|#...#|#...#|#...#|.####|....#|....#',
+r:'....|....|#.##|##..|#...|#...|#...', s:'.....|.....|.####|#....|.###.|....#|####.', t:'.#..|.#..|####|.#..|.#..|.#..|..##',
+u:'.....|.....|#...#|#...#|#...#|#...#|.####', v:'.....|.....|#...#|#...#|#...#|.#.#.|..#..', w:'.....|.....|#...#|#...#|#.#.#|#.#.#|.#.#.',
+x:'.....|.....|#...#|.#.#.|..#..|.#.#.|#...#', y:'.....|.....|#...#|#...#|#...#|#...#|.####|....#|.###.', z:'.....|.....|#####|...#.|..#..|.#...|#####',
+'0':'.###.|#...#|#..##|#.#.#|##..#|#...#|.###.', '1':'.#.|##.|.#.|.#.|.#.|.#.|###', '2':'.###.|#...#|....#|...#.|..#..|.#...|#####',
+'3':'####.|....#|....#|.###.|....#|....#|####.', '4':'...#.|..##.|.#.#.|#..#.|#####|...#.|...#.', '5':'#####|#....|####.|....#|....#|#...#|.###.',
+'6':'.###.|#....|#....|####.|#...#|#...#|.###.', '7':'#####|....#|...#.|..#..|.#...|.#...|.#...', '8':'.###.|#...#|#...#|.###.|#...#|#...#|.###.',
+'9':'.###.|#...#|#...#|.####|....#|....#|.###.', '.':'.|.|.|.|.|.|#', ',':'..|..|..|..|..|.#|.#|#.', '!':'#|#|#|#|#|.|#',
+'?':'.###.|#...#|....#|...#.|..#..|.....|..#..', "'":'#|#|.|.|.|.|.', ')':'#.|.#|.#|.#|.#|.#|#.', '(':'.#|#.|#.|#.|#.|#.|.#',
+':':'.|.|#|.|.|#|.', '-':'....|....|....|####|....|....|....', '+':'.....|..#..|..#..|#####|..#..|..#..|.....', '/':'....#|...#.|...#.|..#..|.#...|.#...|#....',
+' ':'...|...|...|...|...|...|...'
+};
+for (const k in U) defg(k, U[k].split('|'));
+function textW(s, sc = 1) { let w = 0; for (const ch of s) w += ((G[ch] || G[' '])[0].length + 1); return (w - 1) * sc; }
+// draw text into layer; col: number or fn(row, charIndex)
+function textL(T, s, x, y, sc, col) {
+  let cx = x, ci = 0;
+  for (const ch of s) { const g = G[ch] || G[' '];
+    for (let r = 0; r < 9; r++) for (let c = 0; c < g[r].length; c++) if (g[r][c] === '#') {
+      const k = typeof col === 'function' ? col(r, ci) : col; rect(T, cx + c * sc, y + r * sc, sc, sc, k); }
+    cx += (g[0].length + 1) * sc; ci++; }
+}
+// outlined text with drop shadow, composited onto FB
+function text(s, x, y, sc, col, opt = {}) {
+  if (opt.center) x = Math.round(x - textW(s, sc) / 2);
+  const L = buf(); textL(L, s, x, y, sc, col);
+  if (opt.shadow !== false) { const Sh = buf(); for (let i = 0; i < L.length; i++) if (L[i] >= 0) { const yy = (i / W) | 0, xx = i % W; pset(Sh, xx + (opt.sx ?? 1), yy + (opt.sy ?? 1), opt.shadowCol ?? 0); }
+    if (opt.outline) outline(Sh, opt.shadowCol ?? 0, true); comp(Sh); }
+  if (opt.outline) outline(L, opt.outline === true ? 0 : opt.outline, true);
+  comp(L); return x;
+}
+
+// ---------- windows (16-bit blue skin) ----------
+function windowBox(x, y, w, h, fill = [28, 35]) {
+  const T = buf();
+  const r = (i, j) => { // corner rounding
+    const cx = i < 3 ? 3 - i : i > w - 4 ? i - (w - 4) : 0, cy = j < 3 ? 3 - j : j > h - 4 ? j - (h - 4) : 0; return cx * cx + cy * cy; };
+  for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) {
+    const d = r(i, j); if (d > 9) continue;
+    const e = Math.min(i, j, w - 1 - i, h - 1 - j);
+    let c;
+    if (e === 0 || d > 5) c = 0; else if (e === 1 || d > 2) c = 6; else if (e === 2) c = 5; else if (e === 3) c = 0;
+    else { const t = (j - 4) / Math.max(1, h - 9); c = t > bay(x + i, y + j) * 1.0 + 0.0 ? fill[1] : fill[0]; if (j < 6 && i > 4 && i < w - 5) c = 29; }
+    pset(T, x + i, y + j, c);
+  }
+  comp(T);
+}
+function cursor(x, y, col = 6) { // ▶ hand-drawn
+  const T = buf(); for (let j = 0; j < 9; j++) { const w = j < 5 ? j + 1 : 9 - j; for (let i = 0; i < w; i++) pset(T, x + i, y + j, i === 0 && j > 0 && j < 8 ? 5 : col); }
+  outline(T, 0, false); comp(T);
+}
+function cursor2(x, y) { const T = buf(); for (let j = 0; j < 13; j++) { const w = j < 7 ? j + 1 : 13 - j; for (let i = 0; i < w; i++) pset(T, x + i, y + j, i < 2 ? 15 : j < 4 || (j < 7 && i > j - 3) ? 6 : 5); } outline(T, 0, true); comp(T); }
+function downArrow(x, y, sc = 1, col = 14) {
+  const T = buf(); for (let j = 0; j < 4; j++) for (let i = j; i < 7 - j; i++) rect(T, x + i * sc, y + j * sc, sc, sc, col);
+  outline(T, 0, false); comp(T);
+}
+function sparkle(x, y, n, col = 6) { const T = buf(); for (let k = -n; k <= n; k++) { pset(T, x + k, y, Math.abs(k) === n ? 15 : col); pset(T, x, y + k, Math.abs(k) === n ? 15 : col); } comp(T); }
+
+// ---------- Chinese glyphs rasterised into the framebuffer ----------
+const gcan = document.createElement('canvas'), gctx = gcan.getContext('2d', { willReadFrequently: true });
+function hanzi(ch, x, y, size, opt = {}) {
+  gcan.width = gcan.height = size + 4;
+  gctx.clearRect(0, 0, size + 4, size + 4); gctx.fillStyle = '#fff'; gctx.strokeStyle = '#fff';
+  gctx.font = `${Math.round(size * 0.98)}px "LXGW WenKai"`; gctx.textAlign = 'center'; gctx.textBaseline = 'middle';
+  gctx.lineWidth = opt.thick ?? size / 26; gctx.lineJoin = 'round';
+  gctx.fillText(ch, (size + 4) / 2, (size + 4) / 2 + size * 0.04); gctx.strokeText(ch, (size + 4) / 2, (size + 4) / 2 + size * 0.04);
+  const d = gctx.getImageData(0, 0, size + 4, size + 4).data, L = buf();
+  const grad = opt.grad || [15, 15, 14, 14, 13];
+  for (let j = 0; j < size + 4; j++) for (let i = 0; i < size + 4; i++) if (d[(j * (size + 4) + i) * 4 + 3] > (opt.thr ?? 110)) {
+    const t = j / (size + 4); pset(L, x + i - 2, y + j - 2, grad[Math.min(grad.length - 1, Math.floor(t * grad.length))]); }
+  // 1px top highlight on each stroke
+  if (opt.hi !== false) { const add = []; for (let i = 0; i < L.length; i++) if (L[i] >= 0 && L[i - W] === -1) add.push(i); for (const i of add) L[i] = opt.hiCol ?? 6; }
+  const Sh = buf(); for (let i = 0; i < L.length; i++) if (L[i] >= 0) { pset(Sh, i % W + (opt.sh ?? 2), ((i / W) | 0) + (opt.sh ?? 2), opt.shCol ?? 7); }
+  outline(Sh, opt.shCol ?? 7, true); comp(Sh);
+  outline(L, 0, true); comp(L);
+}
+
+// ---------- backgrounds ----------
+function palace(T, x, base, sc, c) { // Chu-style hall silhouette with curved eaves
+  const roof = (cx, y, w, h) => { for (let j = 0; j < h; j++) { const t = j / (h - 1); const half = w / 2 * (0.35 + 0.65 * t) + (j === h - 1 ? 2 : 0); rect(T, Math.round(cx - half), y + j, Math.round(half * 2), 1, c); }
+    pset(T, Math.round(cx - w / 2) - 2, y + h - 2, c); pset(T, Math.round(cx + w / 2) + 1, y + h - 2, c); };
+  rect(T, x - 14 * sc, base - 16 * sc, 28 * sc, 16 * sc, c); roof(x, base - 23 * sc, 40 * sc, 7 * sc);
+  rect(T, x - 9 * sc, base - 31 * sc, 18 * sc, 8 * sc, c); roof(x, base - 37 * sc, 28 * sc, 6 * sc);
+  rect(T, x, base - 41 * sc, 1, 4 * sc, c);
+}
+function skyStars(y0, y1) { seed = 7; for (let k = 0; k < 90; k++) { const x = (rnd() * W) | 0, y = (y0 + rnd() * (y1 - y0)) | 0; pset(FB, x, y, rnd() < 0.25 ? 6 : rnd() < 0.5 ? 5 : 4); } }
+
+// ---------- props & icons ----------
+function jug(T, cx, cy) { // bronze hu wine jug, two loop handles
+  ellipse(T, cx, cy, 9, 8.5, [23, 24, 25]);
+  rect(T, cx - 4, cy - 14, 8, 7, 24); rect(T, cx - 4, cy - 14, 2, 7, 25); rect(T, cx + 2, cy - 14, 2, 7, 23);
+  rect(T, cx - 6, cy - 16, 12, 3, 25); rect(T, cx - 6, cy - 14, 12, 1, 23);
+  rect(T, cx - 5, cy + 7, 10, 3, 23); rect(T, cx - 4, cy + 7, 3, 1, 24);
+  for (const s of [-1, 1]) { const hx = cx + s * 10, hy = cy - 6; for (let a = 0; a < 20; a++) { const an = a / 20 * Math.PI * 2; const px = hx + Math.cos(an) * 3, py = hy + Math.sin(an) * 3; pset(T, Math.round(px), Math.round(py), Math.sin(an) < 0 ? 25 : 23); } }
+  for (let i = -7; i <= 7; i += 2) pset(T, cx + i, cy - 1, 15); // gold band
+  for (let i = -7; i <= 7; i += 2) pset(T, cx + i + 1, cy + 1, 23);
+  pset(T, cx - 5, cy - 4, 27); pset(T, cx + 4, cy + 3, 27); pset(T, cx + 5, cy + 2, 26); pset(T, cx - 3, cy + 4, 27);
+  pset(T, cx - 5, cy - 5, 22); pset(T, cx - 6, cy - 3, 22);
+}
+function iconBrush(cx, cy) { const T = buf(); capsule(T, cx + 8, cy - 9, cx - 1, cy + 1, 1.6, [19, 20, 21]); rect(T, cx - 3, cy - 1, 4, 3, 14); pset(T, cx - 3, cy - 1, 15);
+  ellipse(T, cx - 5, cy + 4, 3.2, 3.2, [0, 1, 2]); pset(T, cx - 8, cy + 8, 0); pset(T, cx - 7, cy + 7, 0); pset(T, cx - 9, cy + 9, 0); outline(T, 0, false);
+  // ink splash
+  for (let i = -7; i <= 7; i++) if (i % 3 !== 0) pset(T, cx + i, cy + 11, 0); comp(T); }
+function iconSnake(cx, cy) { const T = buf(); let px = null;
+  for (let i = 0; i <= 26; i++) { const t = i / 26; const x = cx - 10 + t * 18, y = cy + 4 + Math.sin(t * Math.PI * 2.2) * 4 - t * 4; if (px) capsule(T, px[0], px[1], x, y, 2 - t * 0.4 + 0.4, [26, 27, 34]); px = [x, y]; }
+  capsule(T, cx + 8, cy - 1, cx + 11, cy - 3, 2.8, [26, 27, 34]); pset(T, cx + 11, cy - 4, 0); line(T, cx + 14, cy - 3, cx + 16, cy - 4, 12); pset(T, cx + 16, cy - 2, 12);
+  outline(T, 0, false); comp(T); }
+function iconPlus(cx, cy) { const T = buf(); rect(T, cx - 9, cy - 3, 18, 6, 14); rect(T, cx - 3, cy - 9, 6, 18, 14); rect(T, cx - 9, cy - 3, 18, 1, 15); rect(T, cx - 3, cy - 9, 6, 1, 15); rect(T, cx - 3, cy - 9, 1, 18, 15);
+  rect(T, cx - 9, cy + 2, 18, 1, 13); rect(T, cx + 2, cy - 9, 1, 18, 13); outline(T, 0, false); comp(T); }
+function iconFoot(cx, cy) { const T = buf(); ellipse(T, cx - 1, cy + 1, 5.5, 8, [16, 17, 18]); ellipse(T, cx + 4, cy - 2, 4, 5, [16, 17, 18]);
+  const toes = [[-5, -9, 1.8], [-1, -10, 1.6], [2, -9, 1.5], [5, -8, 1.3], [7, -6, 1.2]]; for (const [a, b, r] of toes) ellipse(T, cx + a + 1, cy + b, r + 0.3, r + 0.3, [16, 17, 18]);
+  outline(T, 0, false); comp(T); }
+
+// ---------- characters ----------
+function zhang(T) { // crouched, lanky, rust robe, topknot w/ red cloth; shocked, facing right
+  const SK = [16, 17, 18], RB = [19, 31, 32], TR = [0, 1, 2];
+  // back leg: kneeling, shin flat on the ground
+  capsule(T, 52, 244, 44, 262, 4.5, TR); capsule(T, 44, 262, 24, 262, 4, TR); ellipse(T, 21, 262, 5, 3, [0, 1, 2]);
+  // front leg: deep squat, knee high
+  capsule(T, 60, 244, 84, 226, 5, TR); capsule(T, 84, 226, 88, 258, 4.2, TR); ellipse(T, 92, 260, 6, 3.2, [0, 1, 2]);
+  // robe: torso leaning forward, skirt draped over the thighs
+  poly(T, [[58, 204], [76, 204], [84, 228], [92, 236], [84, 244], [50, 252], [42, 240], [50, 222]], RB);
+  line(T, 64, 205, 74, 226, 19); line(T, 65, 205, 75, 226, 22); line(T, 60, 242, 88, 236, 19);
+  rect(T, 50, 228, 32, 4, 7); rect(T, 50, 228, 32, 1, 19); // sash
+  // drawing arm: down to the stick that scratches the snake's foot
+  capsule(T, 74, 210, 94, 230, 4, RB); capsule(T, 94, 230, 108, 248, 3.4, RB); ellipse(T, 110, 251, 3.2, 3, SK);
+  line(T, 110, 250, 117, 279, 19); line(T, 111, 250, 118, 279, 20);
+  // shocked arm thrown up toward the vanished jug
+  capsule(T, 62, 210, 88, 196, 3.8, RB); capsule(T, 88, 196, 106, 178, 3.2, RB);
+  ellipse(T, 109, 175, 3.4, 3.4, SK); line(T, 111, 171, 114, 167, 17); line(T, 112, 174, 117, 171, 17); line(T, 112, 177, 117, 176, 17); line(T, 107, 171, 108, 167, 17);
+  capsule(T, 64, 196, 66, 206, 3.5, SK);
+  const cx = 66, cy = 184;
+  ellipse(T, cx, cy, 12, 13, SK);
+  for (let y = cy - 14; y <= cy - 4; y++) for (let x = cx - 13; x <= cx + 13; x++) { const nx = (x + .5 - cx) / 12.5, ny = (y + .5 - cy) / 13.5; if (nx * nx + ny * ny <= 1 && (y < cy - 7 || x < cx - 8)) pset(T, x, y, (x + y) % 5 === 0 ? 2 : 1); }
+  for (let y = cy - 7; y <= cy + 2; y++) { pset(T, cx - 12, y, 1); pset(T, cx - 11, y, 1); if (y < cy - 1) pset(T, cx - 10, y, 1); }
+  ellipse(T, cx - 1, cy - 19, 5.5, 4.8, [0, 1, 2]);
+  rect(T, cx - 6, cy - 16, 11, 3, 12); rect(T, cx - 6, cy - 16, 11, 1, 10);
+  capsule(T, cx - 7, cy - 15, cx - 16, cy - 20, 1.4, [11, 12, 10]); capsule(T, cx - 7, cy - 14, cx - 17, cy - 13, 1.2, [11, 12, 10]);
+  ellipse(T, cx - 11, cy + 1, 2, 3, SK);
+  for (const e of [cx - 3, cx + 6]) { rect(T, e - 2, cy - 3, 5, 6, 6); for (const [a, b] of [[-2, -3], [2, -3], [-2, 2], [2, 2]]) pset(T, e + a, cy + b, 17);
+    rect(T, e - 3, cy - 2, 1, 4, 0); rect(T, e + 3, cy - 2, 1, 4, 0); rect(T, e - 1, cy - 4, 3, 1, 0); rect(T, e - 1, cy + 3, 3, 1, 0);
+    rect(T, e, cy - 2, 2, 2, 0); }
+  line(T, cx - 6, cy - 6, cx - 1, cy - 8, 0); line(T, cx - 6, cy - 5, cx - 2, cy - 7, 0);
+  line(T, cx + 4, cy - 8, cx + 9, cy - 6, 0); line(T, cx + 4, cy - 7, cx + 9, cy - 5, 0);
+  pset(T, cx + 2, cy + 3, 16); pset(T, cx + 2, cy + 4, 16);
+  ellipse(T, cx + 2, cy + 8.5, 2.6, 3.2, 0); ellipse(T, cx + 2, cy + 9.5, 1.4, 1.6, 11);
+  pset(T, cx - 7, cy + 4, 10); pset(T, cx + 10, cy + 4, 10);
+}
+function li(T) { // stocky, round face, short beard, slate-blue robe, white headband; triumphant, facing left, jug held high
+  const SK = [16, 17, 18], RB = [2, 3, 4], TR = [0, 1, 2];
+  capsule(T, 160, 226, 152, 256, 5.5, TR); capsule(T, 178, 226, 186, 256, 5.5, TR);
+  ellipse(T, 148, 258, 7, 3.4, [0, 1, 2]); ellipse(T, 190, 258, 7, 3.4, [0, 1, 2]);
+  // robe: broad, stocky
+  poly(T, [[150, 167], [188, 167], [195, 204], [203, 244], [135, 244], [143, 204]], RB); ellipse(T, 151, 174, 7, 7, RB); ellipse(T, 187, 174, 7, 7, RB);
+  rect(T, 136, 241, 67, 3, 1); rect(T, 136, 241, 67, 1, 3);
+  rect(T, 143, 204, 54, 6, 1); rect(T, 143, 204, 54, 1, 3); rect(T, 166, 203, 8, 8, 21); rect(T, 167, 204, 6, 6, 20); // belt + buckle
+  line(T, 158, 169, 182, 204, 1); line(T, 159, 169, 183, 204, 5); line(T, 178, 169, 170, 182, 1); rect(T, 160, 168, 18, 2, 5);
+  line(T, 158, 212, 152, 240, 2); line(T, 182, 212, 188, 240, 2); line(T, 170, 212, 170, 240, 2);
+  // pointing arm (screen left) toward the snake's feet
+  capsule(T, 152, 176, 136, 194, 5, RB); capsule(T, 136, 194, 124, 204, 4.2, RB);
+  ellipse(T, 120, 207, 3.6, 3.4, SK); capsule(T, 117, 209, 110, 214, 1.3, SK);
+  // raised arm holding the jug high
+  capsule(T, 186, 176, 201, 158, 5, RB); capsule(T, 201, 158, 199, 140, 4.4, RB);
+  // neck/head
+  const cx = 167, cy = 148;
+  ellipse(T, cx, cy, 14, 13.5, SK);
+  // hair cap
+  for (let y = cy - 14; y <= cy - 6; y++) for (let x = cx - 15; x <= cx + 15; x++) { const nx = (x + .5 - cx) / 14.5, ny = (y + .5 - cy) / 14; if (nx * nx + ny * ny <= 1) pset(T, x, y, (x * 3 + y) % 7 === 0 ? 2 : 1); }
+  for (const [a, b] of [[-8, -15], [-2, -16], [5, -15]]) { pset(T, cx + a, cy + b, 1); pset(T, cx + a + 1, cy + b, 1); pset(T, cx + a + 1, cy + b - 1, 1); }
+  // white headband + tails flying right
+  for (let x = cx - 14; x <= cx + 14; x++) { rect(T, x, cy - 8, 1, 3, 6); pset(T, x, cy - 6, 5); }
+  capsule(T, cx + 14, cy - 7, cx + 22, cy - 12, 1.5, [4, 5, 6]); capsule(T, cx + 14, cy - 6, cx + 23, cy - 5, 1.3, [4, 5, 6]);
+  ellipse(T, cx + 13, cy + 1, 2, 3, SK); // ear
+  // beard: short, around jaw + chin
+  for (let y = cy + 5; y <= cy + 15; y++) for (let x = cx - 12; x <= cx + 12; x++) { const nx = (x + .5 - cx) / 12.5, ny = (y + .5 - cy) / 14.5; if (nx * nx + ny * ny <= 1 && (y > cy + 9 || Math.abs(x - cx + 2) > 7)) pset(T, x, y, (x + y) % 3 ? 19 : 33); }
+  pset(T, cx - 2, cy + 16, 19); pset(T, cx - 3, cy + 16, 33); pset(T, cx - 1, cy + 16, 33);
+  // eyes: happy closed arcs; brows confident
+  for (const e of [cx - 8, cx + 2]) { pset(T, e, cy - 0, 0); pset(T, e + 1, cy - 1, 0); pset(T, e + 2, cy - 1, 0); pset(T, e + 3, cy - 1, 0); pset(T, e + 4, cy, 0);
+    rect(T, e, cy - 4, 5, 1, 0); pset(T, e + (e < cx ? 0 : 4), cy - 5, 0); }
+  pset(T, cx - 9, cy + 2, 10); pset(T, cx - 8, cy + 2, 10); pset(T, cx + 6, cy + 2, 10); pset(T, cx + 7, cy + 2, 10);
+  pset(T, cx - 3, cy + 2, 16); pset(T, cx - 3, cy + 3, 16); pset(T, cx - 2, cy + 3, 16);
+  // big open grin
+  rect(T, cx - 9, cy + 5, 13, 1, 0); for (let y = cy + 6; y <= cy + 10; y++) { const inset = y - cy - 6; rect(T, cx - 9 + inset, y, 13 - inset * 2, 1, 11); pset(T, cx - 9 + inset, y, 0); pset(T, cx + 3 - inset, y, 0); }
+  rect(T, cx - 8, cy + 6, 11, 1, 6); rect(T, cx - 6, cy + 9, 7, 1, 10); rect(T, cx - 5, cy + 11, 5, 1, 0);
+}
+
+// ---------- scenes ----------
+function frameA(t) {
+  FB.fill(0);
+  gradV(FB, 0, 0, W, 400, [0, 1, 1, 35, 8, 8, 9]); skyStars(0, 260);
+  // moon
+  ellipse(FB, 214, 52, 13, 13, 22); ellipse(FB, 219, 48, 11, 11, 1);
+  // horizon
+  const BG = buf(); palace(BG, 60, 404, 1.6, 7); palace(BG, 196, 410, 1.1, 7); comp(BG);
+  for (let x = 0; x < W; x++) { const h = 400 + Math.round(Math.sin(x * 0.03) * 5 + Math.sin(x * 0.011 + 1) * 6); rect(FB, x, h, 1, H - h, 7); }
+  gradV(FB, 0, 418, W, 62, [7, 33, 0]);
+  // title window
+  windowBox(5, 76, 224, 28);
+  text('NEW IDIOM UNLOCKED!', 117, 83, 2, (r) => [15, 15, 15, 14, 14, 13, 13, 13, 13][r], { center: true, shadowCol: 0 });
+  sparkle(10, 80, 3); sparkle(224, 100, 2); sparkle(30, 112, 2);
+  text('4 characters.', 117, 113, 2, 6, { center: true, outline: true, shadowCol: 8, sy: 2, sx: 1 });
+  const x2 = text('1 crazy story.', 117, 133, 2, 6, { center: true, outline: true, shadowCol: 8, sy: 2, sx: 1 });
+  // recolour "crazy" pink: overdraw
+  text('crazy', x2 + textW('1 ', 2) + 2, 133, 2, (r) => r < 4 ? 15 : 14, { outline: true, shadowCol: 8, sy: 2, sx: 1 });
+  // four item slots
+  const chars = ['画', '蛇', '添', '足'], gloss = ['draw', 'snake', 'add', 'feet'], icons = [iconBrush, iconSnake, iconPlus, iconFoot];
+  for (let i = 0; i < 4; i++) {
+    const x = 4 + i * 56, y = 158;
+    windowBox(x, y, 54, 110, [35, 28]);
+    hanzi(chars[i], x + 3, y + 6, 48);
+    const T = buf(); // icon pedestal
+    icons[i](x + 27, y + 76);
+    text(gloss[i], x + 27, y + 92, 1, 5, { center: true, shadowCol: 0 });
+  }
+  // guess prompt + bouncing arrow
+  const bob = Math.floor(t * 4) % 2;
+  text('Guess the meaning', 110, 278, 2, 6, { center: true, outline: true, shadowCol: 8, sy: 2 });
+  downArrow(222, 282 + bob, 2, 14);
+  // answer menu
+  windowBox(10, 300, 214, 72);
+  const opts = ['A) Overdoing it', 'B) Being lucky', 'C) Drawing well'];
+  for (let i = 0; i < 3; i++) text(opts[i], 34, 307 + i * 21, 2, i === 0 ? 15 : 6, { shadowCol: 0 });
+  cursor2(15 + (Math.floor(t * 4) % 2), 309);
+}
+function frameB(t) {
+  FB.fill(0);
+  // dusk sky
+  gradV(FB, 0, 0, W, 214, [1, 1, 35, 8, 9, 10, 13, 14]);
+  seed = 3; for (let k = 0; k < 30; k++) pset(FB, (rnd() * W) | 0, (rnd() * 90) | 0, rnd() < 0.3 ? 5 : 4);
+  // sun with Bayer glow
+  for (let y = 150; y < 214; y++) for (let x = 0; x < 110; x++) { const d = Math.hypot(x - 46, y - 196); if (d < 14) pset(FB, x, y, d < 12 ? 15 : 14); else if (d < 26 && bay(x, y) > (d - 14) / 12) pset(FB, x, y, 14); }
+  // far hills + palace silhouettes
+  for (let x = 0; x < W; x++) { const h = 196 + Math.round(Math.sin(x * 0.04 + 2) * 4 + Math.sin(x * 0.013) * 5); rect(FB, x, h, 1, 230 - h, 8); }
+  const BG = buf(); palace(BG, 228, 212, 1.3, 7); palace(BG, 120, 210, 0.8, 7); palace(BG, 14, 212, 0.9, 7); comp(BG);
+  rect(FB, 0, 206, W, 8, 7);
+  // dirt courtyard
+  gradV(FB, 0, 212, W, 76, [19, 20, 20, 21, 21]);
+  seed = 11; for (let k = 0; k < 160; k++) { const x = (rnd() * W) | 0, y = (214 + rnd() * 74) | 0; pset(FB, x, y, rnd() < 0.5 ? 19 : 22); if (rnd() < 0.3) pset(FB, x + 1, y, 19); }
+  for (let k = 0; k < 12; k++) { const x = (rnd() * W) | 0, y = (220 + rnd() * 66) | 0; rect(FB, x, y, 3, 2, 20); rect(FB, x, y + 2, 3, 1, 33); pset(FB, x, y, 22); }
+  gradV(FB, 0, 288, W, 192, [20, 19, 19, 33, 33, 7, 0]);
+  for (let y = 300; y < H; y += 14) { rect(FB, 0, y, W, 1, 33); for (let x = ((y / 14) & 1) * 12; x < W; x += 24) rect(FB, x, y - 13, 1, 13, 33); }
+  // shadows
+  for (const [sx, sy, rx] of [[58, 262, 38], [169, 259, 30]]) for (let y = sy - 4; y <= sy + 4; y++) for (let x = sx - rx; x <= sx + rx; x++) { const nx = (x - sx) / rx, ny = (y - sy) / 4; if (nx * nx + ny * ny < 1 && bay(x, y) < 0.6) pset(FB, x, y, 19); }
+  // snake drawn in the dirt, with four tiny feet
+  const pts = []; for (let i = 0; i <= 80; i++) { const u = i / 80; pts.push([48 + u * 158, 270 + Math.sin(u * Math.PI * 2.2 + 0.3) * 5]); }
+  const SN = buf(), LIP = buf();
+  for (let i = 1; i < pts.length; i++) { const [ax, ay] = pts[i - 1], [bx, by] = pts[i]; const r = 0.8 + Math.min(i, 80 - i) / 80 * 3.2;
+    capsule(SN, ax, ay, bx, by, r, 33); capsule(LIP, ax, ay + 1, bx, by + 1, r + 0.6, 22); }
+  const [hx, hy] = pts[80]; ellipse(SN, hx + 3, hy, 6, 4, 33); ellipse(LIP, hx + 3, hy + 1, 6.6, 4.6, 22);
+  const feet = [12, 24, 35, 58];
+  for (let n = 0; n < 4; n++) { const [fx, fy] = pts[feet[n]]; const ly = fy + 9;
+    capsule(SN, fx, fy, fx + 1, ly, 1, 33); capsule(SN, fx - 3, ly, fx + 4, ly, 0.9, 33); capsule(SN, fx - 3, ly, fx - 4, ly + 2, 0.7, 33); capsule(SN, fx + 4, ly, fx + 5, ly + 2, 0.7, 33); capsule(SN, fx + 1, ly, fx + 1, ly + 2, 0.7, 33);
+    capsule(LIP, fx, fy, fx + 1, ly + 1, 1.6, 22); capsule(LIP, fx - 3, ly + 1, fx + 4, ly + 1, 1.5, 22); capsule(LIP, fx - 4, ly + 1, fx + 5, ly + 3, 1.2, 22); }
+  comp(LIP); comp(SN);
+  pset(FB, hx + 4, hy - 1, 21); pset(FB, hx + 5, hy - 1, 21); line(FB, hx + 9, hy, hx + 13, hy - 1, 12); pset(FB, hx + 13, hy + 1, 12); pset(FB, hx + 14, hy - 2, 12);
+  // fresh dirt flicks at the stick tip (the foot being added)
+  { const [fx, fy] = pts[35]; for (const [a, b] of [[-6, 4], [7, 2], [-4, -3], [8, 7], [-7, 9]]) { pset(FB, fx + a, fy + b, 22); pset(FB, fx + a + 1, fy + b - 1, 21); } }
+  // fresh-dirt sparkle where Zhang is scratching the 4th foot
+  // characters
+  const Z = buf(); zhang(Z); outline(Z, 0, false); comp(Z);
+  const L = buf(); li(L); jug(L, 199, 123); ellipse(L, 199, 138, 4.5, 3.6, [16, 17, 18]); outline(L, 0, false); comp(L);
+  // snatch speed lines from Zhang's empty hand to the jug
+  for (const [a, b, c2] of [[118, 168, 176], [120, 176, 168], [124, 184, 158]]) { for (let x = a; x < c2; x += 1) { const u = (x - a) / (c2 - a); const y = Math.round(b - u * (b - 128) * 0.9); if (bay(x, y) < 0.85 - u * 0.2 && (x % 7) < 5) pset(FB, x, y, 6); } }
+  sparkle(184, 112, 4); sparkle(216, 110, 3); sparkle(212, 140, 2); sparkle(204, 100, 2);
+  // shock marks + '!' bubble over Zhang
+  const BU = buf(); ellipse(BU, 38, 140, 11, 13, 6); poly(BU, [[40, 150], [50, 150], [52, 160]], 6); rect(BU, 36, 131, 5, 11, 12); rect(BU, 36, 131, 2, 11, 10); rect(BU, 36, 145, 5, 4, 12);
+  for (let y = 128; y < 152; y++) pset(BU, 30, y, BU[y * W + 30] >= 0 ? 5 : -1); outline(BU, 0, true); comp(BU);
+  for (const [a, b, c2, d] of [[54, 162, 51, 156], [60, 159, 59, 152], [80, 160, 84, 154]]) { line(FB, a, b, c2, d, 0); line(FB, a + 1, b, c2 + 1, d, 6); }
+  const D = buf(); ellipse(D, 83, 174, 2, 3, [29, 30, 6]); pset(D, 83, 170, 30); outline(D, 0, false); comp(D); // sweat
+  // damage popup
+  text('-1 WINE', 64, 136, 1, (r) => r < 3 ? 10 : 12, { outline: true, shadowCol: 0 });
+  // top battle message
+  windowBox(22, 72, 172, 30);
+  text('LI used SNATCH!', 108, 80, 2, (r, ci) => ci >= 8 ? [15, 15, 15, 14, 14, 13, 13, 13, 13][r] : 6, { center: true, shadowCol: 0 });
+  // corner tag
+  windowBox(8, 42, 82, 28, [35, 28]);
+  for (let i = 0; i < 4; i++) hanzi('画蛇添足'[i], 12 + i * 18, 47, 18, { thick: 0.2, thr: 150, hi: false, sh: 1, shCol: 0, grad: [6, 6, 6, 5] });
+  // caption dialog with speaker tab
+  windowBox(6, 288, 222, 64);
+  windowBox(12, 274, 30, 22, [8, 7]);
+  text('LI', 27, 278, 2, 15, { center: true, shadowCol: 0 });
+  text("Snakes don't", 117, 296, 3, 6, { center: true, shadowCol: 0 });
+  const lx = text('have ', 117 - textW('have FEET!', 3) / 2, 323, 3, 6, { shadowCol: 0 });
+  text('FEET!', Math.round(117 - textW('have FEET!', 3) / 2) + textW('have ', 3) + 3, 323, 3, (r) => [15, 15, 15, 14, 14, 13, 13, 13, 13][r], { shadowCol: 0 });
+  if (Math.floor(t * 3) % 2 === 0) downArrow(214, 342, 1, 6);
+}
+
+// ---------- present ----------
+const out = document.getElementById('c'), octx = out.getContext('2d');
+const low = document.createElement('canvas'); low.width = W; low.height = H; const lctx = low.getContext('2d'); const img = lctx.createImageData(W, H);
+function present() {
+  for (let i = 0; i < W * H; i++) { const c = PAL[FB[i] < 0 ? 0 : FB[i]]; img.data[i * 4] = c[0]; img.data[i * 4 + 1] = c[1]; img.data[i * 4 + 2] = c[2]; img.data[i * 4 + 3] = 255; }
+  lctx.putImageData(img, 0, 0); octx.imageSmoothingEnabled = false; octx.drawImage(low, 0, 0, W * S, H * S);
+}
+window.DUR = 12;
+window.render = (t) => { if (t < 5) frameA(t); else frameB(t); present(); };
+document.fonts.load('48px "LXGW WenKai"', '画蛇添足').then(() => { window.render(1.0); window.READY = true; });
+</script></body></html>
