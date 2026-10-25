@@ -6,6 +6,7 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 @font-face { font-family: 'Lilita One'; font-weight: 400; font-display: block; src: url(fonts/LilitaOne-latin-ext.woff2) format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'NotoSerifSC'; font-weight: 900; font-display: block; src: url(fonts/NotoSerifSC-Black-subset.ttf) format('truetype'); }
 html,body{margin:0;background:#1b2347;overflow:hidden}canvas{display:block}
 </style>
 <script src="timeline.js"></script>
@@ -357,7 +358,7 @@ const T = {};
   const q = LN.Q_N, qd = q.t1 - q.t0, fc = 'Four characters'.length;
   T.stamps = [0, 1, 2, 3].map(i => q.t0 + qd * (i * fc / 4) / q.text.length);
   T.guess = wordT('Q_N', 'Can you guess');
-  const L = SC.lock; T.fly = [L.t0, L.t0 + (L.t1 - L.t0) * .5]; T.wipe = [L.t0 + (L.t1 - L.t0) * .3, L.t1];
+  const L = SC.lock; T.fly = [L.t0 + 2 / 12, L.t1 - .03];   /* chips start once the header has folded flat */ T.wipe = [L.t0 + (L.t1 - L.t0) * .3, L.t1];
   const s1 = SC.S1, d1 = s1.t1 - s1.t0;
   T.count = [s1.t0 + d1 * .06, s1.t0 + d1 * .2, s1.t0 + d1 * .34];
   T.scratch = s1.t0 + d1 * .5;
@@ -391,7 +392,7 @@ function chunkLine(l) {
   return out.map(ws => { const s = ws.join(' '), t0 = l.t0 + (l.t1 - l.t0) * acc / total; acc += s.length + 1; return { words: ws, text: s, t0 }; });
 }
 const CAPS = [];
-['S1_N', 'S2_N', 'S3_N', 'S4_N', 'C_N'].forEach(id => {
+['S1_N', 'S2_N', 'S3_N', 'S4_N'].forEach(id => {
   const ch = chunkLine(LN[id]);
   const scEnd = SC[{ S1_N: 'S1', S2_N: 'S2', S3_N: 'S3', S4_N: 'S4', C_N: 'close' }[id]].t1;
   ch.forEach((c, i) => { c.t1 = i < ch.length - 1 ? ch[i + 1].t0 : Math.min(LN[id].t1 + .25, scEnd); c.id = id; CAPS.push(c); });
@@ -445,9 +446,10 @@ window.EV = EV;
 // CAMERA
 // =====================================================================
 let SHAKE = 0;
+let CAM_DY = 0;   // story scenes sit a little lower so the stacked A·B·C bar has the sky to itself
 function cam(cx, cy, z) {
   const sx = SHAKE ? (rnd(Math.floor(CUR_T * 30), 3) - .5) * SHAKE : 0, sy = SHAKE ? (rnd(Math.floor(CUR_T * 30), 4) - .5) * SHAKE : 0;
-  X.setTransform(z, 0, 0, z, 540 - cx * z + sx, 960 - cy * z + sy); SZ = z;
+  X.setTransform(z, 0, 0, z, 540 - cx * z + sx, 960 + CAM_DY - cy * z + sy); SZ = z;
 }
 function screen() { X.setTransform(1, 0, 0, 1, 0, 0); SZ = 1; }
 let CUR_T = 0;
@@ -495,30 +497,31 @@ function drawChip(i, gold, sc = 1, dx = 0, dy = 0, rot = 0) {
   put(c.strip, 1.2, sc, c.cx, c.cy, rot, dx, dy); put(c.badge, .8, sc, c.cx, c.cy, rot, dx, dy); put(c.tx, .6, sc, c.cx, c.cy, rot, dx, dy);
 }
 // mini chips for the persistent bar
-const BAR_Y = 340;
+const BAR_X = 44, BAR_W = 440, BAR_H = 54, BAR_Y = [330, 392, 454], MINI_SC = BAR_W / CHIP_W;   // three stacked chips, y ≈ 300–482
+const BAR_CX = BAR_X + BAR_W / 2, BAR_CY = 392;
 function miniChip(i) {
   return get('mini' + i, () => {
-    const cx = 178 + i * 286, w = 270, h = 58, x0 = cx - w / 2, y0 = BAR_Y - h / 2, sd = 80 + i;
+    const w = BAR_W, h = BAR_H, x0 = BAR_X, y0 = BAR_Y[i] - h / 2, sd = 80 + i;
     const strip = banner(x0, y0, w, h, i === 0 ? '#8e0f1c' : '#7a0e1c', sd, { flecks: false });
-    const badge = piece([x0 + 20, y0 - 2, x0 + 70, y0 + h + 2], g => {
-      fillP(g, P(ell(x0 + 45, y0 + h / 2, 20, 20, 0, 20), .3, sd), C.cream);
-      g.font = '400 28px "Lilita One"'; g.textAlign = 'center'; g.textBaseline = 'middle';
-      g.save(); g.globalCompositeOperation = 'destination-out'; g.fillText('ABC'[i], x0 + 45, y0 + h / 2 + 2); g.restore();
+    const badge = piece([x0 + 22, y0 - 2, x0 + 82, y0 + h + 2], g => {
+      fillP(g, P(ell(x0 + 52, y0 + h / 2, 25, 25, 0, 20), .3, sd), C.cream);
+      g.font = '400 34px "Lilita One"'; g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.save(); g.globalCompositeOperation = 'destination-out'; g.fillText('ABC'[i], x0 + 52, y0 + h / 2 + 2); g.restore();
     }, { seed: sd + 1, ...LITE_CREAM });
-    const tx = textPiece(CHIP_SHORT[i], '400 29px "Lilita One"', 29, C.cream, x0 + 74, y0 + h / 2 + 11, { align: 'left', seed: sd + 2, fat: 0, edge: 1 });
-    return { strip, badge, tx, cx, cy: BAR_Y };
+    const tx = textPiece(CHIP_SHORT[i], '400 40px "Lilita One"', 40, C.cream, x0 + 92, y0 + h / 2 + 14, { align: 'left', seed: sd + 2, fat: 1, edge: 1.2 });
+    return { strip, badge, tx, cx: x0 + w / 2, cy: BAR_Y[i] };
   });
 }
 function barPiece() {
-  return get('bar', () => piece([20, BAR_Y - 46, 940, BAR_Y + 46], g => {
-    const top = sawEdge(densify([[26, BAR_Y - 38], [934, BAR_Y - 38]], false, 6), 6, 12, 1), bot = sawEdge(densify([[934, BAR_Y + 38], [26, BAR_Y + 38]], false, 6), 6, 12, 1);
-    fillP(g, wob(top.concat(bot), .4, 3), '#141a3c');
-    g.save(); g.globalCompositeOperation = 'destination-out'; g.strokeStyle = '#000'; g.lineWidth = 2; g.strokeRect(36, BAR_Y - 30, 888, 60); g.restore();
+  return get('bar', () => piece([BAR_X - 26, 288, BAR_X + BAR_W + 26, 496], g => {
+    const o = [[BAR_X - 18, 296], [BAR_X + BAR_W + 18, 296], [BAR_X + BAR_W + 18, 488], [BAR_X - 18, 488], [BAR_X - 18, 296]];
+    fillP(g, wob(sawEdge(densify(o, false, 6), 6, 12, -1), .4, 3), '#141a3c');
+    g.save(); g.globalCompositeOperation = 'destination-out'; g.strokeStyle = '#000'; g.lineWidth = 2; g.strokeRect(BAR_X - 8, 305, BAR_W + 16, 174); g.restore();
   }, { seed: 5, lite: 'rgba(170,190,255,.45)', dark: 'rgba(0,0,0,.5)' }));
 }
 function drawBar(t, sc = 1, dy = 0) {
-  screen(); put(barPiece(), 1.2, sc, 480, BAR_Y, 0, 0, dy);
-  for (let i = 0; i < 3; i++) { const m = miniChip(i); const b = 1 + .02 * Math.sin(st(t) * 4 + i); put(m.strip, 1, sc * b, m.cx, m.cy, 0, 0, dy); put(m.badge, .6, sc * b, m.cx, m.cy, 0, 0, dy); put(m.tx, .4, sc * b, m.cx, m.cy, 0, 0, dy); }
+  screen(); put(barPiece(), 1.2, sc, BAR_CX, BAR_CY, 0, 0, dy);
+  for (let i = 0; i < 3; i++) { const m = miniChip(i), b = 1 + .015 * Math.sin(st(t) * 4 + i); const ox = (m.cx - BAR_CX) * (sc - 1), oy = (m.cy - BAR_CY) * (sc - 1); put(m.strip, 1, sc * b, m.cx, m.cy, 0, ox, dy + oy); put(m.badge, .6, sc * b, m.cx, m.cy, 0, ox, dy + oy); put(m.tx, .4, sc * b, m.cx, m.cy, 0, ox, dy + oy); }
 }
 
 const QCH = ['亡', '羊', '补', '牢'], QPY = ['wáng', 'yáng', 'bǔ', 'láo'], QGL = ['lose', 'sheep', 'mend', 'pen'];
@@ -553,7 +556,7 @@ function quizPieces() {
           cut(g, q => q.arc(x + Math.cos(a + Math.PI / 4) * 12, y + Math.sin(a + Math.PI / 4) * 12, 5, 0, TAU));
         }
       }, { seed: sd + 2, lite: 'rgba(255,255,255,.8)', dark: 'rgba(90,60,20,.45)' });
-      const glyph = textPiece(ch, '500 208px "LXGW WenKai"', 208, C.red, ccx, ccy + 74, { seed: sd + 3, fat: 9 });
+      const glyph = textPiece(ch, '900 190px "NotoSerifSC"', 190, C.red, ccx, ccy + 66, { seed: sd + 3, fat: 2 });
       const pin = textPiece(QPY[i], '700 40px "DejaVu Sans"', 40, '#e9d9b4', cx0 + T + 84, cy0 + 48, { seed: sd + 4, edge: 1, lite: 'rgba(255,255,255,.6)', dark: 'rgba(0,0,0,.4)' });
       const gls = textPiece(QGL[i], '400 44px "Lilita One"', 44, C.cream, cx0 + T + 84, cy0 + T - 4, { seed: sd + 5, fat: 1, lite: 'rgba(255,255,255,.7)', dark: 'rgba(0,0,0,.4)' });
       const icon = clueIcon(i, cx0 + T + 84, cy0 + 126, sd + 6);
@@ -613,7 +616,7 @@ function drawQuiz(tq, pulses) {
 const FENCE = { x0: 170, x1: 900 };
 const fBase = x => 1000 - 140 * Math.sin(Math.PI * clamp((x - FENCE.x0) / (FENCE.x1 - FENCE.x0)));
 const fH = x => 150 - 30 * Math.sin(Math.PI * clamp((x - FENCE.x0) / (FENCE.x1 - FENCE.x0)));
-const HOLE = { x: 784, y: 0, x0: 748, x1: 822 }; HOLE.y = fBase(HOLE.x) - fH(HOLE.x) * .48;
+const HOLE = { x: 785, y: 0, x0: 734, x1: 838 }; HOLE.y = fBase(HOLE.x) - fH(HOLE.x) * .48;
 function worldSet() {
   return get('world', () => {
     const S = {};
@@ -633,11 +636,11 @@ function worldSet() {
       within(g, [[-420, 1340], [1500, 1340], [1500, 1960], [-420, 1960]], () => crescentRows(g, -420, 1380, 1500, 1960, 16, 4));
     }, { seed: 45, lite: 'rgba(170,190,255,.4)', dark: 'rgba(0,0,10,.55)' });
     S.fore = hillLayer([[-420, 1350], [0, 1330], [400, 1356], [800, 1326], [1100, 1350], [1500, 1336]], 1960, '#171e45', 53, { saw: 16, sp: 18 });
-    S.bush = piece([790, 700, 1060, 880], g => {
-      const o = scallop(930, 800, 120, 62, 9, .3, 4); fillP(g, o, '#121738');
-      sawRow(g, cr([[830, 830], [930, 840], [1030, 826]], false, 3), 12, 9, -1);
+    S.bush = piece([830, 700, 1080, 880], g => {
+      const o = scallop(965, 800, 104, 58, 8, .3, 4); fillP(g, o, '#222c5e');
+      sawRow(g, cr([[880, 830], [965, 840], [1050, 826]], false, 3), 12, 9, -1);
     }, { seed: 46, lite: 'rgba(120,140,220,.35)' });
-    S.holeDark = piece([HOLE.x - 70, HOLE.y - 90, HOLE.x + 70, HOLE.y + 90], g => { fillP(g, P(ell(HOLE.x, HOLE.y, 50, 70, 0, 30), 2, 3), '#0d1230'); }, { seed: 47, edge: 0 });
+    S.holeDark = piece([HOLE.x - 80, HOLE.y - 90, HOLE.x + 80, HOLE.y + 100], g => { fillP(g, P(ell(HOLE.x, HOLE.y + 6, 66, 76, 0, 30), 2.5, 3), '#090c22'); }, { seed: 47, edge: 0 });
     S.fence = buildFence();
     return S;
   });
@@ -655,7 +658,7 @@ function buildFence() {
       tap(g, [[x - 3, b - h * .85 + 10], [x + 1, b - h * .5], [x - 2, b - h * .15]], 3);
       return o;
     };
-    xs.forEach((x, k) => { if (!inHole(x)) paling(x, k); else paling(x, k, .32, true); });
+    xs.forEach((x, k) => { if (!inHole(x)) paling(x, k); else paling(x, k, .2, true); });
     // woven rails following the curve, ragged where the hole is
     for (const hr of [.32, .7]) {
       const seg = (xa, xb, rag0, rag1) => {
@@ -676,11 +679,15 @@ function buildFence() {
       const b = fBase(x), h = fH(x), w = 15 - 3 * Math.sin(Math.PI * (x - FENCE.x0) / (FENCE.x1 - FENCE.x0));
       for (const hr of [.32, .7]) { const y = b - h * hr; fillP(g, Pl([[x - w, y - 10], [x + w, y - 10], [x + w, y + 10], [x - w, y + 10]], .3, k * 3 + hr * 10), C.woodB); }
     });
-    // one leaning broken paling
-    const bx = HOLE.x1 + 2, bb = fBase(bx);
-    fillP(g, Pl([[bx - 6, bb - 30], [bx + 8, bb - 34], [bx - 22, bb - 118], [bx - 30, bb - 104], [bx - 26, bb - 126], [bx - 36, bb - 110]], .5, 7), C.wood);
+    // snapped palings leaning out of the gap at angles
+    const snapped = (bx, ang, len, k) => {
+      const bb = fBase(bx) - 16, c = Math.cos(ang), sn = Math.sin(ang), w = 13, Pt = (u, v) => [bx + u * c - v * sn, bb + u * sn + v * c];
+      const o = Pl([Pt(-w, 0), Pt(w, 2), Pt(w, -len + 22), Pt(4, -len + 6), Pt(8, -len + 16), Pt(-2, -len), Pt(-6, -len + 18), Pt(-w, -len + 10)], .5, k);
+      fillP(g, o, k % 2 ? C.wood : C.woodB); tap(g, [Pt(-2, -12), Pt(1, -len * .5), Pt(-1, -len + 26)], 3);
+    };
+    snapped(HOLE.x0 + 8, -.55, 112, 7); snapped(HOLE.x1 - 6, .62, 104, 8);
     // wool tufts caught on the ragged edges
-    for (const [x, y, r] of [[HOLE.x0 - 2, HOLE.y - 18, 13], [HOLE.x1 + 6, HOLE.y + 20, 11], [HOLE.x - 10, fBase(HOLE.x) - 52, 10], [HOLE.x0 - 8, HOLE.y + 34, 9]])
+    for (const [x, y, r] of [[HOLE.x0 - 8, HOLE.y - 26, 17], [HOLE.x1 + 10, HOLE.y + 6, 16], [HOLE.x - 6, fBase(HOLE.x) - 36, 14], [HOLE.x0 - 12, HOLE.y + 30, 13], [HOLE.x1 + 4, HOLE.y - 44, 13], [HOLE.x0 - 50, HOLE.y - 62, 15]])
       layer(g, q => { fillP(q, scallop(x, y, r, r * .8, 6, .4, x), C.wool); swirl(q, x, y, r * .6, 1.3, 2.2, 0, 1); });
   }, { seed: 61, K: 2, lite: 'rgba(255,230,190,.55)', dark: 'rgba(40,15,0,.55)' });
 }
@@ -1005,7 +1012,7 @@ function drawWorld(t, o) {
   if (o.holeEyes) { at(wolfParts().head, HOLE.x, HOLE.y + 16, 0, .9, 0, null, .55 * o.holeEyes); }
   if (o.tail !== undefined) at(wolfParts().tail, HOLE.x - 40 + o.tail * 140, HOLE.y + 30, -.05, 1, 0);
   dp(S.fence, 1.6);
-  if (o.patch !== undefined && o.patch > 0) drawPatch(o.patch, HOLE.x, HOLE.y, .82);
+  if (o.patch !== undefined && o.patch > 0) drawPatch(o.patch, HOLE.x, HOLE.y + 4, 1.0);
   (o.dash || []).forEach(d => drawDash(d.x, d.y, .85, t));
   const actors = [...(o.sheep || []).map(s => ({ y: s.y, f: () => drawSheep(s, t) })), ...(o.actors || [])];
   actors.sort((a, b) => a.y - b.y).forEach(a => a.f());
@@ -1123,7 +1130,7 @@ function sceneS4(t) {
   const ea = prog(tc, st(T.eyesAway[0]), st(T.eyesAway[1]));
   drawWorld(t, {
     sunY: 600, sheep, patch: ss(prog(t, T.unfold[0], T.unfold[1])) * (t >= T.unfold[0] ? 1 : 0),
-    bushEyes: { x: 880 + ea * 40, y: 790, open: ea < .5 ? 1 : ea < .8 ? .4 : 0 },
+    bushEyes: { x: 912 + ea * 40, y: 792, open: ea < .5 ? 1 : ea < .8 ? .4 : 0 },
     actors: [{ y: wp.y, f: () => drawWang(wp) }],
     over: () => { if (t >= T.unfold[1]) { const k = prog(t, T.unfold[1], T.unfold[1] + .25); if (k < 1) { X.save(); X.globalCompositeOperation = 'lighter'; X.globalAlpha = .5 * (1 - k); X.fillStyle = '#ffcf7a'; X.beginPath(); X.arc(HOLE.x, HOLE.y, 60 + 60 * k, 0, TAU); X.fill(); X.restore(); } } }
   });
@@ -1149,8 +1156,11 @@ function sceneLock(t) {
   // old scene above the band
   X.save(); screen(); X.beginPath(); X.rect(0, 0, W, Math.max(0, wy)); X.clip();
   const S = quizPieces(); drawQuizBG(t);
-  const f = eIn(prog(tc, st(L.t0), st(L.t0) + 3 / 12)) * 1.8;
-  put(S.badge, 1, 1, 490, 320, 0, 0, -f * 300); put(S.l1, 1.2, 1, 486, 400, 0, 0, -f * 400); put(S.ban, 1.2, 1, 486, 520, 0, 0, -f * 500); put(S.l2, 1, 1, 486, 520, 0, 0, -f * 500); put(S.l3, 1, 1, 0, 0, 0, 0, -f * 600);
+  const fy = k => Math.max(0, Math.cos(Math.PI / 2 * prog(tc, st(L.t0), st(L.t0) + 2 / 12)));   // header folds flat in place, top to bottom
+  let y; if ((y = fy(0)) > .01) put(S.badge, 1, 1, 490, 319, 0, 0, 0, y);
+  if ((y = fy(1)) > .01) put(S.l1, 1.2, 1, 486, 418, 0, 0, 0, y);
+  if ((y = fy(2)) > .01) { put(S.ban, 1.2, 1, 486, 528, 0, 0, 0, y); put(S.l2, 1, 1, 486, 528, 0, 0, 0, y); }
+  if ((y = fy(3)) > .01) { put(S.l3, 1, 1, 446, 632, 0, 0, 0, y); put(S.arrow, 1, 1, S.ax, 640, 0, 0, 0, y); }
   S.cells.forEach((c, i) => {
     const fu = prog(tc, st(L.t0) + i / 24, st(L.t0) + i / 24 + 3 / 12), sy = Math.max(.02, Math.cos(fu * Math.PI / 2));
     put(c.frame, 1.4, 1, c.ccx, c.ccy, 0, 0, 0, sy); put(c.tile, 1, 1, c.ccx, c.ccy, 0, 0, 0, sy); put(c.glyph, 1.1, 1, c.ccx, c.ccy, 0, 0, 0, sy);
@@ -1163,7 +1173,7 @@ function sceneLock(t) {
   const fl = eOut(prog(t, T.fly[0], T.fly[1]));
   for (let i = 0; i < 3; i++) {
     const c = chipPieces(i, false), m = miniChip(i);
-    if (fl < 1) { const dx = lerp(0, m.cx - c.cx, fl), dy = lerp(0, m.cy - c.cy, fl), sc = lerp(1, .36, fl); drawChip(i, false, sc, dx, dy); }
+    if (fl < 1) { const dx = lerp(0, m.cx - c.cx, fl), dy = lerp(0, m.cy - c.cy, fl), sc = lerp(1, MINI_SC, fl); drawChip(i, false, sc, dx, dy); }
   }
   if (fl >= 1) drawBar(t, popS(t, T.fly[1]));
 }
@@ -1177,7 +1187,7 @@ function sceneReveal(t) {
   for (let i = 0; i < 3; i++) {
     const c = chipPieces(i, false), m = miniChip(i);
     const gold = i === 0 && tc >= st(T.ding);
-    const tx = lerp(m.cx - c.cx, 0, d), ty = lerp(m.cy - c.cy, BIG_Y[i] - c.cy, d), sc = lerp(.36, 1, d) * (gold ? popS(t, T.ding) : 1);
+    const tx = lerp(m.cx - c.cx, 0, d), ty = lerp(m.cy - c.cy, BIG_Y[i] - c.cy, d), sc = lerp(MINI_SC, 1, d) * (gold ? popS(t, T.ding) : 1);
     if (i > 0 && t >= T.drop) { const k = t - T.drop; drawChip(i, false, 1, (i === 1 ? -1 : 1) * 160 * k, BIG_Y[i] - c.cy + 2400 * k * k, (i === 1 ? -1 : 1) * 1.4 * k); continue; }
     drawChip(i, gold, sc, tx, ty);
   }
@@ -1210,8 +1220,8 @@ function cardPieces() {
       const tile = piece([x - 92, y - 92, x + 92, y + 92], g => {
         const o = Pl([[x - 86, y - 86], [x + 86, y - 86], [x + 86, y + 86], [x - 86, y + 86]], .6, 5 + i); fillP(g, wob(sawEdge(densify(o.concat([o[0]]), false, 5), 5, 12, 1), .3, i), C.red);
         inset(g, o, 4, 2, C.red);
-        g.save(); g.globalCompositeOperation = 'destination-out'; g.font = '500 144px "LXGW WenKai"'; g.textAlign = 'center'; g.textBaseline = 'alphabetic';
-        g.lineWidth = 7; g.strokeStyle = '#000'; g.strokeText(ch, x, y + 56); g.fillText(ch, x, y + 56); g.restore();
+        g.save(); g.globalCompositeOperation = 'destination-out'; g.font = '900 138px "NotoSerifSC"'; g.textAlign = 'center'; g.textBaseline = 'alphabetic';
+        g.lineWidth = 2; g.strokeStyle = '#000'; g.strokeText(ch, x, y + 48); g.fillText(ch, x, y + 48); g.restore();
       }, { seed: 170 + i, K: 1 });
       const py = textPiece(QPY[i], '700 52px "DejaVu Sans"', 52, TONE[tones[i]], x, cy + 60, { seed: 175 + i, ol: 9, olc: '#4a2410', edge: 1, lite: 'rgba(255,255,255,.6)', dark: 'rgba(0,0,0,.35)' });
       const gl = textPiece(QGL[i], '400 46px "Lilita One"', 46, C.redDeep, x, cy + 140, { seed: 180 + i, fat: 1, ...LITE_CREAM });
@@ -1261,7 +1271,7 @@ function bubblePieces() {
       for (const [x, y] of [[110, y0 + 50], [850, y0 + 50], [110, y1 - 50], [850, y1 - 50]]) petals(g, x, y, 14, 6, 0, .25);
     }, { seed: 201, lite: 'rgba(255,255,255,.8)', dark: 'rgba(90,60,20,.45)' });
     const zh = '亡羊补牢，为时未晚。';
-    S.zh = [...zh].map((ch, i) => ({ dim: textPiece(ch, '500 66px "LXGW WenKai"', 66, '#c9b48e', 182 + i * 66, 880, { seed: 210 + i, fat: 2, edge: 1 }), on: textPiece(ch, '500 66px "LXGW WenKai"', 66, C.red, 182 + i * 66, 880, { seed: 220 + i, fat: 2, edge: 1.2 }) }));
+    S.zh = [...zh].map((ch, i) => ({ dim: textPiece(ch, '900 62px "NotoSerifSC"', 62, '#c9b48e', 182 + i * 66, 880, { seed: 210 + i, edge: 1 }), on: textPiece(ch, '900 62px "NotoSerifSC"', 62, C.red, 182 + i * 66, 880, { seed: 220 + i, edge: 1.2 }) }));
     S.py = textPiece('wáng yáng bǔ láo, wéi shí wèi wǎn', 'italic 34px "DejaVu Sans"', 34, '#5a4a3a', 480, 940, { seed: 231, edge: 0, tex: false });
     S.en1 = richPiece([['Mend the pen ', C.sky], ['now:', C.redDeep]], '400 84px "Lilita One"', 84, 480, 1080, { fat: 2, seed: 232, ...LITE_CREAM });
     S.en2 = richPiece([["it's ", C.sky], ['not too late!', C.redDeep]], '400 84px "Lilita One"', 84, 480, 1190, { fat: 2, seed: 233, ...LITE_CREAM });
@@ -1286,7 +1296,7 @@ function sceneUsage(t) {
     if (t >= T.bubble + .25) { put(B.en1, .7, popS(t, T.bubble + .25), 480, 1050); put(B.en2, .7, popS(t, T.bubble + .4), 480, 1160); }
     X.restore();
     // relieved Wang pokes in at bottom-left
-    cam(540, 960, 1);
+    CAM_DY = 0; cam(540, 960, 1);
     const wp = { x: 150, y: 1700, s: .8, expr: 'smile', armL: [2.3, .6, 'open'], armR: [.4, 0, 'open'], hop: Math.floor(tc * 12) % 6 < 3 ? 0 : 6 };
     X.save(); X.translate(0, lerp(260, 0, eOut(prog(t, T.bubble + .1, T.bubble + .4)))); drawWang(wp); X.restore();
   }
@@ -1311,7 +1321,7 @@ function sceneClose(t) {
 // MAIN
 // =====================================================================
 function render(t) {
-  CUR_T = t; SHAKE = 0;
+  CUR_T = t; SHAKE = 0; CAM_DY = (t >= SC.lock.t0 && t < SC.reveal.t0) ? 96 : 0;
   X.setTransform(1, 0, 0, 1, 0, 0); X.clearRect(0, 0, W, H); X.globalAlpha = 1; X.globalCompositeOperation = 'source-over'; shadowOff();
   const inS = k => t >= SC[k].t0 && t < SC[k].t1;
   if (t < SC.quiz.t1) { drawQuiz(t, true); }
@@ -1329,13 +1339,13 @@ function render(t) {
   const story = t >= SC.S1.t0 && t < SC.reveal.t0;
   if (story) { drawBar(t); }
   screen();
-  if (story || inS('close')) drawCaption(t);
+  if (story) drawCaption(t);
 }
 window.DUR = TL.DUR;
 window.render = render;
 Promise.all([
   document.fonts.load('400 100px "Lilita One"', 'Aa4?!“”…'),
-  document.fonts.load('500 208px "LXGW WenKai"', '亡羊补牢，为时未晚。'),
+  document.fonts.load('900 190px "NotoSerifSC"', '亡羊补牢，为时未晚。'),
   document.fonts.load('700 40px "DejaVu Sans"', 'wáng yáng bǔ láo'),
   document.fonts.load('italic 34px "DejaVu Sans"', 'wéi shí wèi wǎn')
 ]).then(() => { grain(); quizPieces(); quizBG(); for (let i = 0; i < 3; i++) chipPieces(i, false); window.READY = true; });

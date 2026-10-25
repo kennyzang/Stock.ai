@@ -1,6 +1,8 @@
-Lilita One (Regular) - LilitaOne-latin.woff2, LilitaOne-latin-ext.woff2 (unicode-range subsets, unmodified)
-Copyright (c) 2011 Juan Montoreano (juan@remolacha.biz), with Reserved Font Names "Lilita One"
-Licensed under the SIL Open Font License 1.1:
+Fonts in this folder (all SIL Open Font License 1.1, text below):
+- Lilita One (Regular): LilitaOne-latin.woff2, LilitaOne-latin-ext.woff2 (unicode-range subsets, unmodified).
+  Copyright (c) 2011 Juan Montoreano (juan@remolacha.biz), with Reserved Font Names "Lilita One"
+- Noto Serif SC Black: NotoSerifSC-Black-subset.ttf (subset: 亡羊补牢为时未晚，。), name table: "(c) 2017-2024 Adobe (http://www.adobe.com/)", licence URL https://openfontlicense.org
+  (NotoSansSC-Black-subset.ttf was added alongside by the coordinator; it is not used by page.html.)
 
 SIL OPEN FONT LICENSE Version 1.1 - 26 February 2007
 -----------------------------------------------------------
