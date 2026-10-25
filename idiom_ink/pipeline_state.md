@@ -98,3 +98,4 @@
 - 2026-10-24 18:15: EP19 live (record 570055, 206 points); EP20 timed 10-25 ~06:47 UTC. EP21 handed to Publication. Send EP22 after EP20 is live.
 - 2026-10-25 00:58 (scripts run): EP23 守株待兔 and EP24 井底之蛙 written and requested. Pre-check: all lines pass first try (est. ~32 s / ~34 s). Credits: CompShare 52.09 CNY (first try 502, retried), SocialEcho 205 points.
 - 2026-10-25 03:45: EP23/EP24 images arrived ~02:00 (no reply email again; checked Drive directly). Accepted (no redo), built, QC'd (hooks/close at 1560; EP24 frog shots focus 0.8, I7 punch→push_in). Released; EP23 goes after EP21 is live, EP24 after EP22.
+- 2026-10-25 04:55: the "Chinese Idioms" session (session_01UE4ArSjhTKBPtAHUBZxvXF) is building an owner-approved v4 pilot (code-animated quiz, paper-cut look) with 亡羊补牢; skipped here. Rest of the schedule unchanged until the owner decides on v4.
