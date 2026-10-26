@@ -1,0 +1,1363 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Idiom Quiz 3</title>
+<style>
+@font-face { font-family: 'Lilita One'; font-weight: 400; font-display: block; src: url(fonts/LilitaOne-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Lilita One'; font-weight: 400; font-display: block; src: url(fonts/LilitaOne-latin-ext.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'NotoSerifSC'; font-weight: 900; font-display: block; src: url(fonts/NotoSerifSC-Black-subset.ttf) format('truetype'); }
+html,body{margin:0;background:#1b2347;overflow:hidden}canvas{display:block}
+</style>
+<script src="timeline.js"></script>
+</head><body><canvas id="c" width="1080" height="1920"></canvas>
+<script>
+// 画龙点睛 · Idiom Quiz #3 · red paper-cut look. Every visible thing is a cached cut-paper piece placed per frame.
+'use strict';
+const W = 1080, H = 1920, TAU = Math.PI * 2;
+const cv = document.getElementById('c'), X = cv.getContext('2d');
+const TL = window.TL, SC = TL.scenes, LN = Object.fromEntries(TL.lines.map(l => [l.id, l]));
+const C = {
+  red: '#d2201f', rust: '#c8341c', rustD: '#a82a16', redFar: '#6e1222', redDeep: '#a3101e',
+  sky: '#1b2347', skyL: '#232d5e', far: '#33437e', mid: '#273263', groundD: '#11173a',
+  dawn: '#34447f', dawnHill: '#8a2b3c', dawnMid: '#2a376e', field: '#25316b',
+  ink: '#0f1328', cream: '#f3e7cc', skin: '#f2cfa0', slate: '#5f7fb0', slateD: '#48638f',
+  gold: '#e8b54a', white: '#f8f3e8', trouser: '#6e3d22', straw: '#e6cf94', strawD: '#a8853e',
+  wood: '#b37a40', woodB: '#a46a33', rail: '#7e4f26', wool: '#f6efdc', back: '#3a0d12', grey: '#80869a',
+  tan: '#d39a3e', wall: '#6b1e30', dust: '#e9dcb8', plaster: '#efe2c4', roof: '#2a3157', stone: '#8d8a96'
+};
+
+// ---------------- easing / time ----------------
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, u) => a + (b - a) * u;
+const ss = u => { u = clamp(u); return u * u * (3 - 2 * u); };
+const eOut = u => { u = clamp(u); return 1 - (1 - u) * (1 - u) * (1 - u); };
+const eIn = u => { u = clamp(u); return u * u; };
+const st = t => Math.floor(t * 12 + 1e-6) / 12;          // characters and props move on twos (12 fps)
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const popS = (t, t0) => { const s = st(t) - st(t0); return t < t0 ? 0 : s < 1 / 12 - 1e-6 ? 1.18 : s < 2 / 12 - 1e-6 ? .96 : 1; };   // 12 fps pop: 1.18 → .96 → 1
+function wordT(id, word) { const l = LN[id], i = l.text.indexOf(word); return l.t0 + (l.t1 - l.t0) * Math.max(0, i) / l.text.length; }
+
+// ---------------- deterministic noise ----------------
+const h2 = (x, y, s = 0) => { const n = Math.sin(x * 127.1 + y * 311.7 + s * 74.7) * 43758.5453; return n - Math.floor(n); };
+const rnd = (k, s = 0) => h2(k * 1.37 + .5, s * 2.11 + .3, 9.1);
+function mk(w, h) { const c = document.createElement('canvas'); c.width = Math.max(1, Math.ceil(w)); c.height = Math.max(1, Math.ceil(h)); return [c, c.getContext('2d')]; }
+function vn(P, seed) {
+  return (x, y) => {
+    const i = Math.floor(x), j = Math.floor(y), fx = x - i, fy = y - j, u = fx * fx * (3 - 2 * fx), v = fy * fy * (3 - 2 * fy);
+    const w = (a, b) => h2(((a % P) + P) % P, ((b % P) + P) % P, seed);
+    return (w(i, j) * (1 - u) + w(i + 1, j) * u) * (1 - v) + (w(i, j + 1) * (1 - u) + w(i + 1, j + 1) * u) * v;
+  };
+}
+let GRAIN = null;
+function grain() {
+  if (GRAIN) return GRAIN;
+  const N = 512, [c, g] = mk(N, N), id = g.createImageData(N, N), d = id.data;
+  const n1 = vn(4, 1), n2 = vn(16, 2), n3 = vn(64, 3);
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+    const f = (n1(x / 128, y / 128) - .5) + (n2(x / 32, y / 32) - .5) * .5 + (n3(x / 8, y / 8) - .5) * .3;
+    const sp = h2(x, y, 3) > .994 ? -40 : 0, v = 128 + f * 48 + sp, i = (y * N + x) * 4;
+    d[i] = d[i + 1] = d[i + 2] = Math.max(0, Math.min(255, v)); d[i + 3] = 255;
+  }
+  g.putImageData(id, 0, 0);
+  const fib = (n, col, a, len, w, s) => {
+    g.strokeStyle = col; g.lineWidth = w; g.lineCap = 'round';
+    for (let k = 0; k < n; k++) {
+      const x = rnd(k, s) * N, y = rnd(k, s + 1) * N, an = rnd(k, s + 2) * TAU, L = len * (.35 + rnd(k, s + 3));
+      g.globalAlpha = a * (.4 + .6 * rnd(k, s + 4));
+      for (const [ox, oy] of [[0, 0], [-N, 0], [N, 0], [0, -N], [0, N]]) {
+        g.beginPath(); g.moveTo(x + ox, y + oy);
+        g.quadraticCurveTo(x + ox + Math.cos(an + .4) * L * .5, y + oy + Math.sin(an + .4) * L * .5, x + ox + Math.cos(an) * L, y + oy + Math.sin(an) * L); g.stroke();
+      }
+    }
+    g.globalAlpha = 1;
+  };
+  fib(520, '#ffffff', .24, 30, 1.1, 11); fib(200, '#000000', .14, 24, .9, 17);
+  return GRAIN = c;
+}
+
+// ---------------- paths ----------------
+function cr(pts, closed = true, step = 3) {
+  const n = pts.length, out = [], G = i => closed ? pts[(i + n) % n] : pts[Math.max(0, Math.min(n - 1, i))];
+  const segs = closed ? n : n - 1;
+  for (let i = 0; i < segs; i++) {
+    const p0 = G(i - 1), p1 = G(i), p2 = G(i + 1), p3 = G(i + 2), L = Math.hypot(p2[0] - p1[0], p2[1] - p1[1]), k = Math.max(2, Math.ceil(L / step));
+    for (let j = 0; j < k; j++) {
+      const t = j / k, t2 = t * t, t3 = t2 * t, f = d => .5 * (2 * p1[d] + (-p0[d] + p2[d]) * t + (2 * p0[d] - 5 * p1[d] + 4 * p2[d] - p3[d]) * t2 + (-p0[d] + 3 * p1[d] - 3 * p2[d] + p3[d]) * t3);
+      out.push([f(0), f(1)]);
+    }
+  }
+  if (!closed) out.push(pts[n - 1]);
+  return out;
+}
+function densify(pts, closed = true, step = 4) {
+  const o = [], n = pts.length, m = closed ? n : n - 1;
+  for (let i = 0; i < m; i++) { const a = pts[i], b = pts[(i + 1) % n], L = Math.hypot(b[0] - a[0], b[1] - a[1]), k = Math.max(1, Math.ceil(L / step)); for (let j = 0; j < k; j++) o.push([a[0] + (b[0] - a[0]) * j / k, a[1] + (b[1] - a[1]) * j / k]); }
+  if (!closed) o.push(pts[n - 1]); return o;
+}
+function wob(poly, amp = .7, seed = 1, freq = .07) {
+  let s = 0; const out = [];
+  for (let i = 0; i < poly.length; i++) {
+    if (i) s += Math.hypot(poly[i][0] - poly[i - 1][0], poly[i][1] - poly[i - 1][1]);
+    const a = poly[Math.max(0, i - 1)], b = poly[Math.min(poly.length - 1, i + 1)], dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1;
+    const x = s * freq, j = Math.floor(x), f = x - j, u = f * f * (3 - 2 * f);
+    const nz = (rnd(j, seed) * (1 - u) + rnd(j + 1, seed) * u - .5) * 2 + (rnd(i, seed + 7) - .5) * .3;
+    out.push([poly[i][0] - dy / l * nz * amp, poly[i][1] + dx / l * nz * amp]);
+  }
+  return out;
+}
+const P = (pts, amp = .7, seed = 1) => wob(cr(pts, true), amp, seed);
+const Pl = (pts, amp = .6, seed = 1) => wob(densify(pts, true), amp, seed);
+function tr(g, poly, closed = true) { g.moveTo(poly[0][0], poly[0][1]); for (let i = 1; i < poly.length; i++) g.lineTo(poly[i][0], poly[i][1]); if (closed) g.closePath(); }
+function fillP(g, poly, col) { g.beginPath(); tr(g, poly); g.fillStyle = col; g.fill(); }
+function ell(cx, cy, rx, ry, rot = 0, n = 48, a0 = 0, a1 = TAU) {
+  const o = []; for (let i = 0; i < n; i++) { const a = a0 + (a1 - a0) * i / n, x = Math.cos(a) * rx, y = Math.sin(a) * ry; o.push([cx + x * Math.cos(rot) - y * Math.sin(rot), cy + x * Math.sin(rot) + y * Math.cos(rot)]); } return o;
+}
+function capsule(a, b, ra, rb, amp = .5) {
+  const an = Math.atan2(b[1] - a[1], b[0] - a[0]), o = [];
+  for (let i = 0; i <= 12; i++) { const t = an + Math.PI / 2 + i / 12 * Math.PI; o.push([a[0] + Math.cos(t) * ra, a[1] + Math.sin(t) * ra]); }
+  for (let i = 0; i <= 12; i++) { const t = an - Math.PI / 2 + i / 12 * Math.PI; o.push([b[0] + Math.cos(t) * rb, b[1] + Math.sin(t) * rb]); }
+  return wob(densify(o, true, 3), amp, (a[0] * 7 + b[1] * 3) | 0);
+}
+function ribbon(sp, wf) {
+  const L = [], R = [], n = sp.length;
+  for (let i = 0; i < n; i++) {
+    const a = sp[Math.max(0, i - 1)], b = sp[Math.min(n - 1, i + 1)], dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1, w = wf(i / (n - 1));
+    L.push([sp[i][0] - dy / l * w, sp[i][1] + dx / l * w]); R.push([sp[i][0] + dy / l * w, sp[i][1] - dx / l * w]);
+  }
+  return L.concat(R.reverse());
+}
+function along(pts, step) {
+  const L = [0]; for (let i = 1; i < pts.length; i++) L.push(L[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+  const tot = L[L.length - 1], n = Math.max(1, Math.round(tot / step)), out = []; let j = 0;
+  for (let k = 0; k <= n; k++) {
+    const s = tot * k / n; while (j < pts.length - 2 && L[j + 1] < s) j++;
+    const u = (s - L[j]) / ((L[j + 1] - L[j]) || 1), a = pts[j], b = pts[j + 1], dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1;
+    out.push({ x: a[0] + dx * u, y: a[1] + dy * u, nx: dy / l, ny: -dx / l, tx: dx / l, ty: dy / l, u: s / tot });
+  }
+  return out;
+}
+
+// ---------------- cutting ----------------
+function cut(g, fn, rule = 'nonzero') { g.save(); g.globalCompositeOperation = 'destination-out'; g.fillStyle = '#000'; g.beginPath(); fn(g); g.fill(rule); g.restore(); }
+function cutTaper(g, pts, w) {
+  const n = pts.length; if (n < 2) return; const L = [], R = [];
+  for (let i = 0; i < n; i++) {
+    const a = pts[Math.max(0, i - 1)], b = pts[Math.min(n - 1, i + 1)], dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1;
+    const k = Math.sin(Math.PI * (i / (n - 1))) * .92 + .08, ww = w * k / 2;
+    L.push([pts[i][0] - dy / l * ww, pts[i][1] + dx / l * ww]); R.push([pts[i][0] + dy / l * ww, pts[i][1] - dx / l * ww]);
+  }
+  cut(g, q => tr(q, L.concat(R.reverse())));
+}
+const tap = (g, pts, w) => cutTaper(g, cr(pts, false, 2), w);
+function fillTaper(g, pts, w, col) {   // a tapered paper sliver (pasted, not cut)
+  const sp = cr(pts, false, 2), n = sp.length;
+  fillP(g, ribbon(sp, u => w / 2 * (Math.sin(Math.PI * u) * .9 + .1)), col);
+}
+function inset(g, poly, ins = 5, gap = 2, col = C.red) {
+  g.save(); g.beginPath(); tr(g, poly); g.clip();
+  g.globalCompositeOperation = 'destination-out'; g.strokeStyle = '#000'; g.lineJoin = 'round'; g.lineWidth = 2 * (ins + gap); g.beginPath(); tr(g, poly); g.stroke();
+  g.globalCompositeOperation = 'source-over'; g.strokeStyle = col; g.lineWidth = 2 * ins; g.beginPath(); tr(g, poly); g.stroke();
+  g.restore();
+}
+function within(g, poly, fn) { g.save(); g.beginPath(); tr(g, poly); g.clip(); fn(); g.restore(); }
+function crescentPts(cx, cy, r, a0, a1, t, n = 18) {
+  const o = [], ins = [];
+  for (let i = 0; i <= n; i++) { const u = i / n, a = a0 + (a1 - a0) * u, k = Math.sin(Math.PI * u); o.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]); ins.push([cx + Math.cos(a) * (r - t * k), cy + Math.sin(a) * (r - t * k)]); }
+  return o.concat(ins.reverse());
+}
+const crescent = (g, cx, cy, r, a0, a1, t) => cut(g, q => tr(q, crescentPts(cx, cy, r, a0, a1, t)));
+function crescentRows(g, x0, y0, x1, y1, r = 10, t = 4, span = .7) {
+  cut(g, q => {
+    let row = 0;
+    for (let y = y0; y < y1 + r; y += r * 1.05, row++)
+      for (let x = x0 - r * 2 + (row % 2) * r; x < x1 + r * 2; x += r * 2) tr(q, crescentPts(x, y, r, Math.PI * (.5 - span / 2), Math.PI * (.5 + span / 2), t, 12));
+  });
+}
+function sawRow(g, pts, h = 10, sp = 6, side = 1, frac = .78) {
+  const S = along(pts, sp);
+  cut(g, q => {
+    for (let i = 0; i < S.length - 1; i++) {
+      const a = S[i], b = S[i + 1], mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2, hw = frac / 2;
+      q.moveTo(a.x + (b.x - a.x) * (.5 - hw), a.y + (b.y - a.y) * (.5 - hw)); q.lineTo(a.x + (b.x - a.x) * (.5 + hw), a.y + (b.y - a.y) * (.5 + hw));
+      q.lineTo(mx + a.nx * h * side, my + a.ny * h * side); q.closePath();
+    }
+  });
+}
+function sawEdge(pts, h = 12, sp = 14, side = 1) { const S = along(pts, sp / 2), out = []; S.forEach((p, i) => { const k = i % 2 ? h * side : 0; out.push([p.x + p.nx * k, p.y + p.ny * k]); }); return out; }
+function swirl(g, cx, cy, r, turns = 2, w = 4, rot = 0, dir = 1) {
+  const pts = [], n = Math.ceil(turns * 36);
+  for (let i = 0; i <= n; i++) { const u = i / n, a = rot + dir * u * turns * TAU, rr = r * (1 - u * .9); pts.push([cx + Math.cos(a) * rr, cy + Math.sin(a) * rr]); }
+  cutTaper(g, pts, w); const e = pts[pts.length - 1]; cut(g, q => q.arc(e[0], e[1], w * .7, 0, TAU));
+}
+function petals(g, cx, cy, r, n = 6, rot = 0, core = .2) {
+  cut(g, q => {
+    for (let k = 0; k < n; k++) {
+      const a = rot + k * TAU / n, ca = Math.cos(a), sa = Math.sin(a), r0 = r * (core + .08), wd = r * Math.sin(Math.PI / n) * .72, Q = (u, v) => [cx + ca * u - sa * v, cy + sa * u + ca * v];
+      q.moveTo(...Q(r0, 0)); q.quadraticCurveTo(...Q((r0 + r) * .5, wd * 1.25), ...Q(r, 0)); q.quadraticCurveTo(...Q((r0 + r) * .5, -wd * 1.25), ...Q(r0, 0)); q.closePath();
+    }
+  });
+  cut(g, q => { q.moveTo(cx + r * core * .55, cy); q.arc(cx, cy, r * core * .55, 0, TAU); });
+}
+function coin(g, cx, cy, r) { cut(g, q => { q.arc(cx, cy, r, 0, TAU); q.rect(cx - r * .42, cy - r * .42, r * .84, r * .84); }, 'evenodd'); }
+function plum(g, cx, cy, r, rot = -Math.PI / 2) { cut(g, q => { for (let k = 0; k < 5; k++) { const a = rot + k * TAU / 5, x = cx + Math.cos(a) * r * .6, y = cy + Math.sin(a) * r * .6; q.moveTo(x + r * .42, y); q.arc(x, y, r * .42, 0, TAU); } }); }
+function scallop(cx, cy, rx, ry, n, amp, seed = 1) {   // cloud / wool outline: n round lobes
+  const o = []; for (let i = 0; i < n * 8; i++) { const a = i / (n * 8) * TAU, k = 1 + amp * (Math.abs(Math.sin(a * n / 2)) - .5); o.push([cx + Math.cos(a) * rx * k, cy + Math.sin(a) * ry * k]); }
+  return wob(o, .4, seed);
+}
+
+// ---------------- pieces ----------------
+function finish(c, g, opt = {}) {
+  const w = c.width, h = c.height, K = opt.K || 1, [m, mg] = mk(w, h); mg.drawImage(c, 0, 0);
+  g.save(); g.setTransform(1, 0, 0, 1, 0, 0);
+  if (opt.tex !== false) {
+    const pat = g.createPattern(grain(), 'repeat'), s = opt.seed || 0;
+    pat.setTransform(new DOMMatrix([K * .9, 0, 0, K * .9, (s * 137) % 512, (s * 71) % 512]));
+    g.globalCompositeOperation = 'soft-light'; g.globalAlpha = opt.gA ?? 1; g.fillStyle = pat; g.fillRect(0, 0, w, h); g.globalAlpha = 1;
+  }
+  const e = (opt.edge ?? 1.6) * K;
+  if (e > 0) {
+    const [r, rg] = mk(w, h);
+    rg.drawImage(m, 0, 0); rg.globalCompositeOperation = 'destination-out'; rg.drawImage(m, e, e);
+    rg.globalCompositeOperation = 'source-in'; rg.fillStyle = opt.lite || 'rgba(255,232,210,.55)'; rg.fillRect(0, 0, w, h);
+    g.globalCompositeOperation = 'source-atop'; g.drawImage(r, 0, 0);
+    rg.globalCompositeOperation = 'source-over'; rg.clearRect(0, 0, w, h);
+    rg.drawImage(m, 0, 0); rg.globalCompositeOperation = 'destination-out'; rg.drawImage(m, -e, -e);
+    rg.globalCompositeOperation = 'source-in'; rg.fillStyle = opt.dark || 'rgba(25,0,10,.5)'; rg.fillRect(0, 0, w, h);
+    g.drawImage(r, 0, 0);
+  }
+  g.globalCompositeOperation = 'destination-in'; g.drawImage(m, 0, 0);
+  g.restore();
+}
+function piece(box, draw, opt = {}) {
+  const [x0, y0, x1, y1] = box, K = opt.K || 1, [c, g] = mk((x1 - x0) * K, (y1 - y0) * K);
+  g.setTransform(K, 0, 0, K, -x0 * K, -y0 * K); g.lineJoin = 'round'; g.lineCap = 'round';
+  draw(g); finish(c, g, opt);
+  return { c, x0, y0, w: x1 - x0, h: y1 - y0 };
+}
+// a sub-layer inside a piece: its cuts only remove its own paper (what shows through is the layer below)
+function layer(g, fn) {
+  const [t, tg] = mk(g.canvas.width, g.canvas.height); tg.setTransform(g.getTransform()); tg.lineJoin = tg.lineCap = 'round';
+  fn(tg); g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.drawImage(t, 0, 0); g.restore();
+}
+let SZ = 1;   // shadow zoom (camera zoom × puppet scale feel)
+function shadowOn(z) { X.shadowColor = 'rgba(3,5,16,.5)'; X.shadowBlur = 6 * z * SZ; X.shadowOffsetX = 3 * z * SZ; X.shadowOffsetY = 4.5 * z * SZ; }
+function shadowOff() { X.shadowColor = 'rgba(0,0,0,0)'; X.shadowBlur = 0; X.shadowOffsetX = 0; X.shadowOffsetY = 0; }
+function dp(p, z = 1, a = 1) { if (z > 0) shadowOn(z); if (a < 1) X.globalAlpha = a; X.drawImage(p.c, p.x0, p.y0, p.w, p.h); if (a < 1) X.globalAlpha = 1; if (z > 0) shadowOff(); }
+// place a piece: translate to (x,y), rotate r, scale s (sx,sy), with paper shadow z; px,py = pivot inside the piece's own coords
+function at(p, x, y, r = 0, s = 1, z = 1, sy = null, a = 1) {
+  X.save(); X.translate(x, y); if (r) X.rotate(r); if (s !== 1 || sy !== null) X.scale(s, sy ?? s); dp(p, z, a); X.restore();
+}
+// put a piece built at absolute coords, popping/rotating about (px,py)
+function put(p, z = 1, sc = 1, px = 0, py = 0, rot = 0, dx = 0, dy = 0, sy = null) {
+  X.save(); X.translate(dx, dy);
+  if (sc !== 1 || rot || sy !== null) { X.translate(px, py); X.rotate(rot); X.scale(sc, sy ?? sc); X.translate(-px, -py); }
+  dp(p, z); X.restore();
+}
+const CACHE = {};
+const get = (k, f) => CACHE[k] || (CACHE[k] = f());
+
+function textPiece(s, font, size, col, x, y, opt = {}) {
+  X.save(); X.font = font; const tw = X.measureText(s).width; X.restore();
+  const pad = (opt.fat || 0) + (opt.ol || 0) + 12, al = opt.align || 'center', lx = al === 'center' ? x - tw / 2 : al === 'left' ? x : x - tw;
+  return piece([lx - pad, y - size * 1.05 - pad, lx + tw + pad, y + size * .4 + pad], g => {
+    g.font = font; g.textAlign = 'left'; g.textBaseline = 'alphabetic';
+    if (opt.ol) { g.strokeStyle = opt.olc || C.cream; g.lineWidth = opt.ol; g.lineJoin = 'round'; g.strokeText(s, lx, y); }
+    g.fillStyle = col;
+    if (opt.fat) { g.strokeStyle = col; g.lineWidth = opt.fat; g.lineJoin = 'round'; g.strokeText(s, lx, y); }
+    g.fillText(s, lx, y);
+  }, { seed: opt.seed || 3, edge: opt.edge ?? 1.6, lite: opt.lite, dark: opt.dark, K: opt.K || 1 });
+}
+// multi-colour line of text segments [[str,col]] centred at x
+function richPiece(segs, font, size, x, y, opt = {}) {
+  X.save(); X.font = font; const ws = segs.map(s => X.measureText(s[0]).width); X.restore();
+  const tw = ws.reduce((a, b) => a + b, 0), pad = (opt.fat || 0) + 14, lx = x - tw / 2;
+  return piece([lx - pad, y - size * 1.05 - pad, lx + tw + pad, y + size * .4 + pad], g => {
+    g.font = font; g.textAlign = 'left'; g.textBaseline = 'alphabetic'; let xx = lx;
+    segs.forEach((s, i) => { g.fillStyle = s[1]; if (opt.fat) { g.strokeStyle = s[1]; g.lineWidth = opt.fat; g.lineJoin = 'round'; g.strokeText(s[0], xx, y); } g.fillText(s[0], xx, y); xx += ws[i]; });
+  }, { seed: opt.seed || 3, edge: opt.edge ?? 1.6, lite: opt.lite || 'rgba(255,255,255,.7)', dark: opt.dark || 'rgba(60,20,10,.55)', K: opt.K || 1 });
+}
+function bgPaper(col, seed, box = [0, 0, W, H]) { return piece(box, g => { g.fillStyle = col; g.fillRect(box[0], box[1], box[2] - box[0], box[3] - box[1]); }, { seed, edge: 0, gA: .9 }); }
+function banner(x0, y0, w, h, col, seed = 5, opt = {}) {
+  return piece([x0 - 4, y0 - 6, x0 + w + 4, y0 + h + 6], g => {
+    const poly = [], stp = 12;
+    for (let x = x0; x <= x0 + w; x += stp) poly.push([x, y0 + ((x - x0) / stp % 2) * 4]);
+    poly.push([x0 + w - 26, y0 + h / 2]);
+    for (let x = x0 + w; x >= x0; x -= stp) poly.push([x, y0 + h - ((x - x0) / stp % 2) * 4]);
+    poly.push([x0 + 26, y0 + h / 2]);
+    fillP(g, Pl(poly, .5, seed), col);
+    g.save(); g.globalCompositeOperation = 'destination-out'; g.strokeStyle = '#000'; g.lineWidth = 2.2;
+    g.beginPath(); g.moveTo(x0 + 40, y0 + 11); g.lineTo(x0 + w - 40, y0 + 11); g.moveTo(x0 + 40, y0 + h - 11); g.lineTo(x0 + w - 40, y0 + h - 11); g.stroke(); g.restore();
+    if (opt.flecks !== false) for (let k = 0; k < Math.floor(w / 25); k++) { g.fillStyle = `rgba(232,181,74,${.18 + rnd(k, seed) * .3})`; g.beginPath(); g.arc(x0 + 30 + rnd(k, seed + 1) * (w - 60), y0 + 14 + rnd(k, seed + 2) * (h - 28), .8 + rnd(k, seed + 3) * 1.3, 0, TAU); g.fill(); }
+  }, { seed, edge: 1.4, lite: opt.lite, dark: opt.dark, K: opt.K || 1 });
+}
+function wedge(g, R) {
+  const A = Math.PI / 8, pol = (r, a) => [Math.cos(a) * r, Math.sin(a) * r];
+  cut(g, q => { const o = [], n = 10; for (let i = 0; i <= n; i++) o.push(pol(R * .91, .035 + (A - .07) * i / n)); for (let i = n; i >= 0; i--) o.push(pol(R * .86, .035 + (A - .07) * i / n)); tr(q, o); });
+  for (let i = 0; i < 3; i++) { const a = (i + .5) * A / 3; cut(g, q => { q.moveTo(...pol(R * .83, a - .03)); q.lineTo(...pol(R * .83, a + .03)); q.lineTo(...pol(R * .72, a)); q.closePath(); }); }
+  cut(g, q => { const a = A * .5, b = [R * .44, 0], t = [R * .68, 0], wd = R * .07; const rot = (p) => [p[0] * Math.cos(a) - p[1] * Math.sin(a), p[0] * Math.sin(a) + p[1] * Math.cos(a)];
+    q.moveTo(...rot(b)); q.quadraticCurveTo(...rot([R * .56, wd]), ...rot(t)); q.quadraticCurveTo(...rot([R * .56, -wd]), ...rot(b)); q.closePath(); });
+  crescent(g, ...pol(R * .58, A * .98), R * .05, A + Math.PI * .6, A + Math.PI * 1.4, R * .022);
+  for (let i = 0; i < 2; i++) { const a = (i + .5) * A / 2; cut(g, q => { q.moveTo(...pol(R * .4, a - .05)); q.lineTo(...pol(R * .4, a + .05)); q.lineTo(...pol(R * .27, a)); q.closePath(); }); }
+  crescent(g, 0, 0, R * .22, .02, A - .02, R * .05);
+}
+function tuanhua(cx, cy, R, col, seed = 4) {
+  return piece([cx - R - 12, cy - R - 12, cx + R + 12, cy + R + 12], g => {
+    const out = []; const N = 96;
+    for (let i = 0; i < N * 2; i++) { const a = i / (N * 2) * TAU, r = R * (i % 2 ? .975 : 1.0); out.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]); }
+    fillP(g, out, col);
+    g.save(); g.translate(cx, cy);
+    for (let k = 0; k < 8; k++) for (const m of [1, -1]) { g.save(); g.rotate(k * TAU / 8); g.scale(1, m); wedge(g, R); g.restore(); }
+    g.restore();
+    plum(g, cx, cy, R * .1);
+    g.strokeStyle = 'rgba(0,0,0,.12)'; g.lineWidth = 1;
+    for (let k = 0; k < 4; k++) { const a = k * Math.PI / 4; g.beginPath(); g.moveTo(cx - Math.cos(a) * R, cy - Math.sin(a) * R); g.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R); g.stroke(); }
+  }, { seed, edge: 1.2 });
+}
+function cornerFlower(cx, cy, R, col, q0, seed) {
+  return piece([cx - R, cy - R, cx + R, cy + R], g => {
+    const o = [[cx, cy]]; for (let i = 0; i <= 40; i++) { const a = q0 + Math.PI / 2 * i / 40, r = R * (i % 2 ? .93 : 1); o.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]); }
+    fillP(g, wob(o, .4, seed), col);
+    g.save(); g.translate(cx, cy); g.rotate(q0);
+    for (let k = 0; k < 2; k++) for (const m of [1, -1]) { g.save(); g.scale(1, m); g.rotate(Math.PI / 8 * (k ? 1 : -1) + Math.PI / 4); wedge(g, R * .98); g.restore(); }
+    g.restore();
+  }, { seed, edge: 1.2 });
+}
+function scraps(t, n, box, seed, cols, alpha = .85) {
+  for (let k = 0; k < n; k++) {
+    const [x0, y0, x1, y1] = box, sp = 20 + rnd(k, seed) * 40;
+    const x = x0 + rnd(k, seed + 1) * (x1 - x0) + Math.sin(t * 1.3 + k) * 14, y = y0 + ((rnd(k, seed + 2) * (y1 - y0) + t * sp) % (y1 - y0));
+    const s = 5 + rnd(k, seed + 3) * 9, a = t * (1 + rnd(k, seed + 4) * 2) + k;
+    X.save(); X.translate(x, y); X.rotate(a); X.fillStyle = cols[k % cols.length]; X.globalAlpha = alpha;
+    shadowOn(.5);
+    X.beginPath(); X.moveTo(-s, -s * .6); X.lineTo(s, -s * .3); X.lineTo(-s * .2, s); X.closePath(); X.fill(); X.restore();
+  }
+}
+function stars(n, box, seed, col = '#e9dcb8', t = 0) {
+  for (let k = 0; k < n; k++) {
+    const x = box[0] + rnd(k, seed) * (box[2] - box[0]), y = box[1] + rnd(k, seed + 1) * (box[3] - box[1]), s = 2 + rnd(k, seed + 2) * 4;
+    X.save(); X.fillStyle = col; X.globalAlpha = (.5 + rnd(k, seed + 3) * .4) * (.75 + .25 * Math.sin(t * 3 + k)); X.translate(x, y); X.rotate(.3);
+    X.beginPath(); X.moveTo(0, -s); X.lineTo(s * .4, 0); X.lineTo(0, s); X.lineTo(-s * .4, 0); X.closePath(); X.fill(); X.restore();
+  }
+}
+function hillLayer(pts, yBottom, col, seed, opt = {}) {
+  const top = cr(pts, false, 4), edge = opt.saw ? sawEdge(top, opt.saw, opt.sp || 16, -1) : top;
+  const poly = wob(edge, .6, seed).concat([[pts[pts.length - 1][0], yBottom], [pts[0][0], yBottom]]);
+  const ys = pts.map(p => p[1]); const ymin = Math.min(...ys) - 30;
+  return piece([pts[0][0], ymin, pts[pts.length - 1][0], yBottom], g => {
+    fillP(g, poly, col);
+    if (opt.deco) opt.deco(g, top);
+  }, { seed, edge: 1.4, lite: opt.lite || 'rgba(170,190,255,.35)', dark: 'rgba(0,0,10,.5)' });
+}
+const LITE_CREAM = { lite: 'rgba(255,255,255,.75)', dark: 'rgba(60,20,10,.5)' };
+
+// =====================================================================
+// TIMING (all from TL)
+// =====================================================================
+const T = {};
+(() => {
+  T.chars = LN.Q_M.chars;                                     // each tile lights as its syllable is spoken
+  const q2 = LN.Q2_N, q2d = (q2.t1 - q2.t0) / 3; T.abc = [0, 1, 2].map(i => q2.t0 + i * q2d);   // "A, B, or C?" in thirds
+  const L = SC.lock, ld = L.t1 - L.t0;
+  T.glide = [L.t0 + .04, L.t0 + ld * .82];                    // options glide (smooth, every frame) into the top-left bar
+  T.fold = [L.t0, L.t0 + ld * .4];                            // header + tiles fold away
+  T.wipe = [L.t0 + ld * .45, L.t1];                           // S1 comes in behind in the second half
+  const s1 = SC.S1; T.noeyes = wordT('S1_N', 'but no eyes'); T.pan = [s1.t0, T.noeyes];
+  T.cut2 = wordT('S2_N', 'He said'); T.laugh = SC.S2.t0 + .1; T.fly = wordT('S2_N', 'fly away');
+  const w = SC.turn; T.brushIn = [w.t0 + .05, w.t1];
+  T.dot1 = wordT('S3_N', 'dotted') + .1; T.dot2 = wordT('S3_N', 'two dragons') + .25; T.walk = [T.dot1 + .3, T.dot2 - .15];
+  T.boom = SC.S4.t0 + .05; T.flyoff = [T.boom + .12, SC.S4.t1];
+  const r = SC.reveal, dr = r.t1 - r.t0; T.barDrop = [r.t0, r.t0 + dr * .28]; T.ding = r.t0 + dr * .36; T.drop = r.t0 + dr * .5;
+  T.slams = LN.R_M.chars.map(c => c[0]);
+  T.card = SC.slam.t0;
+  const an = SC.answer; T.shrink = [an.t0, an.t0 + .4]; T.ansLand = an.t0 + .4;
+  const u = SC.usage; T.bubble = u.t0 + .2;
+  const c = SC.close; T.title = c.t0 + .04; T.chipsC = [c.t0 + .3, c.t0 + .38, c.t0 + .46]; T.hint = c.t0 + .7;
+})();
+
+// captions: chunks of 2–4 words, proportional by character count
+const KEY = ['eyes', 'eyes!', 'laughed', 'fly', 'dotted', 'boom', 'flew'];
+function chunkLine(l) {
+  const words = l.text.split(/\s+/).filter(Boolean), phrases = []; let cur = [];
+  words.forEach(w => { cur.push(w); if (/[,.!?:;…”]$/.test(w)) { phrases.push(cur); cur = []; } });
+  if (cur.length) phrases.push(cur);
+  const split = []; phrases.forEach(p => { const k = Math.ceil(p.length / 4); if (k === 1) split.push(p); else { const big = Math.ceil(p.length / k); for (let i = 0; i < p.length; i += big) split.push(p.slice(i, i + big)); } });
+  const out = []; split.forEach(p => { const last = out[out.length - 1], le = last && last[last.length - 1]; if (last && !/[.!?…”:]$/.test(le) && (last.length === 1 || p.length === 1 || /,$/.test(le)) && last.length + p.length <= 4) last.push(...p); else out.push(p.slice()); });
+  let acc = 0; const total = l.text.length;
+  return out.map(ws => { const s = ws.join(' '), t0 = l.t0 + (l.t1 - l.t0) * acc / total; acc += s.length + 1; return { words: ws, text: s, t0 }; });
+}
+const CAPS = [];
+['S1_N', 'S2_N', 'S3_N', 'S4_N'].forEach(id => {
+  const ch = chunkLine(LN[id]);
+  const scEnd = SC[{ S1_N: 'S1', S2_N: 'S2', S3_N: 'S3', S4_N: 'S4', C_N: 'close' }[id]].t1;
+  ch.forEach((c, i) => { c.t1 = i < ch.length - 1 ? ch[i + 1].t0 : Math.min(LN[id].t1 + .25, scEnd); c.id = id; CAPS.push(c); });
+});
+function isKey(ws, i) {
+  const w = ws[i].toLowerCase().replace(/[^a-z']/g, '');
+  if (KEY.includes(w)) return true;
+  return false;
+}
+function capPieces(c) {
+  return get('cap|' + c.text, () => {
+    const font = '400 80px "Lilita One"'; X.font = font;
+    const segs = []; c.words.forEach((w, i) => segs.push([w + (i < c.words.length - 1 ? ' ' : ''), isKey(c.words, i) ? C.gold : C.cream]));
+    const tw = X.measureText(c.text).width, bw = tw + 130;
+    return { ban: banner(486 - bw / 2, 1180, bw, 112, C.redDeep, 9 + c.text.length), txt: richPiece(segs, font, 80, 486, 1264, { fat: 2, seed: 7 }) };
+  });
+}
+function drawCaption(t) {
+  const c = CAPS.find(c => t >= c.t0 && t < c.t1); if (!c) return;
+  const p = capPieces(c), s = popS(t, c.t0), sh = Math.min(1, (c.t1 - t) / .08);
+  if (s === 0) return;
+  SZ = 1; put(p.ban, 1.3, s, 486, 1236); put(p.txt, .8, s, 486, 1236);
+}
+
+// =====================================================================
+// SOUND EVENTS
+// =====================================================================
+const EV = [];
+const ev = (t, type, gain) => EV.push(gain === undefined ? { t: +t.toFixed(3), type } : { t: +t.toFixed(3), type, gain });
+T.chars.forEach(c => ev(c[0], 'stamp', .55));
+T.abc.forEach(t => ev(t, 'tick', .8));
+ev(T.glide[0], 'whoosh', .45); ev(T.wipe[0], 'wipe', .7);
+ev(T.pan[0] + .05, 'whoosh', .35); ev(T.noeyes, 'pop', .55); ev(T.noeyes + .12, 'pop', .45);
+ev(T.laugh, 'rustle', .5); ev(T.laugh + .25, 'pop', .5); ev(T.laugh + .55, 'pop', .45);
+ev(T.cut2, 'whoosh', .7); ev(T.fly, 'whoosh', .45);
+ev(SC.turn.t0, 'rustle', .3);
+ev(T.dot1, 'stamp', .8); ev(T.walk[0], 'rustle', .4); ev(T.dot2, 'stamp', .8);
+ev(T.boom, 'boom', 1); ev(T.boom + .02, 'wipe', .7); ev(T.flyoff[0] + .1, 'whoosh', .8); ev(T.flyoff[0] + .45, 'whoosh', .6);
+ev(T.barDrop[0], 'whoosh', .6); ev(T.ding, 'ding', 1); ev(T.ding + .01, 'stamp', .5); ev(T.drop, 'drop', .8);
+ev(T.card, 'pop', .5); T.slams.forEach((t, i) => { if (i === 0) ev(t, 'boom', 1); ev(t, 'stamp', .9); });
+ev(T.shrink[0], 'whoosh', .5); ev(T.ansLand, 'ding', .55); ev(T.ansLand + .01, 'pop', .6); ev(T.bubble, 'pop', .8);
+ev(T.title, 'pop', .7); ev(T.chipsC[0], 'pop', .5); ev(T.hint, 'pop', .35);
+CAPS.forEach(c => { if (c.id !== 'C_N') ev(c.t0, 'pop', .22); });
+EV.sort((a, b) => a.t - b.t);
+window.EV = EV;
+
+// =====================================================================
+// CAMERA
+// =====================================================================
+let SHAKE = 0;
+let CAM_DY = 0;   // story scenes sit a little lower so the stacked A·B·C bar has the sky to itself
+function cam(cx, cy, z) {
+  const sx = SHAKE ? (rnd(Math.floor(CUR_T * 30), 3) - .5) * SHAKE : 0, sy = SHAKE ? (rnd(Math.floor(CUR_T * 30), 4) - .5) * SHAKE : 0;
+  X.setTransform(z, 0, 0, z, 540 - cx * z + sx, 960 + CAM_DY - cy * z + sy); SZ = z;
+}
+function screen() { X.setTransform(1, 0, 0, 1, 0, 0); SZ = 1; }
+let CUR_T = 0;
+
+// =====================================================================
+// QUIZ CARD (scene 1, also reveal/slam/usage/close backgrounds)
+// =====================================================================
+function quizBG() {
+  return get('qbg', () => ({
+    bg: bgPaper(C.sky, 2),
+    rose: tuanhua(470, 930, 610, C.skyL, 6),
+    cornerL: cornerFlower(0, 0, 230, C.redFar, 0, 7),
+    cornerR: cornerFlower(W, 0, 230, C.redFar, Math.PI / 2, 8),
+    hill1: hillLayer([[-20, 1560], [200, 1520], [420, 1555], [640, 1505], [860, 1545], [1100, 1515]], H, C.far, 11, { saw: 12, deco: g => crescentRows(g, -20, 1600, 1100, 1700, 14, 4) }),
+    hill2: hillLayer([[-20, 1660], [260, 1630], [520, 1670], [780, 1625], [1100, 1660]], H, C.groundD, 12, { saw: 14 })
+  }));
+}
+function drawQuizBG(t, roseRot = 0) {
+  const B = quizBG(); screen();
+  put(B.bg, 0);
+  put(B.rose, .8, 1, 470, 930, roseRot);
+  put(B.cornerL, 1); put(B.cornerR, 1);
+  stars(40, [20, 40, 1060, 1500], 5, '#e9dcb8', t);
+  put(B.hill1, 1); put(B.hill2, 1.4);
+  scraps(t, 16, [0, 0, 1080, 1700], 31, [C.red, '#e9dcb8', C.redDeep]);
+}
+const CORR = 2;   // the right answer is C in this episode (rotate the letter across episodes)
+const CHIP_TXT = [['A', 'Always finish what you start'], ['B', 'Dragons are scared of eyes'], ['C', 'A finishing touch brings it alive']];
+const CHIP_Y = [1226, 1302, 1378], CHIP_X = 66, CHIP_W = 830, CHIP_H = 64;
+function chipPieces(i, gold = false) {
+  return get('chip' + i + gold, () => {
+    const [k, s] = CHIP_TXT[i], y0 = CHIP_Y[i], x0 = CHIP_X, w = CHIP_W, h = CHIP_H, sd = 60 + i * 3;
+    const strip = banner(x0, y0, w, h, gold ? C.gold : (i === 0 ? '#8e0f1c' : '#7a0e1c'), sd, gold ? { lite: 'rgba(255,255,230,.8)', dark: 'rgba(110,60,0,.5)', flecks: false } : {});
+    const badge = piece([x0 + 30, y0 - 4, x0 + 110, y0 + h + 4], g => {
+      fillP(g, P(ell(x0 + 70, y0 + h / 2, 34, 34, 0, 24), .4, sd), gold ? C.redDeep : C.cream);
+      g.font = '400 44px "Lilita One"'; g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.save(); g.globalCompositeOperation = 'destination-out'; g.fillText(k, x0 + 70, y0 + h / 2 + 3); g.restore();
+    }, { seed: sd + 1, ...LITE_CREAM });
+    const tx = textPiece(s, '400 44px "Lilita One"', 44, gold ? '#5e0a14' : C.cream, x0 + 128, y0 + h / 2 + 16, { align: 'left', seed: sd + 2, fat: 1, lite: 'rgba(255,255,255,.6)', dark: 'rgba(0,0,0,.4)' });
+    return { strip, badge, tx, cx: x0 + w / 2, cy: y0 + h / 2 };
+  });
+}
+function drawChip(i, gold, sc = 1, dx = 0, dy = 0, rot = 0) {
+  const c = chipPieces(i, gold);
+  put(c.strip, 1.2, sc, c.cx, c.cy, rot, dx, dy); put(c.badge, .8, sc, c.cx, c.cy, rot, dx, dy); put(c.tx, .6, sc, c.cx, c.cy, rot, dx, dy);
+}
+// the persistent bar: the same three option chips, glided to the top-left at bar scale (text ≈ 40 px)
+const BAR_SC = .9, BAR_X = 40, BAR_Y = [334, 396, 458];
+const barPos = i => ({ cx: BAR_X + CHIP_W * BAR_SC / 2, cy: BAR_Y[i] });
+function barPiece() {
+  return get('bar', () => { const x0 = BAR_X - 16, x1 = BAR_X + CHIP_W * BAR_SC + 16; return piece([x0 - 10, 284, x1 + 10, 508], g => {
+    const o = [[x0, 292], [x1, 292], [x1, 500], [x0, 500], [x0, 292]];
+    fillP(g, wob(sawEdge(densify(o, false, 6), 6, 12, -1), .4, 3), '#141a3c');
+    g.save(); g.globalCompositeOperation = 'destination-out'; g.strokeStyle = '#000'; g.lineWidth = 2; g.strokeRect(x0 + 9, 301, x1 - x0 - 18, 190); g.restore();
+  }, { seed: 5, lite: 'rgba(170,190,255,.45)', dark: 'rgba(0,0,0,.5)' }); });
+}
+// chip i placed at a blend u (0 = quiz position, 1 = bar position)
+function chipAt(i, u, gold = false, extra = 1) {
+  const c = chipPieces(i, gold), b = barPos(i);
+  drawChip(i, gold, lerp(1, BAR_SC, u) * extra, lerp(0, b.cx - c.cx, u), lerp(0, b.cy - c.cy, u));
+}
+function drawBar(t, a = 1) {
+  screen();
+  if (a > 0) { X.globalAlpha = a; put(barPiece(), 1.2); X.globalAlpha = 1; }
+  for (let i = 0; i < 3; i++) chipAt(i, 1);
+}
+// smooth highlight envelope (not stepped): rise in .07 s, hold, fall over .25 s
+const env = (t, a, b, up = .07, dn = .25) => t < a ? 0 : Math.min(ss((t - a) / up), 1 - ss((t - b) / dn));
+let GLOWC = null;
+function glowSprite() {
+  if (GLOWC) return GLOWC; const [c, g] = mk(256, 256), gr = g.createRadialGradient(128, 128, 10, 128, 128, 128);
+  gr.addColorStop(0, 'rgba(255,205,90,.9)'); gr.addColorStop(.45, 'rgba(240,170,50,.45)'); gr.addColorStop(1, 'rgba(240,170,50,0)'); g.fillStyle = gr; g.fillRect(0, 0, 256, 256); return GLOWC = c;
+}
+function glow(x, y, rx, ry, a) { if (a <= 0) return; X.save(); X.globalCompositeOperation = 'lighter'; X.globalAlpha = a; X.drawImage(glowSprite(), x - rx, y - ry, rx * 2, ry * 2); X.restore(); }
+
+const QCH = ['画', '龙', '点', '睛'], QPY = ['huà', 'lóng', 'diǎn', 'jīng'], QGL = ['paint', 'dragon', 'dot', 'eye'];
+function quizPieces() {
+  return get('quiz', () => {
+    const S = {};
+    S.badge = piece([370, 286, 610, 352], g => {
+      const o = Pl([[380, 296], [600, 296], [600, 342], [380, 342]], .5, 4); fillP(g, o, C.red);
+      g.save(); g.globalCompositeOperation = 'destination-out'; g.strokeStyle = '#000'; g.lineWidth = 2; g.strokeRect(387, 303, 206, 32); g.restore();
+      g.font = '400 30px "Lilita One"'; g.textAlign = 'center'; g.fillStyle = C.cream; g.fillText('IDIOM QUIZ #3', 490, 331);
+    }, { seed: 4 });
+    S.l1 = textPiece('What does this', '400 96px "Lilita One"', 96, C.cream, 486, 452, { seed: 21, fat: 3, lite: 'rgba(255,255,255,.7)', dark: 'rgba(80,50,20,.5)' });
+    X.font = '400 80px "Lilita One"'; const w2 = X.measureText('Chinese idiom mean?').width + 130;
+    S.ban = banner(486 - w2 / 2, 474, w2, 108, C.redDeep, 4);
+    S.l2 = textPiece('Chinese idiom mean?', '400 80px "Lilita One"', 80, C.cream, 486, 556, { seed: 22, fat: 2, lite: 'rgba(255,255,255,.7)', dark: 'rgba(80,30,20,.6)' });
+    S.l3 = textPiece('Pick A, B or C', '400 54px "Lilita One"', 54, C.gold, 446, 650, { seed: 23, fat: 2, lite: 'rgba(255,255,230,.7)', dark: 'rgba(90,50,0,.5)' });
+    X.font = '400 54px "Lilita One"'; const ax = 446 + X.measureText('Pick A, B or C').width / 2 + 44; S.ax = ax;
+    S.arrow = piece([ax - 35, 600, ax + 35, 680], g => {
+      const o = Pl([[ax - 12, 606], [ax + 12, 606], [ax + 12, 634], [ax + 29, 634], [ax, 672], [ax - 29, 634], [ax - 12, 634]], .4, 3); fillP(g, o, C.gold);
+      cut(g, q => { q.moveTo(ax, 656); q.lineTo(ax - 7, 644); q.lineTo(ax + 7, 644); q.closePath(); });
+    }, { seed: 4, lite: 'rgba(255,255,230,.7)', dark: 'rgba(90,50,0,.5)' });
+    S.cells = QCH.map((ch, i) => {
+      const cx0 = i % 2 ? 494 : 50, cy0 = i < 2 ? 684 : 950, T = 236, ccx = cx0 + T / 2, ccy = cy0 + T / 2, sd = 30 + i * 5;
+      const frame = piece([cx0 - 22, cy0 - 22, cx0 + T + 22, cy0 + T + 22], g => {
+        const sq = [[cx0 - 8, cy0 - 8], [cx0 + T + 8, cy0 - 8], [cx0 + T + 8, cy0 + T + 8], [cx0 - 8, cy0 + T + 8], [cx0 - 8, cy0 - 8]];
+        fillP(g, wob(sawEdge(densify(sq, false, 6), 10, 16, -1), .4, sd), C.redDeep);
+      }, { seed: sd });
+      const tile = piece([cx0, cy0, cx0 + T, cy0 + T], g => {
+        fillP(g, Pl([[cx0 + 4, cy0 + 4], [cx0 + T - 4, cy0 + 4], [cx0 + T - 4, cy0 + T - 4], [cx0 + 4, cy0 + T - 4]], .5, sd + 1), C.cream);
+        for (const [x, y, a] of [[cx0 + 4, cy0 + 4, 0], [cx0 + T - 4, cy0 + 4, Math.PI / 2], [cx0 + T - 4, cy0 + T - 4, Math.PI], [cx0 + 4, cy0 + T - 4, -Math.PI / 2]]) {
+          crescent(g, x, y, 26, a + .15, a + Math.PI / 2 - .15, 6);
+          cut(g, q => q.arc(x + Math.cos(a + Math.PI / 4) * 12, y + Math.sin(a + Math.PI / 4) * 12, 5, 0, TAU));
+        }
+      }, { seed: sd + 2, lite: 'rgba(255,255,255,.8)', dark: 'rgba(90,60,20,.45)' });
+      const glyph = textPiece(ch, '900 190px "NotoSerifSC"', 190, C.red, ccx, ccy + 66, { seed: sd + 3, fat: 2 });
+      const pin = textPiece(QPY[i], '700 40px "DejaVu Sans"', 40, '#e9d9b4', cx0 + T + 84, cy0 + 48, { seed: sd + 4, edge: 1, lite: 'rgba(255,255,255,.6)', dark: 'rgba(0,0,0,.4)' });
+      const gls = textPiece(QGL[i], '400 44px "Lilita One"', 44, C.cream, cx0 + T + 84, cy0 + T - 4, { seed: sd + 5, fat: 1, lite: 'rgba(255,255,255,.7)', dark: 'rgba(0,0,0,.4)' });
+      const icon = clueIcon(i, cx0 + T + 84, cy0 + 126, sd + 6);
+      const rim = piece([cx0 - 30, cy0 - 30, cx0 + T + 30, cy0 + T + 30], g => {
+        const sq = [[cx0 - 14, cy0 - 14], [cx0 + T + 14, cy0 - 14], [cx0 + T + 14, cy0 + T + 14], [cx0 - 14, cy0 + T + 14], [cx0 - 14, cy0 - 14]];
+        fillP(g, wob(sawEdge(densify(sq, false, 6), 12, 16, -1), .4, sd), C.gold);
+      }, { seed: sd + 7, lite: 'rgba(255,255,230,.8)', dark: 'rgba(110,60,0,.5)' });
+      const pinG = textPiece(QPY[i], '700 40px "DejaVu Sans"', 40, C.gold, cx0 + T + 84, cy0 + 48, { seed: sd + 8, edge: 1, lite: 'rgba(255,255,230,.8)', dark: 'rgba(90,50,0,.5)' });
+      const glsG = textPiece(QGL[i], '400 44px "Lilita One"', 44, C.gold, cx0 + T + 84, cy0 + T - 4, { seed: sd + 9, fat: 1, lite: 'rgba(255,255,230,.8)', dark: 'rgba(90,50,0,.5)' });
+      return { frame, tile, glyph, pin, gls, icon, rim, pinG, glsG, ccx, ccy, ix: cx0 + T + 84, iy: cy0 + 126 };
+    });
+    return S;
+  });
+}
+function clueIcon(i, x, y, sd) {
+  return piece([x - 80, y - 75, x + 80, y + 75], g => {
+    if (i === 0) {   // 画 paint: a brush and a sweeping stroke
+      fillP(g, ribbon(cr([[x - 66, y + 46], [x - 30, y + 26], [x + 10, y + 40], [x + 50, y + 18]], false, 3), u => 4 + 8 * Math.sin(Math.PI * u)), C.red);
+      fillP(g, capsule([x + 54, y - 64], [x + 12, y + 2], 6, 5), C.red);
+      fillP(g, P([[x + 6, y - 4], [x + 22, y + 6], [x + 4, y + 30], [x - 6, y + 22]], .3, sd), C.red);
+      for (const k of [0, 1]) cut(g, q => q.rect(x + 34 - k * 10, y - 40 + k * 14, 8, 3));
+    } else if (i === 1) {   // 龙 dragon head
+      const D = ([a, b]) => [x - 14 + (a - 140) * .78, y + 12 + (b + 30) * .78];
+      fillP(g, scallop(...D([98, -30]), 20, 16, 6, .5, 7), C.red);
+      fillP(g, P(DRAGON_HEAD.map(D), .4, sd), C.red);
+      fillTaper(g, [[118, -52], [110, -78], [96, -96]].map(D), 7, C.red); fillTaper(g, [[132, -54], [132, -82], [124, -102]].map(D), 7, C.red);
+      fillTaper(g, [[180, -20], [206, -30], [224, -16]].map(D), 4, C.red); fillTaper(g, [[176, -10], [198, 4], [214, 18]].map(D), 4, C.red);
+      cut(g, q => q.arc(...D([140, -36]), 6, 0, TAU));
+      tap(g, [[150, -14], [166, -16], [180, -22]].map(D), 2.6);
+    } else if (i === 2) {   // 点 dot: the brush tip above a big ink dot
+      fillP(g, capsule([x + 40, y - 70], [x + 8, y - 6], 6, 5), C.red);
+      fillP(g, P([[x + 2, y - 10], [x + 16, y - 2], [x - 2, y + 18], [x - 10, y + 10]], .3, sd), C.red);
+      fillP(g, P(ell(x - 26, y + 40, 26, 24, 0, 24), .6, sd + 1), C.red);
+      crescent(g, x - 26, y + 40, 16, Math.PI * 1.1, Math.PI * 1.6, 4);
+    } else {   // 睛 eye
+      const o = P([[x - 64, y], [x - 30, y - 30], [x + 30, y - 30], [x + 64, y], [x + 30, y + 30], [x - 30, y + 30]], .4, sd); fillP(g, o, C.red);
+      cut(g, q => q.arc(x, y, 22, 0, TAU)); fillP(g, P(ell(x, y, 13, 13, 0, 18), .2, sd + 1), C.red); cut(g, q => q.arc(x + 4, y - 4, 4, 0, TAU));
+      for (let k = -2; k <= 2; k++) fillTaper(g, [[x + k * 18, y - 32], [x + k * 22, y - 46], [x + k * 26, y - 54]], 5, C.red);
+    }
+  }, { seed: sd });
+}
+function drawQuiz(tq, pulses) {
+  const S = quizPieces();
+  drawQuizBG(tq);
+  const s = st(tq);
+  put(S.badge, 1); put(S.l1, 1.2); put(S.ban, 1.2); put(S.l2, 1);
+  put(S.l3, 1);
+  put(S.arrow, 1, 1, S.ax, 640, 0, 0, Math.round(Math.sin(s * 5) * 6));
+  S.cells.forEach((c, i) => {
+    const k = pulses ? env(tq, T.chars[i][0], T.chars[i][1]) : 0;        // smooth, on every frame
+    const sc = (1 + .012 * Math.sin(s * 3.2 + i * 1.3)) * (1 + .08 * k);
+    const tilt = [-.03, .025, .02, -.025][i];
+    glow(c.ccx, c.ccy, 230, 230, .85 * k);
+    if (k > 0) { X.globalAlpha = k; put(c.rim, 1.6, sc, c.ccx, c.ccy, tilt); X.globalAlpha = 1; }
+    put(c.frame, 1.4, sc, c.ccx, c.ccy, tilt); put(c.tile, 1, sc, c.ccx, c.ccy, tilt); put(c.glyph, 1.1, sc, c.ccx, c.ccy, tilt);
+    put(c.icon, 1.1, 1 + .1 * k, c.ix, c.iy, Math.sin(s * 2.4 + i) * .05);
+    if (k < 1) { put(c.pin, .6); put(c.gls, .8); }
+    if (k > 0) { X.globalAlpha = k; put(c.pinG, .6, 1 + .12 * k, c.ix, c.iy - 78); put(c.glsG, .8, 1 + .12 * k, c.ix, c.iy + 94); X.globalAlpha = 1; }
+  });
+  for (let i = 0; i < 3; i++) drawChip(i, false, 1 + .07 * (pulses ? chipPulse(i, tq) : 0));
+}
+const chipPulse = (i, t) => env(t, T.abc[i], T.abc[i] + .12, .06, .22);
+
+// =====================================================================
+// STORY WORLD: sets
+// =====================================================================
+// the temple wall with four painted dragons (two face right, two face left)
+const DRAG = [{ x: 290, y: 765, s: .88, flip: false }, { x: 750, y: 765, s: .88, flip: true }, { x: 290, y: 940, s: .76, flip: false }, { x: 750, y: 940, s: .76, flip: true }];
+const DRAGON_SPINE = [[-190, 30], [-140, -10], [-80, 22], [-20, -18], [40, 12], [92, -14]];
+const DRAGON_HEAD = [[88, -34], [112, -52], [140, -56], [168, -44], [186, -30], [182, -16], [160, -12], [146, -2], [118, 4], [96, -6]];
+const DRAGON_EYE = [140, -36];
+const eyeAt = d => [d.x + (d.flip ? -1 : 1) * DRAGON_EYE[0] * d.s, d.y + DRAGON_EYE[1] * d.s];
+function dragonShape(g, col) {
+  const body = cr(DRAGON_SPINE, false, 3);
+  const rib = ribbon(body, u => 5 + 17 * Math.sin(Math.PI * (.12 + .88 * u)));
+  fillP(g, wob(sawEdge(rib.concat([rib[0]]), 9, 12, 1), .5, 3), col);
+  for (const [lx, ly, a] of [[-112, 16, .5], [6, 0, .35]]) {     // legs with three claws
+    fillP(g, capsule([lx, ly], [lx + 16, ly + 34], 7, 5), col);
+    for (const k of [-1, 0, 1]) fillTaper(g, [[lx + 16, ly + 34], [lx + 22 + k * 8, ly + 46], [lx + 30 + k * 10, ly + 48]], 4, col);
+  }
+  fillP(g, scallop(98, -30, 26, 20, 6, .5, 7), col);               // mane
+  fillP(g, P(DRAGON_HEAD, .4, 5), col);
+  fillTaper(g, [[118, -52], [110, -78], [96, -96]], 8, col); fillTaper(g, [[132, -54], [132, -82], [124, -102]], 8, col);
+  fillTaper(g, [[180, -20], [210, -30], [236, -14], [256, -24]], 5, col); fillTaper(g, [[176, -10], [200, 4], [220, 22], [244, 18]], 5, col);
+  return body;
+}
+function dragonParts() {
+  return get('dragon', () => {
+    const S = {};
+    S.painted = piece([-220, -120, 270, 70], g => {
+      const body = dragonShape(g, C.red);
+      along(body, 24).forEach((p, k) => { if (k > 0 && k < 15) crescent(g, p.x, p.y, 9, Math.atan2(p.ty, p.tx) + Math.PI * .6, Math.atan2(p.ty, p.tx) + Math.PI * 1.4, 3); });
+      cut(g, q => q.arc(DRAGON_EYE[0], DRAGON_EYE[1], 10, 0, TAU));   // the empty eye (wall shows through)
+      cut(g, q => q.ellipse(174, -26, 3, 2.2, .3, 0, TAU)); tap(g, [[150, -14], [166, -16], [180, -22]], 2.6);
+      swirl(g, -150, 6, 9, 1.4, 2.4, 0, 1);
+    }, { seed: 311, K: 2, lite: 'rgba(255,220,200,.5)' });
+    S.dot = piece([-14, -14, 14, 14], g => fillP(g, P(ell(0, 0, 9, 9, 0, 16), .3, 2), C.ink), { seed: 312, K: 3, lite: 'rgba(160,170,220,.5)' });
+    S.dash = piece([-220, -120, 270, 70], g => {
+      const rib = ribbon(cr(DRAGON_SPINE, false, 3), u => 5 + 17 * Math.sin(Math.PI * (.12 + .88 * u)));
+      g.save(); g.setLineDash([12, 9]); g.lineWidth = 4; g.lineCap = 'butt'; g.strokeStyle = '#c99a8a';
+      g.beginPath(); tr(g, rib); g.stroke(); g.beginPath(); tr(g, P(DRAGON_HEAD, .4, 5)); g.stroke(); g.restore();
+    }, { seed: 313, K: 2, edge: 0 });
+    return S;
+  });
+}
+function drawDragon(d, eyes, t, z = .3) {
+  const D = dragonParts();
+  X.save(); X.translate(d.x, d.y); if (d.rot) X.rotate(d.rot); X.scale(d.s * (d.flip ? -1 : 1), d.s);
+  dp(D.painted, z);
+  if (eyes > 0) at(D.dot, DRAGON_EYE[0], DRAGON_EYE[1], 0, eyes, z * .5);
+  X.restore();
+}
+function drawDash(d) { const D = dragonParts(); X.save(); X.translate(d.x, d.y); X.scale(d.s * (d.flip ? -1 : 1), d.s); dp(D.dash, 0); X.restore(); }
+function worldSet() {
+  return get('world', () => {
+    const S = {};
+    S.sky = bgPaper(C.dawn, 3, [-420, -40, 1500, 1960]);
+    S.far = hillLayer([[-420, 560], [-100, 520], [200, 550], [480, 520], [760, 545], [1050, 515], [1500, 550]], 700, C.dawnHill, 51, { saw: 10, sp: 14, lite: 'rgba(255,190,190,.35)' });
+    S.ground = piece([-420, 1000, 1500, 1960], g => {
+      const top = sawEdge(cr([[-420, 1040], [400, 1044], [1500, 1040]], false, 4), 10, 16, -1);
+      fillP(g, wob(top, .5, 9).concat([[1500, 1960], [-420, 1960]]), C.field);
+      for (let k = 0; k < 30; k++) { const x = -380 + rnd(k, 3) * 1840, y = 1120 + rnd(k, 4) * 200; sawRow(g, [[x, y], [x + 34, y]], 10, 7, -1); }
+      within(g, [[-420, 1340], [1500, 1340], [1500, 1960], [-420, 1960]], () => crescentRows(g, -420, 1380, 1500, 1960, 16, 4));
+    }, { seed: 45, lite: 'rgba(170,190,255,.4)', dark: 'rgba(0,0,10,.55)' });
+    S.wall = piece([-320, 560, 1400, 1060], g => {
+      fillP(g, Pl([[-310, 620], [1390, 620], [1390, 1046], [-310, 1046]], .6, 2), C.plaster);
+      fillP(g, Pl([[-310, 1000], [1390, 1000], [1390, 1050], [-310, 1050]], .5, 3), C.stone);      // stone plinth
+      for (let x = -300; x < 1390; x += 64) cut(g, q => q.rect(x, 1022, 30, 3));
+      for (const px of [70, 980]) { fillP(g, Pl([[px - 22, 620], [px + 22, 620], [px + 22, 1000], [px - 22, 1000]], .4, px), C.redDeep); tap(g, [[px - 4, 660], [px + 2, 820], [px - 3, 960]], 3); }
+    }, { seed: 47, lite: 'rgba(255,255,255,.7)', dark: 'rgba(90,60,20,.4)' });
+    S.roof = piece([-330, 520, 1410, 650], g => {
+      const bot = sawEdge(densify([[1400, 630], [-320, 630]], false, 8), 10, 18, 1);
+      fillP(g, wob([[-320, 560], [1400, 560], ...bot], .5, 4), C.roof);
+      within(g, [[-320, 560], [1400, 560], [1400, 640], [-320, 640]], () => crescentRows(g, -320, 572, 1400, 626, 13, 3.4));
+      fillP(g, Pl([[-320, 548], [1400, 548], [1400, 566], [-320, 566]], .4, 5), '#1c2246');
+    }, { seed: 52, lite: 'rgba(170,190,255,.45)', dark: 'rgba(0,0,10,.55)' });
+    S.fore = hillLayer([[-420, 1350], [0, 1330], [400, 1356], [800, 1326], [1100, 1350], [1500, 1336]], 1960, '#171e45', 53, { saw: 16, sp: 18 });
+    return S;
+  });
+}
+function drawPatch(u, x, y, s = .95) {  const p = patchPiece(), bk = patchBack(); X.save(); X.translate(x, y); X.scale(s, s);
+  if (u >= 1) { dp(p, 1.4); X.restore(); return; }
+  const K = p.c.width / p.w;
+  // right half (flat)
+  shadowOn(1.2); X.drawImage(p.c, 80 * K, 0, 80 * K, 180 * K, 0, -90, 80, 180); shadowOff();
+  const th = Math.PI * (1 - eOut(u)), c = Math.cos(th), N = 12;
+  for (let i = 0; i < N; i++) {
+    const a0 = i / N, a1 = (i + 1) / N;     // strip a: 0 at fold .. 1 at outer edge
+    const xa = -80 * a0 * c, xb = -80 * a1 * c, lift = 1 + .28 * Math.sin(th) * a1;
+    const src = th < Math.PI / 2 ? p : bk;
+    const sx0 = th < Math.PI / 2 ? (80 - 80 * a1) : (80 + 80 * a0);   // back side mirrors
+    X.save(); X.translate(0, 0); X.scale(1, lift);
+    const dx = Math.min(xa, xb), dw = Math.abs(xb - xa) + .6;
+    X.drawImage(src.c, sx0 * K, 0, 80 / N * K, 180 * K, dx, -90, dw, 180);
+    X.globalAlpha = .35 * Math.sin(th); X.fillStyle = '#2a0006'; X.fillRect(dx, -90, dw, 180); X.globalAlpha = 1;
+    X.restore();
+  }
+  X.restore();
+}
+
+// ---------------- sheep ----------------
+function sheepOutline(x, y, s) {   // silhouette for dashed "missing" spots (feet at x,y)
+  const body = scallop(0, -66, 72, 46, 9, .28, 2).map(([a, b]) => [x + a * s, y + b * s]);
+  return body;
+}
+function sheepParts() {
+  return get('sheep', () => {
+    const S = {}, KK = 2;
+    S.legs = piece([-55, -45, 55, 6], g => {
+      for (const [a, b] of [[-38, -40], [-16, -38], [18, -38], [40, -40]]) { fillP(g, capsule([a, b], [a + (a > 0 ? 2 : -2), -4], 7, 6.5), C.ink); fillP(g, Pl([[a - 8, -6], [a + 8, -6], [a + 8, 2], [a - 8, 2]], .3, a), '#262a3d'); }
+    }, { seed: 81, K: KK, lite: 'rgba(170,180,230,.5)' });
+    S.body = piece([-90, -125, 85, -15], g => {
+      const o = scallop(-4, -68, 76, 48, 9, .28, 2); fillP(g, o, C.wool); inset(g, o, 4, 2, C.wool);
+      for (const [x, y, r, d] of [[-46, -74, 13, 1], [-16, -88, 14, -1], [16, -70, 13, 1], [-28, -50, 11, -1], [6, -46, 10, 1], [40, -90, 10, -1]]) swirl(g, x, y, r, 1.6, 3, x * .1, d);
+      fillP(g, scallop(-80, -78, 12, 10, 5, .4, 4), C.wool);
+    }, { seed: 82, K: KK, lite: 'rgba(255,255,255,.85)', dark: 'rgba(80,60,30,.45)' });
+    const head = (open) => piece([-20, -50, 62, 46], g => {
+      layer(g, q => {
+        for (const s of [-1, 1]) fillP(q, P([[4, -12 + s * 2], [-14, -22 + s * 12], [-12, -8 + s * 10]], .3, 3 + s), C.ink);
+        fillP(q, P(ell(22, 6, 22, 29, -.35, 28), .4, 5), C.ink);
+      });
+      layer(g, q => { fillP(q, scallop(18, -22, 22, 13, 6, .45, 6), C.wool); swirl(q, 18, -22, 8, 1.4, 2.4, 0, 1); });
+      layer(g, q => { for (const [x, y] of [[14, -2], [34, -6]]) { fillP(q, P(ell(x, y, 7.5, 8.5, 0, 16), .2, x), '#fbf6ea'); cut(q, z => z.arc(x + 2, y + 1, 3.6, 0, TAU)); } });
+      layer(g, q => { if (open) { fillP(q, P(ell(32, 24, 9, 7, -.3, 16), .2, 7), '#e36a6a'); } else fillTaper(q, [[24, 22], [32, 25], [40, 20]], 3, '#e9a0a0'); });
+    }, { seed: 83, K: KK, lite: 'rgba(170,180,230,.5)', dark: 'rgba(0,0,0,.5)' });
+    S.head = head(false); S.headOpen = head(true);
+    S.dash = piece([-100, -130, 95, 10], g => {
+      const o = scallop(-4, -66, 76, 48, 9, .28, 2);
+      g.save(); g.setLineDash([16, 11]); g.lineWidth = 6; g.lineCap = 'butt'; g.strokeStyle = C.wool; g.beginPath(); tr(g, o); g.stroke(); g.restore();
+      g.save(); g.setLineDash([12, 9]); g.lineWidth = 5; g.strokeStyle = C.wool; g.beginPath(); g.ellipse(70, -78, 22, 28, -.35, 0, TAU); g.stroke(); g.restore();
+      g.font = '400 64px "Lilita One"'; g.textAlign = 'center'; g.fillStyle = C.wool; g.fillText('?', -4, -44);
+    }, { seed: 84, K: KK, ...LITE_CREAM });
+    return S;
+  });
+}
+function drawSheep(sh, t) {   // {x,y,s,flip,hop,head,open,shake}
+  const S = sheepParts(), tc = st(t);
+  X.save(); X.translate(sh.x + (sh.shake ? Math.sin(tc * 60) * sh.shake : 0), sh.y - (sh.hop || 0)); X.scale(sh.s * (sh.flip ? -1 : 1), sh.s);
+  const br = 1 + .02 * Math.sin(tc * 4 + sh.x);
+  at(S.legs, 0, 0, 0, 1, .8);
+  at(S.body, 0, 0, 0, br, 1, br);
+  at(sh.open ? S.headOpen : S.head, 56, -78 * br, sh.head || 0, 1, 1);
+  X.restore();
+}
+function drawDash(x, y, s, t) { const S = sheepParts(); X.save(); X.translate(x, y); X.scale(s, s); at(S.dash, 0, 0, 0, 1, .4, null, .9); X.restore(); }
+
+// ---------------- WANG (front-view jointed cut-out; origin = pelvis, feet at +165) ----------------
+const WK = 4, WKH = 6;
+function wangParts() {
+  return get('wang', () => {
+    const S = {};
+    S.leg = piece([-34, -10, 40, 182], g => {
+      layer(g, q => { const o = capsule([0, 0], [0, 138], 24, 20); fillP(q, o, C.trouser); inset(q, o, 3.5, 1.8, C.trouser); tap(q, [[-6, 40], [-2, 80], [-6, 118]], 3); });
+      layer(g, q => { fillP(q, capsule([0, 136], [0, 152], 12, 12), C.skin); });
+      layer(g, q => { const sole = P(ell(3, 166, 30, 9, 0, 24), .3, 2); fillP(q, sole, C.straw); sawRow(q, [[-24, 166], [30, 166]], 5, 5, 1); });
+      layer(g, q => { fillP(q, P(ell(3, 157, 19, 9, 0, 20), .3, 3), C.skin); fillP(q, Pl([[-16, 154], [22, 152], [22, 160], [-16, 162]], .3, 4), C.strawD); });
+    }, { seed: 91, K: WK, lite: 'rgba(255,220,190,.5)' });
+    const torso = (back) => piece([-84, -172, 84, 34], g => {
+      layer(g, q => fillP(q, capsule([0, -170], [0, -146], 17, 17), C.skin));
+      layer(g, q => {
+        const o = P([[-58, -150], [-22, -158], [22, -158], [58, -150], [72, -118], [68, -60], [76, 18], [40, 26], [0, 24], [-40, 26], [-76, 18], [-68, -60], [-72, -118]], .6, 5);
+        fillP(q, o, C.rust); inset(q, o, 5, 2.2, C.rust);
+        if (!back) { tap(q, [[-22, -156], [-2, -118], [16, -74]], 4.5); tap(q, [[22, -156], [12, -128], [6, -112]], 4); for (const y of [-92, -64]) coin(q, 30, y, 5.5); }
+        else { tap(q, [[0, -150], [2, -90], [0, -30]], 4); }
+        within(q, o, () => crescentRows(q, -80, 2, 80, 24, 9, 3.4));
+        tap(q, [[-56, -110], [-52, -70], [-58, -36]], 3); tap(q, [[56, -110], [52, -70], [58, -36]], 3);
+      });
+      layer(g, q => { const b = Pl([[-72, -24], [72, -24], [73, -6], [-73, -6]], .4, 6); fillP(q, b, '#2a1410'); if (!back) fillP(q, Pl([[-10, -26], [8, -26], [16, 12], [2, 8], [-6, 14]], .3, 7), '#2a1410'); for (let x = -60; x <= 60; x += 20) coin(q, x, -15, 4); });
+    }, { seed: 92, K: WK });
+    S.torso = torso(false); S.torsoB = torso(true);
+    S.upper = piece([-26, -24, 26, 100], g => { const o = capsule([0, 0], [0, 76], 22, 18.5); fillP(g, o, C.rust); inset(g, o, 3.5, 1.8, C.rust); crescentRows(g, -22, -6, 22, 14, 7, 2.6); }, { seed: 93, K: WK });
+    S.fore = piece([-24, -22, 24, 86], g => { const o = capsule([0, 0], [0, 64], 19, 16.5); fillP(g, o, C.rust); inset(g, o, 3.5, 1.8, C.rust); tap(g, [[-14, 56], [0, 59], [14, 56]], 4); coin(g, 0, 0, 5); }, { seed: 94, K: WK });
+    const hand = (type) => piece([-34, -12, 34, 72], g => {
+      if (type === 'open') {
+        fillP(g, P([[-13, -4], [13, -4], [16, 20], [15, 38], [9, 48], [1, 50], [-7, 48], [-12, 38], [-24, 26], [-26, 16], [-16, 14]], .3, 2), C.skin);
+        for (const x of [-4, 4]) tap(g, [[x, 30], [x, 38], [x, 46]], 2.2);
+      } else if (type === 'point') {
+        fillP(g, P(ell(0, 16, 16, 18, 0, 20), .3, 3), C.skin); fillP(g, capsule([3, 20], [5, 56], 6.5, 5.5), C.skin); tap(g, [[-10, 12], [-2, 18], [-4, 28]], 2.4);
+      } else if (type === 'fist') {
+        fillP(g, P(ell(0, 18, 17, 18, 0, 20), .3, 4), C.skin); for (const y of [14, 22]) tap(g, [[-12, y], [0, y + 2], [12, y]], 2.2);
+      } else if (type === 'scratch') {
+        fillP(g, P([[-14, -2], [14, -2], [17, 20], [10, 34], [-2, 30], [-14, 34], [-18, 18]], .3, 5), C.skin); for (const x of [-7, 2, 10]) tap(g, [[x, 22], [x + 1, 30]], 2.4);
+      }
+    }, { seed: 95 + type.length, K: WK });
+    S.hand = { open: hand('open'), point: hand('point'), fist: hand('fist'), scratch: hand('scratch') };
+    S.hammer = piece([-28, -10, 40, 110], g => {
+      fillP(g, capsule([0, 0], [0, 88], 5.5, 5), '#9a6a36'); tap(g, [[-1, 20], [1, 50], [-1, 76]], 2);
+      const h = Pl([[-24, 80], [34, 80], [36, 104], [-22, 104]], .4, 3); fillP(g, h, '#4a4e5e'); tap(g, [[-16, 92], [6, 93], [28, 92]], 3);
+    }, { seed: 99, K: WK, lite: 'rgba(220,230,255,.5)' });
+    // heads: pivot = neck (0,0); face centre (0,-62)
+    const headBox = [-90, -136, 90, 12];
+    const face = (expr) => piece(headBox, g => {
+      layer(g, q => { for (const s of [-1, 1]) { fillP(q, P(ell(s * 58, -58, 12, 17, 0, 18), .3, 2 + s), C.skin); tap(q, [[s * 60, -66], [s * 56, -58], [s * 60, -50]], 2.4); } });
+      layer(g, q => { fillP(q, ell(0, -58, 52, 54), C.back); if (expr === 'smile') { q.fillStyle = C.white; q.fillRect(-15, -31, 30, 7); } if (expr === 'shocked') { q.fillStyle = '#c23a3a'; q.beginPath(); q.ellipse(0, -14, 8, 5, 0, 0, TAU); q.fill(); } });
+      layer(g, q => {
+        const o = P([[0, -124], [40, -116], [60, -84], [60, -50], [48, -20], [24, -2], [0, 2], [-24, -2], [-48, -20], [-60, -50], [-60, -84], [-40, -116]], .5, 7);
+        fillP(q, o, C.skin);
+        const eye = (x, y) => cut(q, z => z.ellipse(x, y, 6.5, 8.5, 0, 0, TAU));
+        if (expr === 'neutral') {
+          eye(-22, -62); eye(22, -62); tap(q, [[-36, -82], [-22, -87], [-8, -82]], 4.5); tap(q, [[8, -82], [22, -87], [36, -82]], 4.5);
+          tap(q, [[-12, -22], [0, -17], [12, -22]], 4);
+        } else if (expr === 'puzzled') {
+          eye(-22, -62); cut(q, z => z.ellipse(22, -60, 5, 6, 0, 0, TAU));
+          tap(q, [[-38, -86], [-24, -96], [-8, -90]], 5); tap(q, [[8, -78], [22, -76], [36, -82]], 5);
+          tap(q, [[-14, -20], [-6, -24], [2, -18], [12, -22]], 3.6);
+        } else if (expr === 'smug') {
+          for (const s of [-1, 1]) { cut(q, z => { z.moveTo(s * 22 - 11, -63); z.quadraticCurveTo(s * 22, -50, s * 22 + 11, -63); z.closePath(); }); tap(q, [[s * 22 - 14, -64], [s * 22, -66], [s * 22 + 14, -64]], 4.5); }
+          tap(q, [[-36, -86], [-22, -92], [-8, -86]], 4.5); tap(q, [[8, -84], [22, -88], [36, -84]], 4.5);
+          tap(q, [[-12, -22], [4, -22], [18, -30]], 5);
+        } else if (expr === 'shocked') {
+          for (const s of [-1, 1]) { crescent(q, s * 22, -62, 14, Math.PI * 1.04, Math.PI * 1.96, 4.6); crescent(q, s * 22, -62, 14, Math.PI * .08, Math.PI * .92, 3); cut(q, z => z.arc(s * 22, -61, 4.8, 0, TAU)); }
+          tap(q, [[-38, -90], [-24, -102], [-8, -96]], 5); tap(q, [[8, -96], [24, -102], [38, -90]], 5);
+          cut(q, z => z.ellipse(0, -16, 12, 15, 0, 0, TAU));
+        } else if (expr === 'smile') {
+          for (const s of [-1, 1]) crescent(q, s * 22, -58, 12, Math.PI * 1.08, Math.PI * 1.92, 5.5);
+          tap(q, [[-36, -86], [-22, -92], [-8, -86]], 4.5); tap(q, [[8, -86], [22, -92], [36, -86]], 4.5);
+          cut(q, z => { z.moveTo(-17, -32); z.quadraticCurveTo(0, -29, 17, -32); z.quadraticCurveTo(14, -10, 0, -9); z.quadraticCurveTo(-14, -10, -17, -32); z.closePath(); });
+        }
+        tap(q, [[-3, -50], [3, -42], [-2, -38]], 3);   // nose
+      });
+      layer(g, q => {   // thin black mustache + sideburns
+        const up = expr === 'shocked' ? -8 : expr === 'smile' ? -3 : 0;
+        for (const s of [-1, 1]) fillTaper(q, [[s * 2, -38 + up * .4], [s * 14, -37 + up], [s * 27, -31 + up * 1.6]], 5, C.ink);
+        for (const s of [-1, 1]) fillP(q, P([[s * 50, -96], [s * 58, -92], [s * 56, -70], [s * 50, -74]], .3, 9 + s), C.ink);
+        if (expr === 'smile') for (const s of [-1, 1]) { fillP(q, P(ell(s * 38, -38, 10, 8, 0, 16), .3, s + 4), C.red); }
+      });
+    }, { seed: 101 + expr.length, K: WKH, lite: 'rgba(255,255,240,.7)', dark: 'rgba(90,40,10,.45)' });
+    S.head = {}; for (const e of ['neutral', 'puzzled', 'smug', 'shocked', 'smile']) S.head[e] = face(e);
+    S.head.back = piece(headBox, g => {
+      for (const s of [-1, 1]) fillP(g, P(ell(s * 58, -58, 12, 17, 0, 18), .3, 2 + s), C.skin);
+      const o = P(ell(0, -62, 60, 62, 0, 36), .5, 8); fillP(g, o, C.ink);
+      for (const r of [30, 44]) { const s = []; for (let i = 0; i <= 14; i++) { const a = Math.PI * (.2 + .6 * i / 14); s.push([Math.cos(a) * r, -70 + Math.sin(a) * r * .9]); } cutTaper(g, s, 3); }
+    }, { seed: 109, K: WKH, lite: 'rgba(150,170,230,.5)' });
+    S.hat = piece([-150, -72, 150, 30], g => {
+      layer(g, q => fillP(q, P(ell(0, 12, 128, 13, 0, 40), .4, 2), C.strawD));
+      layer(g, q => {
+        const o = P([[-144, 8], [-92, -16], [-34, -48], [0, -62], [34, -48], [92, -16], [144, 8], [100, 14], [0, 18], [-100, 14]], .5, 3);
+        fillP(q, o, C.straw); inset(q, o, 4, 2, C.straw);
+        within(q, o, () => {
+          for (let k = 1; k <= 4; k++) { const f = k / 5, pts = []; for (let i = 0; i <= 30; i++) { const u = -1 + 2 * i / 30; pts.push([u * 144 * f, -62 + (70 * f) + Math.abs(u) * 0 - (1 - u * u) * 6 * f]); } for (let i = 0; i < pts.length - 1; i += 2) { const a = pts[i], b = pts[i + 1]; cutTaper(q, [a, [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2 - 1], b], 3); } }
+          for (let k = -6; k <= 6; k++) { const ex = k * 22; tap(q, [[ex * .15, -54], [ex * .55, -26], [ex, 8]], 2.6); }
+        });
+        fillP(q, P(ell(0, -60, 9, 6, 0, 14), .3, 5), C.strawD);
+      });
+    }, { seed: 111, K: WKH, lite: 'rgba(255,255,230,.8)', dark: 'rgba(90,60,20,.5)' });
+    S.q = textPiece('?', '400 120px "Lilita One"', 120, C.gold, 0, 40, { seed: 112, fat: 6, K: 2, lite: 'rgba(255,255,230,.8)', dark: 'rgba(90,50,0,.6)' });
+    S.brush = piece([-14, -10, 14, 168], g => {
+      fillP(g, capsule([0, 0], [0, 112], 5.5, 5), '#9a6a36'); tap(g, [[-1, 20], [1, 60], [-1, 96]], 2);
+      fillP(g, Pl([[-8, 108], [8, 108], [8, 118], [-8, 118]], .3, 2), C.gold);
+      fillP(g, P([[-8, 116], [8, 116], [6, 140], [0, 164], [-6, 140]], .3, 3), C.ink);
+    }, { seed: 98, K: WK, lite: 'rgba(255,230,190,.5)' });
+    S.sweat = piece([-16, -26, 16, 22], g => fillP(g, P([[0, -22], [11, 2], [8, 14], [-8, 14], [-11, 2]], .2, 2), '#bfe0f0'), { seed: 113, K: 3, lite: 'rgba(255,255,255,.9)' });
+    S.nums = [1, 2, 3].map(n => piece([-36, -36, 36, 36], g => {
+      fillP(g, P(ell(0, 0, 30, 30, 0, 24), .4, n), C.red);
+      g.save(); g.globalCompositeOperation = 'destination-out'; g.font = '400 44px "Lilita One"'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(String(n), 0, 3); g.restore();
+    }, { seed: 114 + n, K: 2 }));
+    return S;
+  });
+}
+// pose: {x,y (feet), s, sx, expr, back, armL:[a1,a2,hand,hr], armR:[...], frontL, frontR, headRot, headDy, hatDy, hatRot, hatDx, hop, lean, legL, legR, hammer, shrug}
+function drawArm(S, side, a, hammer) {
+  const [a1, a2, hd, hr = 0] = a;
+  X.save(); X.scale(side, 1); X.rotate(-a1);
+  at(S.upper, 0, 0, 0, 1, 1);
+  X.translate(0, 76); X.rotate(-a2); at(S.fore, 0, 0, 0, 1, 1);
+  X.translate(0, 64); X.rotate(-hr);
+  if (hammer) at(hammer === 'brush' ? S.brush : S.hammer, 0, 14, 0, 1, 1.3);
+  at(S.hand[hd], 0, 0, 0, 1, 1);
+  X.restore();
+}
+function drawWang(p) {
+  const S = wangParts();
+  X.save(); X.translate(p.x, p.y - (p.hop || 0)); X.scale(p.s * (p.sx ?? 1), p.s); X.rotate(p.lean || 0);
+  X.translate(0, -165);
+  at(S.leg, -30, 0, p.legL || 0, 1, 1); X.save(); X.scale(-1, 1); at(S.leg, -30, 0, -(p.legR || 0), 1, 1); X.restore();
+  at(p.back ? S.torsoB : S.torso, 0, 0, 0, 1, 1.2);
+  const sh = p.shrug || 0;
+  const arm = (side, a, front, hammer) => { X.save(); X.translate(side * 60, -140 - sh); drawArm(S, side, a, hammer); X.restore(); };
+  if (!p.frontL) arm(-1, p.armL || [0.12, 0, 'open'], false, false);
+  if (!p.frontR) arm(1, p.armR || [0.12, 0, 'open'], false, p.hammer);
+  X.save(); X.translate(0, -158 + (p.headDy || 0) + sh * .6); X.rotate(p.headRot || 0);
+  at(p.back ? S.head.back : S.head[p.expr || 'neutral'], 0, 0, 0, 1, 1.1);
+  if (p.sweat) at(S.sweat, 62, -86, 0, 1, .6);
+  at(S.hat, p.hatDx || 0, -116 + (p.hatDy || 0), p.hatRot || 0, 1, 1.4);
+  X.restore();
+  if (p.frontL) arm(-1, p.armL, true, false);
+  if (p.frontR) arm(1, p.armR, true, p.hammer);
+  X.restore();
+}
+// world position of Wang's shoulder (for pointing)
+const wangShoulder = (p, side) => [p.x + side * 60 * p.s * (p.sx ?? 1), p.y - (p.hop || 0) - (165 + 140) * p.s];
+function aimArm(p, side, tx, ty) { const [sx, sy] = wangShoulder(p, side); const dx = (tx - sx) * side * Math.sign(p.sx ?? 1), dy = ty - sy; return Math.atan2(dx, dy); }
+
+// ---------------- OLD LIU (tall, slate robe, long white beard, stick; origin pelvis, feet +195) ----------------
+function liuParts() {
+  return get('liu', () => {
+    const S = {};
+    S.robe = piece([-96, -186, 96, 210], g => {
+      layer(g, q => { for (const s of [-1, 1]) fillP(q, Pl([[s * 30 - 16, 186], [s * 30 + 18, 186], [s * 30 + 22, 202], [s * 30 - 20, 202]], .3, 3 + s), C.ink); });
+      layer(g, q => {
+        const o = P([[-48, -168], [0, -176], [48, -168], [60, -130], [58, -40], [70, 80], [84, 184], [0, 192], [-84, 184], [-70, 80], [-58, -40], [-60, -130]], .6, 5);
+        fillP(q, o, C.slate); inset(q, o, 5, 2.2, C.slate);
+        tap(q, [[-22, -170], [4, -120], [22, -60]], 4.5); tap(q, [[22, -170], [10, -140], [4, -122]], 4);
+        within(q, o, () => crescentRows(q, -90, 140, 90, 190, 11, 4));
+        sawRow(q, cr([[-74, 132], [0, 138], [74, 132]], false, 3), 12, 10, 1);
+        for (const x of [-34, 0, 34]) tap(q, [[x, -20], [x * 1.2, 50], [x * 1.4, 120]], 3);
+      });
+      layer(g, q => { fillP(q, Pl([[-60, -40], [60, -40], [61, -22], [-61, -22]], .4, 6), C.ink); fillP(q, Pl([[14, -26], [28, -26], [36, 30], [20, 24]], .3, 7), C.ink); for (let x = -48; x <= 48; x += 16) coin(q, x, -31, 4); });
+    }, { seed: 121, K: WK, lite: 'rgba(220,235,255,.45)' });
+    S.upper = piece([-30, -26, 30, 104], g => { const o = P([[-20, -6], [20, -6], [24, 40], [26, 82], [-24, 82], [-22, 40]], .4, 2); fillP(g, o, C.slate); inset(g, o, 3.5, 1.8, C.slate); crescentRows(g, -24, 0, 24, 18, 7, 2.6); }, { seed: 122, K: WK, lite: 'rgba(220,235,255,.45)' });
+    S.fore = piece([-34, -22, 34, 84], g => { const o = P([[-19, -4], [19, -4], [26, 40], [32, 70], [-32, 70], [-26, 40]], .4, 3); fillP(g, o, C.slate); inset(g, o, 3.5, 1.8, C.slate); tap(g, [[-26, 60], [0, 64], [26, 60]], 4); coin(g, 0, 0, 5); }, { seed: 123, K: WK, lite: 'rgba(220,235,255,.45)' });
+    S.point = piece([-26, -10, 26, 66], g => { fillP(g, P(ell(0, 14, 14, 16, 0, 20), .3, 3), C.skin); fillP(g, capsule([2, 18], [3, 54], 6, 5), C.skin); }, { seed: 124, K: WK });
+    S.fist = piece([-24, -10, 24, 40], g => { fillP(g, P(ell(0, 16, 16, 17, 0, 20), .3, 4), C.skin); for (const y of [12, 20]) tap(g, [[-11, y], [0, y + 2], [11, y]], 2.2); }, { seed: 125, K: WK });
+    S.stick = piece([-16, -150, 16, 190], g => { fillP(g, capsule([0, -130], [0, 180], 6.5, 5.5), '#8a5a2a'); fillP(g, P(ell(0, -134, 12, 11, 0, 16), .3, 3), '#7a4a20'); for (const y of [-60, 20, 100]) tap(g, [[-4, y], [0, y + 10]], 2); }, { seed: 126, K: WK, lite: 'rgba(255,230,190,.5)' });
+    const liuHead = (expr) => piece([-80, -150, 80, 110], g => {
+      layer(g, q => fillP(q, ell(0, -60, 40, 50), C.back));
+      layer(g, q => {
+        const o = P([[0, -122], [34, -112], [46, -80], [44, -40], [30, -10], [0, 0], [-30, -10], [-44, -40], [-46, -80], [-34, -112]], .5, 3); fillP(q, o, C.skin);
+        if (expr === 'smile') for (const s of [-1, 1]) crescent(q, s * 18, -66, 11, Math.PI * 1.08, Math.PI * 1.92, 5);
+        else for (const s of [-1, 1]) { cut(q, z => { z.moveTo(s * 18 - 10, -70); z.quadraticCurveTo(s * 18, -78, s * 18 + 10, -70); z.quadraticCurveTo(s * 18, -62, s * 18 - 10, -70); z.closePath(); }); }
+        const mouth = z => { if (expr === 'smile') { z.moveTo(-16, -34); z.quadraticCurveTo(0, -30, 16, -34); z.quadraticCurveTo(12, -16, 0, -15); z.quadraticCurveTo(-12, -16, -16, -34); z.closePath(); } else { z.moveTo(-14, -34); z.lineTo(14, -34); z.quadraticCurveTo(12, -12, 0, -10); z.quadraticCurveTo(-12, -12, -14, -34); z.closePath(); } };
+        cut(q, mouth);
+        tap(q, [[-3, -60], [3, -48], [-2, -44]], 3);
+        for (const s of [-1, 1]) tap(q, [[s * 30, -104], [s * 36, -96]], 2);
+      });
+      if (expr !== 'smile') layer(g, q => { for (const s of [-1, 1]) { q.fillStyle = '#fbf6ea'; q.beginPath(); q.arc(s * 18 + 2, -70, 3, 0, TAU); q.fill(); } });
+      const mouth2 = z => { if (expr === 'smile') { z.moveTo(-16, -34); z.quadraticCurveTo(0, -30, 16, -34); z.quadraticCurveTo(12, -16, 0, -15); z.quadraticCurveTo(-12, -16, -16, -34); z.closePath(); } else { z.moveTo(-14, -34); z.lineTo(14, -34); z.quadraticCurveTo(12, -12, 0, -10); z.quadraticCurveTo(-12, -12, -14, -34); z.closePath(); } };
+      layer(g, q => {   // white hair, topknot, white brows, long beard (mouth cut through)
+        const hair = P([[-46, -84], [-44, -112], [-20, -128], [20, -128], [44, -112], [46, -84], [36, -100], [0, -112], [-36, -100]], .4, 4); fillP(q, hair, C.white);
+        fillP(q, P(ell(0, -134, 17, 14, 0, 18), .3, 5), C.white); swirl(q, 0, -134, 10, 1.4, 2.4, 0, 1);
+        fillP(q, Pl([[-18, -146], [18, -146], [16, -138], [-16, -138]], .3, 6), C.slateD);
+        if (expr === 'smile') for (const s of [-1, 1]) fillP(q, P([[s * 6, -86], [s * 22, -92], [s * 40, -88], [s * 34, -82], [s * 16, -84]], .3, 7 + s), C.white);
+        else for (const s of [-1, 1]) fillP(q, P([[s * 6, -80], [s * 22, -86], [s * 40, -96], [s * 34, -84], [s * 16, -78]], .3, 7 + s), C.white);
+        const beard = P([[-40, -50], [-30, -30], [-16, -30], [0, -36], [16, -30], [30, -30], [40, -50], [38, -10], [24, 30], [10, 80], [0, 100], [-10, 80], [-24, 30], [-38, -10]], .5, 9);
+        fillP(q, beard, C.white);
+        for (const x of [-20, -8, 4, 16]) tap(q, [[x, -4], [x * .8, 30], [x * .4, 70]], 2.6);
+        cut(q, mouth2);
+        for (const s of [-1, 1]) fillTaper(q, [[s * 2, -38], [s * 16, -36], [s * 26, -20]], 6, C.white);
+      });
+    }, { seed: 127 + expr.length, K: WKH, lite: 'rgba(255,255,240,.7)', dark: 'rgba(60,40,30,.45)' });
+    S.head = liuHead('neutral'); S.headSmile = liuHead('smile');
+    S.bang = textPiece('!', '400 110px "Lilita One"', 110, C.gold, 0, 40, { seed: 128, fat: 6, K: 2, lite: 'rgba(255,255,230,.8)', dark: 'rgba(90,50,0,.6)' });
+    return S;
+  });
+}
+function drawLiu(p) {
+  const S = liuParts();
+  X.save(); X.translate(p.x, p.y - (p.hop || 0)); X.scale(p.s, p.s); X.translate(0, -195);
+  // stick arm (screen left), behind head
+  X.save(); X.translate(-50, -156); X.scale(-1, 1); X.rotate(-p.stickA1); at(S.upper, 0, 0, 0, 1, 1); X.translate(0, 80); X.rotate(-p.stickA2); at(S.fore, 0, 0, 0, 1, 1); X.translate(0, 66); X.scale(-1, 1); X.rotate(p.stickA1 + p.stickA2 + (p.stickTilt || 0)); at(S.stick, 0, 14, 0, 1, 1.4); at(S.fist, 0, 0, 0, 1, 1); X.restore();
+  at(S.robe, 0, 0, 0, 1, 1.2);
+  X.save(); X.translate(0, -170); X.rotate(p.headRot || 0); at(p.expr === 'smile' ? S.headSmile : S.head, 0, 0, 0, 1, 1.1); X.restore();
+  // pointing arm (screen right), in front
+  X.save(); X.translate(50, -156); X.rotate(-p.ptA1); at(S.upper, 0, 0, 0, 1, 1); X.translate(0, 80); X.rotate(-p.ptA2); at(S.fore, 0, 0, 0, 1, 1); X.translate(0, 66); at(S.point, 0, 0, 0, 1, 1); X.restore();
+  X.restore();
+}
+
+// ---------------- wolf ----------------
+function wolfParts() {
+  return get('wolf', () => ({
+    eyes: piece([-40, -16, 40, 16], g => {
+      for (const s of [-1, 1]) { fillP(g, P([[s * 30, 0], [s * 18, -9], [s * 6, -4], [s * 8, 4], [s * 20, 7]], .2, 3 + s), C.gold); cut(g, z => z.ellipse(s * 15, 0, 2, 6, 0, 0, TAU)); }
+    }, { seed: 131, K: 3, lite: 'rgba(255,255,220,.9)', dark: 'rgba(90,50,0,.5)' }),
+    glow: (() => { const [c, g] = mk(200, 120); const gr = g.createRadialGradient(100, 60, 4, 100, 60, 60); gr.addColorStop(0, 'rgba(255,200,90,.55)'); gr.addColorStop(1, 'rgba(255,200,90,0)'); g.fillStyle = gr; g.fillRect(0, 0, 200, 120); return { c, x0: -100, y0: -60, w: 200, h: 120 }; })(),
+    head: piece([-60, -60, 60, 50], g => { fillP(g, P([[-44, 30], [-48, -10], [-40, -50], [-24, -22], [0, -26], [24, -22], [40, -50], [48, -10], [44, 30], [0, 44]], .5, 3), '#2b2f40'); }, { seed: 132, K: 2, lite: 'rgba(150,160,200,.35)' }),
+    tail: piece([-20, -40, 150, 40], g => {
+      const sp = cr([[0, 0], [40, -10], [90, -4], [140, 10]], false, 3), o = ribbon(sp, u => 10 + Math.sin(Math.PI * u) * 18);
+      fillP(g, sawEdge(o.concat([o[0]]), 7, 10, 1), C.grey); tap(g, [[20, 0], [70, -6], [120, 4]], 3);
+      fillP(g, P(ell(136, 10, 14, 10, .3, 16), .3, 4), '#d8dbe4');
+    }, { seed: 133, K: 2, lite: 'rgba(230,235,255,.6)' })
+  }));
+}
+function drawEyes(x, y, open, s = 1, glow = 1) {
+  if (open <= 0) return; const Wp = wolfParts();
+  X.save(); X.translate(x, y); X.scale(s, s);
+  X.globalCompositeOperation = 'lighter'; X.globalAlpha = .8 * glow * open; X.drawImage(Wp.glow.c, -100, -60, 200, 120); X.globalAlpha = 1; X.globalCompositeOperation = 'source-over';
+  X.scale(1, open); dp(Wp.eyes, 0); X.restore();
+}
+
+// =====================================================================
+// STORY WORLD: render
+// =====================================================================
+// =====================================================================
+// STORY WORLD: render
+// =====================================================================
+// o.eyes[i] (0..1 dot scale), o.flown[i] ({x,y,s,rot} once a dragon has left the wall), o.actors, o.over
+function drawWorld(t, o) {
+  const S = worldSet();
+  dp(S.sky, 0); dp(S.far, 1);
+  dp(S.ground, 1.4); dp(S.wall, 1.4);
+  DRAG.forEach((d, i) => { if (o.flown && o.flown[i]) drawDash(d); else drawDragon(d, (o.eyes || [])[i] || 0, t); });
+  dp(S.roof, 1.6);
+  (o.actors || []).slice().sort((a, b) => a.y - b.y).forEach(a => a.f());
+  (o.flown || []).forEach((f, i) => { if (f) drawDragon({ ...DRAG[i], ...f }, 1, t, 1.6); });
+  if (o.over) o.over();
+  dp(S.fore, 1.4);
+}
+function nightOverlay(a) { if (a <= 0) return; X.save(); X.setTransform(1, 0, 0, 1, 0, 0); X.fillStyle = `rgba(5,7,24,${a})`; X.fillRect(0, 0, W, H); X.restore(); }
+
+// ---------------- scenes ----------------
+const WANG_PAINT = { x: 560, y: 1124, s: .78 };
+const LIU_SPOT = { x: 250, y: 1130, s: .8 };
+function liuAim(lp, tx, ty) { const sx = lp.x + 50 * lp.s, sy = lp.y - (195 + 156) * lp.s; return Math.atan2(tx - sx, ty - sy); }
+function sceneS1(t) {   // pan along the wall: four dragons, then a pull back: no eyes!
+  const s1 = SC.S1, tc = st(t), u = ss(prog(t, T.pan[0], T.pan[1])), v = ss(prog(t, T.noeyes, s1.t1));
+  cam(lerp(lerp(330, 720, u), 520, v), lerp(800, 860, v), lerp(1.5, 1.2, v));
+  const wp = { ...WANG_PAINT, expr: 'smug', hammer: 'brush' };
+  const dab = Math.floor(tc * 12) % 4 < 2 ? 0 : .08;
+  wp.armR = [aimArm(wp, 1, 860, 900) + dab, 0, 'fist', 0]; wp.armL = [.3, .2, 'open']; wp.headRot = .06;
+  drawWorld(t, {
+    actors: [{ y: wp.y, f: () => drawWang(wp) }],
+    over: () => { const Sw = wangParts(); if (t >= T.noeyes) [0, 1].forEach(i => { const [ex, ey] = eyeAt(DRAG[i]); at(Sw.q, ex, ey - 110, Math.sin(tc * 6 + i) * .08, popS(t, T.noeyes + i * .12) * .7, 1.2); }); }
+  });
+}
+function sceneS2(t) {
+  const s2 = SC.S2, tc = st(t);
+  if (t < T.cut2) {   // shot 1: Old Liu laughs and points at the blank eyes
+    const u = prog(t, s2.t0, T.cut2);
+    cam(lerp(420, 440, u), lerp(850, 830, u), lerp(1.45, 1.6, u));
+    const lp = { ...LIU_SPOT, expr: 'smile' };
+    const pump = Math.floor(tc * 12) % 4 < 2 ? 0 : .1;
+    const [ex, ey] = eyeAt(DRAG[0]);
+    lp.ptA1 = liuAim(lp, ex, ey) + pump * .5; lp.ptA2 = -pump * .3;
+    lp.stickA1 = .25; lp.stickA2 = 0; lp.stickTilt = 0; lp.headRot = -.06 + pump * .6; lp.hop = pump ? 6 : 0;
+    drawWorld(t, {
+      actors: [{ y: lp.y, f: () => drawLiu(lp) }],
+      over: () => { const H = get('haha', () => textPiece('HA HA!', '400 84px "Lilita One"', 84, C.gold, 0, 30, { seed: 401, fat: 4, K: 2, lite: 'rgba(255,255,230,.8)', dark: 'rgba(90,50,0,.6)' })); if (t >= T.laugh + .25) at(H, lp.x + 160, lp.y - 590, -.1 + pump, popS(t, T.laugh + .25) * .9, 1.2); }
+    });
+  } else {            // shot 2: close on the painter, deadly serious, one finger up: they will fly away!
+    const u = prog(t, T.cut2, s2.t1);
+    const wp = { ...WANG_PAINT, expr: 'neutral', hammer: 'brush' };
+    const up = ss(prog(tc, st(T.cut2) + 1 / 12, st(T.cut2) + 5 / 12));
+    wp.armL = [lerp(.2, 2.7, up), lerp(0, .9, up), 'point', 0]; wp.frontL = true;
+    wp.armR = [.35, .2, 'fist', 0]; wp.headRot = -.04 * Math.sin(tc * 5);
+    const fx = wp.x, fy = wp.y - (165 + 158 + 62) * wp.s;
+    cam(lerp(fx - 20, fx - 30, u), lerp(fy + 110, fy + 80, u), lerp(2.0, 2.4, u));
+    drawWorld(t, { actors: [{ y: wp.y, f: () => drawWang(wp) }],
+      over: () => { if (t >= T.fly) { const Sl = liuParts(); at(Sl.bang, fx - 150, fy - 70, -.15, popS(t, T.fly) * .7, 1.2); } } });
+  }
+}
+function sceneTurn(t) {   // near silence: a close-up of the empty eye, the brush tip creeping in
+  const w = SC.turn, u = prog(t, w.t0, w.t1);
+  const [ex, ey] = eyeAt(DRAG[0]);
+  cam(ex + 10, ey + 6, lerp(3.4, 3.8, u));
+  drawWorld(t, {
+    over: () => {
+      const Sw = wangParts(), k = eOut(prog(t, T.brushIn[0], T.brushIn[1]));
+      X.save(); X.translate(lerp(ex + 150, ex + 26, k), lerp(ey + 70, ey + 12, k)); X.rotate(1.15); at(Sw.brush, 0, -164, 0, 1, 1.2); X.restore();
+    }
+  });
+  nightOverlay(.18 * Math.sin(Math.PI * u));
+}
+function sceneS3(t) {   // he dots dragon 1, hops over, dots dragon 2
+  const s3 = SC.S3, tc = st(t);
+  const reach = (76 + 64 + 14 + 164) * WANG_PAINT.s;
+  const spot = (i, side) => { const [ex, ey] = eyeAt(DRAG[i]); const sy = WANG_PAINT.y - (165 + 140) * WANG_PAINT.s, dy = ey - sy, dx = Math.sqrt(Math.max(0, reach * reach - dy * dy)); return { x: ex - side * dx - side * 60 * WANG_PAINT.s, eye: [ex, ey] }; };
+  const A = spot(0, 1), B = spot(1, 1);    // he stands to the left of each eye and reaches up-right
+  const wk = prog(tc, st(T.walk[0]), st(T.walk[1]));
+  const wp = { ...WANG_PAINT, expr: 'smug', hammer: 'brush' };
+  if (wk <= 0) wp.x = A.x;
+  else if (wk >= 1) wp.x = B.x;
+  else { wp.x = lerp(A.x, B.x, wk); wp.hop = Math.floor(tc * 12) % 2 ? 10 : 0; wp.expr = 'neutral'; }
+  const target = wk < .5 ? A.eye : B.eye, dotT = wk < .5 ? T.dot1 : T.dot2;
+  const press = tc >= st(dotT) && tc < st(dotT) + 2 / 12 ? .06 : 0;
+  const pre = tc < st(dotT) ? .12 : 0;
+  wp.armR = [aimArm(wp, 1, target[0], target[1]) + pre - press, 0, 'fist', 0]; wp.armL = [.3, .2, 'open']; wp.headRot = -.12;
+  if (wk > 0 && wk < 1) wp.armR = [.6, .4, 'fist', 0];
+  const z = lerp(1.7, 1.75, prog(t, s3.t0, s3.t1));
+  cam(lerp(wp.x, 520, .55), 800, z);
+  const eyes = [t >= T.dot1 ? popS(t, T.dot1) : 0, t >= T.dot2 ? popS(t, T.dot2) : 0, 0, 0];
+  drawWorld(t, { eyes, actors: [{ y: wp.y, f: () => drawWang(wp) }],
+    over: () => { [[T.dot1, 0], [T.dot2, 1]].forEach(([tt, i]) => { if (t >= tt && t < tt + .4) { const [ex, ey] = eyeAt(DRAG[i]); glow(ex, ey, 60, 60, .8 * (1 - (t - tt) / .4)); } }); } });
+}
+function sceneS4(t) {   // BOOM: the two dragons with eyes peel off the wall and fly up into the sky
+  const s4 = SC.S4, tc = st(t), u = prog(t, s4.t0, s4.t1);
+  const k = eIn(prog(t, T.flyoff[0], T.flyoff[1]));
+  SHAKE = shakeAt(t, [T.boom], 16, .3);
+  cam(lerp(520, 520, u), lerp(880, 700, ss(u)), lerp(1.35, 1.05, ss(u)));
+  const wig = i => Math.sin(tc * 9 + i * 2) * .18;
+  const flown = t >= T.boom ? [
+    { x: lerp(DRAG[0].x, 60, k), y: lerp(DRAG[0].y, 260, k) - Math.sin(k * 6) * 30, s: DRAG[0].s * lerp(1, 1.35, k), rot: -.35 * k + wig(0) },
+    { x: lerp(DRAG[1].x, 980, k), y: lerp(DRAG[1].y, 230, k) - Math.sin(k * 6 + 1) * 30, s: DRAG[1].s * lerp(1, 1.35, k), rot: .35 * k + wig(1) }, null, null] : null;
+  const wp = { x: 520, y: 1124, s: .78, expr: 'shocked', hammer: 'brush', sweat: true };
+  const jolt = t >= T.boom && tc - st(T.boom) < 3 / 12;
+  wp.armL = [2.45, .35, 'open', 0]; wp.armR = [2.45, .35, 'fist', 0]; wp.hatDy = jolt ? -60 : -22; wp.hatRot = jolt ? -.22 : -.08; wp.hop = jolt ? 14 : 0;
+  const lp = { ...LIU_SPOT, x: 180, expr: 'neutral', ptA1: 2.5, ptA2: .3, stickA1: .3, stickA2: 0, stickTilt: 0, headRot: -.08, hop: jolt ? 8 : 0 };
+  drawWorld(t, {
+    flown, actors: [{ y: wp.y, f: () => drawWang(wp) }, { y: lp.y, f: () => drawLiu(lp) }],
+    over: () => { if (t >= T.boom && t < T.boom + .35) { const a = 1 - (t - T.boom) / .35; [0, 1].forEach(i => { const [ex, ey] = eyeAt(DRAG[i]); glow(ex, ey, 260, 200, .9 * a); }); } }
+  });
+  SHAKE = 0;
+}
+
+// ---------------- lock: chips fly to the bar, tiles fold, red sawtooth wipe ----------------
+function wipeBand() {
+  return get('wipe', () => piece([-20, -170, 1100, 170], g => {
+    const top = sawEdge(densify([[-20, -120], [1100, -120]], false, 8), 30, 40, 1), bot = sawEdge(densify([[1100, 120], [-20, 120]], false, 8), 30, 40, 1);
+    const o = wob(top.concat(bot), .8, 3); fillP(g, o, C.red);
+    for (let x = 40; x < 1080; x += 150) petals(g, x, 0, 40, 8, 0, .22);
+    sawRow(g, [[-20, -70], [1100, -70]], 16, 14, 1); sawRow(g, [[-20, 70], [1100, 70]], 16, 14, -1);
+  }, { seed: 141 }));
+}
+function sceneLock(t) {
+  const L = SC.lock;
+  const wy = lerp(H + 200, -220, ss(prog(t, T.wipe[0], T.wipe[1])));   // red sawtooth band rises: S1 below it, quiz above
+  X.save(); screen(); X.beginPath(); X.rect(0, wy, W, H); X.clip(); sceneS1(SC.S1.t0); X.restore();
+  X.save(); screen(); X.beginPath(); X.rect(0, 0, W, Math.max(0, wy)); X.clip();
+  const S = quizPieces(); drawQuizBG(t);
+  const fo = k => Math.max(0, Math.cos(Math.PI / 2 * ss(prog(t, T.fold[0] + k * .05, T.fold[1] + k * .05))));   // smooth fold, top to bottom
+  let y;
+  if ((y = fo(0)) > .01) { put(S.badge, 1, 1, 490, 319, 0, 0, 0, y); put(S.l1, 1.2, 1, 486, 418, 0, 0, 0, y); }
+  if ((y = fo(1)) > .01) { put(S.ban, 1.2, 1, 486, 528, 0, 0, 0, y); put(S.l2, 1, 1, 486, 528, 0, 0, 0, y); }
+  if ((y = fo(2)) > .01) { put(S.l3, 1, 1, 446, 632, 0, 0, 0, y); put(S.arrow, 1, 1, S.ax, 640, 0, 0, 0, y); }
+  S.cells.forEach((c, i) => {
+    const sy = fo(2 + i * .6); if (sy <= .06) return;
+    put(c.frame, 1.4, 1, c.ccx, c.ccy, 0, 0, 0, sy); put(c.tile, 1, 1, c.ccx, c.ccy, 0, 0, 0, sy); put(c.glyph, 1.1, 1, c.ccx, c.ccy, 0, 0, 0, sy);
+    X.globalAlpha = sy; put(c.icon, 1, 1, c.ix, c.iy); put(c.pin, 0); put(c.gls, 0); X.globalAlpha = 1;
+  });
+  X.restore();
+  screen(); put(wipeBand(), 2, 1, 0, 0, -.04, 0, wy);
+  // the bar backing fades in under the arriving chips; the chips glide continuously on top of everything
+  X.globalAlpha = ss(prog(t, T.glide[1] - .3, T.glide[1])); put(barPiece(), 1.2); X.globalAlpha = 1;
+  for (let i = 0; i < 3; i++) {
+    const u = ss(prog(t, T.glide[0] + i * .05, T.glide[1] - (2 - i) * .05));
+    chipAt(i, u, false, 1 + .07 * chipPulse(i, t));
+  }
+}
+// ---------------- reveal / slam / usage / close ----------------
+const BIG_Y = [790, 880, 970];
+function sceneReveal(t) {
+  const r = SC.reveal, tc = st(t);
+  drawQuizBG(t);
+  const d = eOut(prog(t, T.barDrop[0], T.barDrop[1]));
+  for (let i = 0; i < 3; i++) {
+    const c = chipPieces(i, false), m = barPos(i);
+    const gold = i === CORR && t >= T.ding;
+    const tx = lerp(m.cx - c.cx, 0, d), ty = lerp(m.cy - c.cy, BIG_Y[i] - c.cy, d), sc = lerp(BAR_SC, 1, d) * (gold ? popS(t, T.ding) : 1);
+    if (i !== CORR && t >= T.drop) { const k = t - T.drop, dir = i < CORR ? -1 : 1; drawChip(i, false, 1, dir * 160 * k, BIG_Y[i] - c.cy + 2400 * k * k, dir * 1.4 * k); continue; }
+    drawChip(i, gold, sc, tx, ty);
+  }
+  if (tc >= st(T.ding)) drawSeal(840, BIG_Y[CORR], popS(t, T.ding) * (tc - st(T.ding) < 1 / 12 ? 1.25 : 1));
+  scraps(t, 10, [80, BIG_Y[CORR] - 120, 900, BIG_Y[CORR] + 60], 91, [C.gold, C.red, C.cream]);
+}
+function sealPiece() {
+  return get('seal', () => piece([-56, -56, 56, 56], g => {
+    const o = Pl([[-46, -46], [46, -46], [46, 46], [-46, 46]], .7, 3); fillP(g, wob(sawEdge(densify(o.concat([o[0]]), false, 5), 5, 10, 1), .3, 4), C.red);
+    cut(g, q => { q.moveTo(-26, 0); q.lineTo(-8, 20); q.lineTo(28, -22); q.lineTo(20, -30); q.lineTo(-8, 4); q.lineTo(-18, -8); q.closePath(); });
+    g.save(); g.globalCompositeOperation = 'destination-out'; g.lineWidth = 3; g.strokeRect(-38, -38, 76, 76); g.restore();
+  }, { seed: 151, K: 2 }));
+}
+function drawSeal(x, y, s) { at(sealPiece(), x, y, -.12, s, 1.6); }
+const TONE = { 1: '#D2201F', 2: '#F08C1E', 3: '#2E9A3C', 4: '#2B6CC4' };
+function cardPieces() {
+  return get('card', () => {
+    const S = {}, cy = 930;
+    S.frame = piece([40, cy - 260, 920, cy + 250], g => {
+      const sq = [[56, cy - 246], [904, cy - 246], [904, cy + 236], [56, cy + 236], [56, cy - 246]];
+      fillP(g, wob(sawEdge(densify(sq, false, 6), 12, 18, -1), .4, 3), C.redDeep);
+    }, { seed: 161 });
+    S.panel = piece([60, cy - 236, 900, cy + 226], g => {
+      const o = Pl([[66, cy - 230], [894, cy - 230], [894, cy + 220], [66, cy + 220]], .6, 4); fillP(g, o, C.cream);
+      for (const [x, y, a] of [[66, cy - 230, 0], [894, cy - 230, Math.PI / 2], [894, cy + 220, Math.PI], [66, cy + 220, -Math.PI / 2]]) crescent(g, x, y, 40, a + .15, a + Math.PI / 2 - .15, 8);
+    }, { seed: 162, lite: 'rgba(255,255,255,.8)', dark: 'rgba(90,60,20,.45)' });
+    const tones = [4, 2, 3, 1];
+    S.tiles = QCH.map((ch, i) => {
+      const x = 92 + i * 196 + 88, y = cy - 110;
+      const tile = piece([x - 92, y - 92, x + 92, y + 92], g => {
+        const o = Pl([[x - 86, y - 86], [x + 86, y - 86], [x + 86, y + 86], [x - 86, y + 86]], .6, 5 + i); fillP(g, wob(sawEdge(densify(o.concat([o[0]]), false, 5), 5, 12, 1), .3, i), C.red);
+        inset(g, o, 4, 2, C.red);
+        g.save(); g.globalCompositeOperation = 'destination-out'; g.font = '900 138px "NotoSerifSC"'; g.textAlign = 'center'; g.textBaseline = 'alphabetic';
+        g.lineWidth = 2; g.strokeStyle = '#000'; g.strokeText(ch, x, y + 48); g.fillText(ch, x, y + 48); g.restore();
+      }, { seed: 170 + i, K: 1 });
+      const py = textPiece(QPY[i], '700 52px "DejaVu Sans"', 52, TONE[tones[i]], x, cy + 60, { seed: 175 + i, ol: 9, olc: '#4a2410', edge: 1, lite: 'rgba(255,255,255,.6)', dark: 'rgba(0,0,0,.35)' });
+      const gl = textPiece(QGL[i], '400 46px "Lilita One"', 46, C.redDeep, x, cy + 140, { seed: 180 + i, fat: 1, ...LITE_CREAM });
+      return { tile, py, gl, x, y };
+    });
+    S.dots = [0, 1, 2].map(i => piece([-10, -10, 10, 10], g => { g.fillStyle = C.redDeep; g.beginPath(); g.arc(0, 0, 5, 0, TAU); g.fill(); }, { seed: 190 }));
+    return S;
+  });
+}
+function drawCard(t, sc, cx, cy) {
+  const S = cardPieces(), tc = st(t);
+  X.save(); screen(); X.translate(cx, cy); X.scale(sc, sc); X.translate(-480, -930);
+  put(S.frame, 1.6); put(S.panel, 1);
+  S.tiles.forEach((tl, i) => {
+    if (t < T.slams[i]) return;
+    const k = tc - st(T.slams[i]), s = k < 1 / 12 ? 1.9 : k < 2 / 12 - 1e-6 ? .92 : 1;
+    put(tl.tile, k < 2 / 12 ? 3 : 1.2, s, tl.x, tl.y, [-.03, .02, -.02, .03][i]);
+    put(tl.py, .5, popS(t, T.slams[i] + .06), tl.x, 990);
+    if (t >= T.slams[3] + .15) put(tl.gl, .4);
+  });
+  if (t >= T.slams[3] + .15) for (let i = 0; i < 3; i++) at(S.dots[i], 92 + 88 + 196 * i + 98, 930 + 125, 0, 1, .3);
+  X.restore();
+}
+function shakeAt(t, times, amp, dur = .15) { let s = 0; times.forEach(tt => { const k = t - tt; if (k >= 0 && k < dur) s = Math.max(s, amp * (1 - k / dur)); }); return s; }
+function sceneSlam(t) {
+  const sl = SC.slam;
+  SHAKE = shakeAt(t, T.slams, 12); CUR_T = t;
+  drawQuizBG(t, st(t) * .05);
+  X.save(); if (SHAKE) X.translate((rnd(Math.floor(t * 30), 3) - .5) * SHAKE, (rnd(Math.floor(t * 30), 4) - .5) * SHAKE);
+  // the gold correct chip rides above the card
+  const k = eOut(prog(t, sl.t0, sl.t0 + .25)), c = chipPieces(CORR, true);
+  drawChip(CORR, true, lerp(1, .86, k), 0, lerp(BIG_Y[CORR], 520, k) - c.cy);
+  drawSeal(lerp(840, 810, k), lerp(BIG_Y[CORR], 520, k), lerp(1, .8, k));
+  drawCard(t, popS(t, T.card), 480, 960);
+  X.restore(); SHAKE = 0;
+}
+function answerPieces() {
+  return get('answer', () => {
+    const S = {}, cx = 480, cy = 1010, w = 860, h = 270, x0 = cx - w / 2, y0 = cy - h / 2;
+    S.card = piece([x0 - 14, y0 - 14, x0 + w + 14, y0 + h + 14], g => {
+      const sq = [[x0, y0], [x0 + w, y0], [x0 + w, y0 + h], [x0, y0 + h], [x0, y0]];
+      fillP(g, wob(sawEdge(densify(sq, false, 6), 10, 16, -1), .4, 3), C.gold);
+      inset(g, Pl([[x0 + 12, y0 + 12], [x0 + w - 12, y0 + 12], [x0 + w - 12, y0 + h - 12], [x0 + 12, y0 + h - 12]], .4, 4), 5, 2.4, C.gold);
+      for (const [x, y] of [[x0 + 30, y0 + 30], [x0 + w - 30, y0 + 30], [x0 + 30, y0 + h - 30], [x0 + w - 30, y0 + h - 30]]) petals(g, x, y, 12, 6, 0, .25);
+    }, { seed: 251, lite: 'rgba(255,255,230,.85)', dark: 'rgba(110,60,0,.55)' });
+    S.badge = piece([x0 + 30, cy - 60, x0 + 150, cy + 60], g => {
+      fillP(g, P(ell(x0 + 90, cy, 52, 52, 0, 28), .4, 5), C.redDeep);
+      g.font = '400 70px "Lilita One"'; g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.save(); g.globalCompositeOperation = 'destination-out'; g.fillText(CHIP_TXT[CORR][0], x0 + 90, cy + 4); g.restore();
+    }, { seed: 252 });
+    const L1 = 'A finishing touch', L2 = 'brings it alive.', tx = x0 + 172;
+    S.lines = [[L1, cy - 18], [L2, cy + 70]].map(([s, y], k) => ({
+      dim: textPiece(s, '400 70px "Lilita One"', 70, '#9b6a1c', tx, y, { align: 'left', seed: 253 + k, fat: 1, edge: 1, lite: 'rgba(255,255,230,.5)', dark: 'rgba(90,50,0,.35)' }),
+      on: textPiece(s, '400 70px "Lilita One"', 70, '#5e0a14', tx, y, { align: 'left', seed: 255 + k, fat: 2, edge: 1.2, lite: 'rgba(255,230,210,.6)', dark: 'rgba(40,0,0,.5)' }),
+      len: s.length, y }));
+    S.tx = tx; S.cx = cx; S.cy = cy; S.w = w; S.h = h;
+    return S;
+  });
+}
+function drawAnswerCard(t, s, a = 1) {
+  const S = answerPieces(); if (s <= 0) return;
+  X.save(); screen(); X.translate(S.cx, S.cy); X.scale(s, s); X.translate(-S.cx, -S.cy); X.globalAlpha = a;
+  put(S.card, 1.8); put(S.badge, .8);
+  const l = LN.A_N, u = clamp((t - l.t0) / (l.t1 - l.t0 - .25)), tot = S.lines[0].len + S.lines[1].len;   // words darken as A_N reads them
+  S.lines.forEach((ln, k) => {
+    put(ln.dim, 0);
+    const done = clamp((u * tot - (k ? S.lines[0].len : 0)) / ln.len); if (done <= 0) return;
+    X.save(); X.beginPath(); X.rect(ln.on.x0, ln.on.y0, ln.on.w * done, ln.on.h); X.clip(); put(ln.on, .5); X.restore();
+  });
+  X.restore(); X.globalAlpha = 1;
+  drawSeal(S.cx + S.w / 2 * s - 44, S.cy - S.h / 2 * s + 10, .95 * s);
+}
+const CARD_TOP = { y: 470, s: .56 };
+function sceneAnswer(t) {
+  const an = SC.answer;
+  drawQuizBG(t, .06);
+  const k = ss(prog(t, T.shrink[0], T.shrink[1]));
+  glow(480, 1010, 620, 330, .7 * ss(prog(t, T.ansLand - .1, T.ansLand + .2)) * (.85 + .15 * Math.sin(t * 5)));
+  drawCard(SC.slam.t1, lerp(1, CARD_TOP.s, k), 480, lerp(960, CARD_TOP.y, k));
+  if (t < T.ansLand) {   // the correct chip glides from its slot above the card to the centre, growing
+    const c = chipPieces(CORR, true), u = ss(prog(t, an.t0, T.ansLand));
+    drawChip(CORR, true, lerp(.86, 1.02, u), 0, lerp(520, 1010, u) - c.cy); drawSeal(lerp(810, 850, u), lerp(520, 1010, u), .8);
+  } else {
+    const pk = prog(t, T.ansLand, T.ansLand + .12), s = pk < 1 ? lerp(.98, 1.06, pk) : lerp(1.06, 1, ss(prog(t, T.ansLand + .12, T.ansLand + .3)));
+    drawAnswerCard(t, s);
+  }
+  scraps(t, 12, [60, 820, 900, 1200], 97, [C.gold, C.red, C.cream], .7);
+}
+function bubblePieces() {
+  return get('bubble', () => {
+    const S = {}, y0 = 760, y1 = 1290;
+    S.bub = piece([40, y0 - 20, 930, y1 + 120], g => {
+      const o = []; const cx = 480, cy = (y0 + y1) / 2, rx = 420, ry = (y1 - y0) / 2;
+      for (let i = 0; i < 160; i++) { const a = i / 160 * TAU; const sq = Math.pow(Math.abs(Math.cos(a)), .35) * Math.sign(Math.cos(a)), sy = Math.pow(Math.abs(Math.sin(a)), .35) * Math.sign(Math.sin(a)); const k = 1 + .012 * Math.sin(a * 48); o.push([cx + rx * sq * k, cy + ry * sy * k]); }
+      const tail = [[190, y1 - 10], [150, y1 + 100], [280, y1 - 6]];
+      fillP(g, wob(o, .6, 3), C.cream); fillP(g, Pl(tail, .5, 4), C.cream);
+      const io = o.map(([x, y]) => [cx + (x - cx) * .965, cy + (y - cy) * .955]);
+      g.save(); g.globalCompositeOperation = 'destination-out'; g.lineWidth = 3; g.setLineDash([14, 8]); g.beginPath(); tr(g, io); g.stroke(); g.restore();
+      for (const [x, y] of [[110, y0 + 50], [850, y0 + 50], [110, y1 - 50], [850, y1 - 50]]) petals(g, x, y, 14, 6, 0, .25);
+    }, { seed: 201, lite: 'rgba(255,255,255,.8)', dark: 'rgba(90,60,20,.45)' });
+    const zh = '这句话真是画龙点睛。';
+    S.zh = [...zh].map((ch, i) => ({ dim: textPiece(ch, '900 62px "NotoSerifSC"', 62, '#c9b48e', 182 + i * 66, 880, { seed: 210 + i, edge: 1 }), on: textPiece(ch, '900 62px "NotoSerifSC"', 62, C.red, 182 + i * 66, 880, { seed: 220 + i, edge: 1.2 }) }));
+    S.py = textPiece('zhè jù huà zhēn shì huà lóng diǎn jīng', 'italic 34px "DejaVu Sans"', 34, '#5a4a3a', 480, 940, { seed: 231, edge: 0, tex: false });
+    S.en1 = richPiece([['That one line', C.sky]], '400 76px "Lilita One"', 76, 480, 1064, { fat: 2, seed: 232, ...LITE_CREAM });
+    S.en2 = richPiece([['dots the eyes', C.redDeep]], '400 76px "Lilita One"', 76, 480, 1146, { fat: 2, seed: 233, ...LITE_CREAM });
+    S.en3 = richPiece([['of the ', C.sky], ['dragon!', C.redDeep]], '400 76px "Lilita One"', 76, 480, 1228, { fat: 2, seed: 235, ...LITE_CREAM });
+    S.rule = piece([200, 970, 760, 990], g => { fillP(g, Pl([[220, 976], [740, 976], [740, 982], [220, 982]], .3, 2), C.redDeep); petals(g, 480, 979, 9, 6, 0, .25); }, { seed: 234 });
+    return S;
+  });
+}
+function sceneUsage(t) {
+  const u = SC.usage, tc = st(t);
+  drawQuizBG(t, .08);
+  drawCard(SC.slam.t1, CARD_TOP.s, 480, CARD_TOP.y);
+  const k = eIn(prog(t, u.t0, u.t0 + .25)); if (k < 1) { X.save(); X.translate(0, 1100 * k); drawAnswerCard(SC.answer.t1, 1 - .3 * k); X.restore(); }
+  if (t >= T.bubble) {
+    const B = bubblePieces(), s = popS(t, T.bubble);
+    X.save(); screen(); X.translate(480, 1025); X.scale(s, s); X.translate(-480, -1025);
+    put(B.bub, 1.6);
+    const m = LN.U_M, n = B.zh.length;
+    B.zh.forEach((z, i) => { const on = t >= m.t0 + (m.t1 - m.t0) * i / n; put(on ? z.on : z.dim, on ? .5 : 0, on ? popS(t, m.t0 + (m.t1 - m.t0) * i / n) : 1, 182 + i * 66, 860); });
+    put(B.py, 0); put(B.rule, .3);
+    if (t >= T.bubble + .25) put(B.en1, .7, popS(t, T.bubble + .25), 480, 1040); if (t >= T.bubble + .4) put(B.en2, .7, popS(t, T.bubble + .4), 480, 1122); if (t >= T.bubble + .55) put(B.en3, .7, popS(t, T.bubble + .55), 480, 1204);
+    X.restore();
+    // the proud painter pokes in at bottom-left, brush up
+    CAM_DY = 0; cam(540, 960, 1);
+    const wp = { x: 150, y: 1700, s: .8, expr: 'smile', hammer: 'brush', armR: [2.5, .3, 'fist', -.2], armL: [.4, 0, 'open'], hop: Math.floor(tc * 12) % 6 < 3 ? 0 : 6 };
+    X.save(); X.translate(0, lerp(260, 0, eOut(prog(t, T.bubble + .1, T.bubble + .4)))); drawWang(wp); X.restore();
+  }
+}
+function closePieces() {
+  return get('close', () => ({
+    t1: textPiece('Did you get', '400 116px "Lilita One"', 116, C.cream, 486, 560, { seed: 241, fat: 4, lite: 'rgba(255,255,255,.7)', dark: 'rgba(80,50,20,.5)' }),
+    t2: richPiece([['it ', C.cream], ['right?', C.gold]], '400 116px "Lilita One"', 116, 486, 690, { fat: 4, seed: 242 }),
+    hint: richPiece([['Comment ', C.cream], ['A', C.gold], [', ', C.cream], ['B', C.gold], [' or ', C.cream], ['C', C.gold], ['!', C.cream]], '400 46px "Lilita One"', 46, 506, 1100, { fat: 1, seed: 243 }),
+    icon: piece([200, 1050, 290, 1120], g => { const o = Pl([[212, 1060], [280, 1060], [280, 1098], [238, 1098], [222, 1114], [224, 1098], [212, 1098]], .4, 2); fillP(g, o, C.cream); for (const x of [232, 246, 260]) cut(g, q => q.arc(x, 1079, 4, 0, TAU)); }, { seed: 244, ...LITE_CREAM })
+  }));
+}
+function sceneClose(t) {
+  const tc = st(t), S = closePieces();
+  drawQuizBG(t, .1);
+  if (t >= T.title) { const s = popS(t, T.title); put(S.t1, 1.3, s, 486, 520); put(S.t2, 1.3, s, 486, 650); }
+  for (let i = 0; i < 3; i++) if (t >= T.chipsC[i]) { const c = chipPieces(i, false); const b = Math.floor(tc * 12) % 12 === i * 4 ? 1.04 : 1; drawChip(i, false, popS(t, T.chipsC[i]) * b, 0, BIG_Y[i] - 10 - c.cy); }
+  if (t >= T.hint) { const s = popS(t, T.hint); put(S.icon, .6, s, 246, 1086); put(S.hint, .6, s, 506, 1086); }
+}
+
+// =====================================================================
+// MAIN
+// =====================================================================
+function render(t) {
+  CUR_T = t; SHAKE = 0; CAM_DY = (t >= SC.lock.t0 && t < SC.reveal.t0) ? 96 : 0;
+  X.setTransform(1, 0, 0, 1, 0, 0); X.clearRect(0, 0, W, H); X.globalAlpha = 1; X.globalCompositeOperation = 'source-over'; shadowOff();
+  const inS = k => t >= SC[k].t0 && t < SC[k].t1;
+  if (t < SC.quiz.t1) { drawQuiz(t, true); }
+  else if (inS('lock')) sceneLock(t);
+  else if (inS('S1')) sceneS1(t);
+  else if (inS('S2')) sceneS2(t);
+  else if (inS('turn')) sceneTurn(t);
+  else if (inS('S3')) sceneS3(t);
+  else if (inS('S4')) sceneS4(t);
+  else if (inS('reveal')) sceneReveal(t);
+  else if (inS('slam')) sceneSlam(t);
+  else if (inS('answer')) sceneAnswer(t);
+  else if (inS('usage')) sceneUsage(t);
+  else if (inS('close')) sceneClose(t);
+  else { drawQuiz(t - SC.loop.t0, false); }   // loop: hard cut back to exactly the quiz frame
+  const story = t >= SC.S1.t0 && t < SC.reveal.t0;
+  if (story) drawBar(t);
+  screen();
+  if (t >= SC.lock.t0 && t < SC.reveal.t0) drawCaption(t);   // S1's first words start while the options settle
+}
+window.DUR = TL.DUR;
+window.render = render;
+Promise.all([
+  document.fonts.load('400 100px "Lilita One"', 'Aa4?!“”…'),
+  document.fonts.load('900 190px "NotoSerifSC"', '画龙点睛这句话真是。'),
+  document.fonts.load('700 40px "DejaVu Sans"', 'huà lóng diǎn jīng'),
+  document.fonts.load('italic 34px "DejaVu Sans"', 'zhè jù huà zhēn shì')
+]).then(() => { grain(); quizPieces(); quizBG(); for (let i = 0; i < 3; i++) chipPieces(i, false); window.READY = true; });
+</script></body></html>
