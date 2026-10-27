@@ -111,3 +111,4 @@
 - 2026-10-26 13:09: owner paused all producer scheduled tasks until further notice: "Idiom Ink v4 production A" and "B" disabled ("Idiom Ink image check" was already off). No new episodes until the owner says restart. Already queued at Publication: EP22 → EP26 → EP27.
 - 2026-10-26 18:10: EP22 live (record 574886, 17:57 UTC, 381 points). Queue: EP26 (~05:05 UTC 10-27) → EP27; then empty. Publication asked for EP28; told it production is paused by the owner.
 - 2026-10-27 05:17: EP26 live (record 575688, 05:08 UTC, 376 points; answer comment to add by hand). EP27 timed ~16:43 UTC, the last in Publication's queue while production is paused.
+- 2026-10-27 16:55: EP27 live (record 578340, 16:45 UTC, 471 points). Publication's queue is now empty; production paused by the owner.
